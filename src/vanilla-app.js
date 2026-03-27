@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       align: 'start',
       containScroll: 'trimSnaps',
       dragFree: true,
-      loop: false,
+      loop: true,
       skipSnaps: false
     });
 

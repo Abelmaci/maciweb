@@ -336,16 +336,26 @@
             <i data-lucide="play" class="w-4 h-4 fill-current"></i>
             <span data-i18n-es="DESCUBRIR EN SPOTIFY" data-i18n-en="DISCOVER ON SPOTIFY">DESCUBRIR EN SPOTIFY</span>
           </a>
-          <div class="flex gap-8 text-white text-[0.7rem] tracking-widest border-l border-outline-variant/30 pl-6 uppercase">
-            <div id="bpm-counter">BPM: 120</div>
-            <div id="time-counter">TIME: 00:00</div>
+          <div class="flex gap-6 items-center text-white/70 border-l border-outline-variant/30 pl-6">
+            <div class="flex items-center gap-2">
+              <i data-lucide="clock" class="w-4 h-4"></i>
+              <span id="time-counter" class="text-[0.7rem] tracking-widest uppercase">00:00</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4"></i>
+              <span id="bpm-counter" class="text-[0.7rem] tracking-widest uppercase">120</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="users" class="w-4 h-4"></i>
+              <span id="audience-counter" class="text-[0.7rem] tracking-widest uppercase">460</span>
+            </div>
           </div>
           <script>
             // BPM Counter
             let bpm = 120;
             setInterval(() => {
               bpm = Math.floor(118 + Math.random() * 4);
-              document.getElementById('bpm-counter').innerText = 'BPM: ' + bpm;
+              document.getElementById('bpm-counter').innerText = bpm;
             }, 2000);
 
             // Time Counter
@@ -354,8 +364,15 @@
               seconds++;
               const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
               const secs = (seconds % 60).toString().padStart(2, '0');
-              document.getElementById('time-counter').innerText = 'TIME: ' + mins + ':' + secs;
+              document.getElementById('time-counter').innerText = mins + ':' + secs;
             }, 1000);
+
+            // Audience Counter
+            let audience = 523;
+            setInterval(() => {
+              audience += Math.floor(Math.random() * 3);
+              document.getElementById('audience-counter').innerText = audience;
+            }, 5000);
           </script>
         </div>
       </div>

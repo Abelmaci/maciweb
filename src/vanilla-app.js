@@ -78,6 +78,28 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDots();
     });
 
+    // --- Auto Scroll ---
+    let autoPlayInterval;
+    const autoPlayDelay = 4000;
+
+    const startAutoPlay = () => {
+      autoPlayInterval = setInterval(() => {
+        const snaps = emblaApi.scrollSnapList();
+        const currentIndex = emblaApi.selectedScrollSnap();
+        const nextIndex = (currentIndex + 1) % snaps.length;
+        emblaApi.scrollTo(nextIndex);
+      }, autoPlayDelay);
+    };
+
+    const stopAutoPlay = () => {
+      clearInterval(autoPlayInterval);
+    };
+
+    startAutoPlay();
+
+    emblaNode.addEventListener('mouseenter', stopAutoPlay);
+    emblaNode.addEventListener('mouseleave', startAutoPlay);
+
     // Add horizontal scroll control
     emblaNode.addEventListener('wheel', (event) => {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {

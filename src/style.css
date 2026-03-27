@@ -1,0 +1,189 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+
+body {
+  background-color: #0E0E0F;
+  color: #E6E6E6;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+  transition: all 0.3s ease;
+}
+.btn-primary-gradient:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+}
+
+.vinyl-record {
+  background: 
+    conic-gradient(
+      from 0deg,
+      #080808 0deg,
+      #333333 15deg,
+      #080808 30deg,
+      #080808 150deg,
+      #333333 165deg,
+      #080808 180deg,
+      #080808 330deg,
+      #333333 345deg,
+      #080808 360deg
+    );
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 
+    0 0 60px rgba(0,0,0,1), 
+    inset 0 0 25px rgba(255,255,255,0.15);
+  border: 2px solid #1a1a1a;
+  outline: 1px solid rgba(255,255,255,0.25);
+}
+.vinyl-record::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at center,
+    transparent 0,
+    transparent 1px,
+    rgba(255, 255, 255, 0.06) 2px,
+    rgba(255, 255, 255, 0.06) 3px
+  );
+  pointer-events: none;
+  opacity: 0.8;
+}
+.vinyl-record::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(0,0,0,0.5) 100%
+  );
+  pointer-events: none;
+}
+
+.album-card {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 250px; /* Fallback */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.info-overlay {
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+}
+
+.embla {
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+  margin-left: -1rem;
+}
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  padding-left: 1rem;
+}
+@media (min-width: 640px) {
+  .embla__slide { flex: 0 0 50%; }
+}
+@media (min-width: 1024px) {
+  .embla__slide { flex: 0 0 33.333%; }
+}
+
+.animate-in {
+  animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* New Title Specific Animation */
+.animate-in h1, 
+.animate-in h2, 
+.animate-in h3,
+.animate-in a,
+h1.animate-in,
+h2.animate-in,
+h3.animate-in,
+a.animate-in {
+  animation: titleTracking 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes titleTracking {
+  from {
+    letter-spacing: -0.5em;
+    filter: blur(12px);
+    opacity: 0;
+  }
+  to {
+    /* Inherits from Tailwind classes like tracking-tighter */
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(60px) scale(0.95); 
+    filter: blur(10px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+    filter: blur(0);
+  }
+}
+
+.reveal { 
+  opacity: 1; 
+  transition: opacity 0.5s ease;
+}
+
+/* Carousel Dots Contrast */
+.embla__dot {
+  background-color: rgba(255, 255, 255, 0.4);
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.embla__dot.is-active {
+  background-color: #FF4444;
+  width: 32px;
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+}
+
+.embla__dot:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.glow-text {
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+/* Vinyl Slow Stop */
+.vinyl-record.is-stopping {
+  animation: spin 4s cubic-bezier(0.1, 0.4, 0.2, 1) forwards !important;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0E0E0F; }
+::-webkit-scrollbar-thumb { background: #2E3136; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #FF4444; }

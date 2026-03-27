@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MACI - Panel de Control</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { background-color: #000; color: #fff; }
+    .neon-border { box-shadow: 0 0 10px rgba(255,68,68,0.3); border: 1px solid #FF4444; }
+  </style>
+</head>
+<body class="min-h-screen text-white font-sans selection:bg-red-500 selection:text-white pb-20 p-8">
+
+  <div class="max-w-5xl mx-auto" x-data="adminPanel()">
+    <header class="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+      <div class="flex items-center gap-4">
+        <h1 class="text-3xl font-black uppercase text-red-500 tracking-tighter">MACI <span class="text-white">Admin</span></h1>
+      </div>
+      <button @click="guardarCambios()" class="bg-red-500 hover:bg-white hover:text-black text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest transition-all">
+        Guardar Cambios
+      </button>
+    </header>
+
+    <div x-show="loading" class="text-center py-20 text-white/50 animate-pulse">Cargando base de datos estática...</div>
+
+    <div x-show="!loading" class="space-y-12">
+      <!-- Sección: Diseño Global -->
+      <section class="bg-white/5 rounded-2xl p-8 border border-white/10">
+        <h2 class="text-2xl font-black uppercase tracking-tight mb-8">Diseño Global (Imágenes)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-black border border-white/10 p-6 rounded-xl flex items-center gap-6">
+            <div class="relative w-32 h-20 rounded-lg overflow-hidden border border-white/20">
+              <img :src="'http://localhost:3001/' + (data.bannerUrl || 'images/Banner MACI.png')" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <h3 class="text-sm uppercase font-bold text-white/80 mb-1">Fondo de Inicio</h3>
+              <p class="text-[0.6rem] text-white/50 mb-3">La imagen gigante de la portada.</p>
+              <label class="text-xs cursor-pointer bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded transition-colors font-bold uppercase tracking-widest mt-2 block w-fit">
+                Subir imagen
+                <input type="file" accept="image/*" class="hidden" @change="subirBanner($event, 'bannerUrl')">
+              </label>
+            </div>
+          </div>
+          
+          <div class="bg-black border border-white/10 p-6 rounded-xl flex items-center gap-6">
+            <div class="relative w-20 h-24 rounded-lg overflow-hidden border border-white/20">
+              <img :src="'http://localhost:3001/' + (data.bioImageUrl || 'images/Biomaci.jpeg')" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <h3 class="text-sm uppercase font-bold text-white/80 mb-1">Imagen Biografía</h3>
+              <p class="text-[0.6rem] text-white/50 mb-3">Retrato vertical en la sección de Biografía.</p>
+              <label class="text-xs cursor-pointer bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded transition-colors font-bold uppercase tracking-widest mt-2 block w-fit">
+                Subir retrato
+                <input type="file" accept="image/*" class="hidden" @change="subirBanner($event, 'bioImageUrl')">
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección: Discografía -->
+      <section class="bg-white/5 rounded-2xl p-8 border border-white/10">
+        <div class="flex justify-between items-center mb-8">
+          <h2 class="text-2xl font-black uppercase tracking-tight">Discografía</h2>
+          <button @click="agregarAlbum()" class="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all">
+            + Nuevo Álbum
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <template x-for="(album, index) in data.albums" :key="album.id">
+            <div class="bg-black border border-white/10 p-6 rounded-xl flex flex-col gap-4 relative">
+              <button @click="eliminarAlbum(index)" class="absolute top-4 right-4 text-red-500 hover:text-red-400"><i class="fa fa-trash"></i></button>
+              
+              <!-- TÍTULO Y DESCRIPCIÓN -->
+              <div>
+                <label class="text-xs text-white/40 uppercase mb-1 block">Título de la Canción</label>
+                <input type="text" x-model="album.title" class="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white outline-none focus:border-red-500">
+              </div>
+              <!-- TRANSLATABLE FIELDS (ES/EN) -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dropdown Formato -->
+                <div class="col-span-1 md:col-span-2 flex gap-4">
+                  <div class="w-2/3">
+                    <label class="text-[0.6rem] text-white/40 uppercase mb-1 flex items-center gap-1">Tipo de Formato</label>
+                    <select x-model="album.highlight_es" @change="album.highlight_en = $event.target.options[$event.target.selectedIndex].dataset.en" class="w-full bg-white/5 border border-white/10 rounded px-2 py-2 text-white outline-none focus:border-red-500 text-xs">
+                      <option value="Single destacado" data-en="Featured Single">Single Destacado</option>
+                      <option value="Single" data-en="Single">Single Independiente</option>
+                      <option value="Álbum" data-en="Album">Álbum Completo</option>
+                      <option value="EP" data-en="EP">EP (Mini Álbum)</option>
+                      <option value="Recopilación" data-en="Compilation">Recopilación</option>
+                      <option value="Nuevo Lanzamiento" data-en="New Release">Nuevo Lanzamiento</option>
+                      <option value="Tracks del álbum" data-en="Album Tracks">Tracks de un Álbum</option>
+                      <option :value="album.highlight_es" :data-en="album.highlight_en" hidden>Actual: <span x-text="album.highlight_es"></span></option>
+                    </select>
+                  </div>
+                  <div class="w-1/3">
+                    <label class="text-[0.6rem] text-white/40 uppercase mb-1 flex items-center gap-1">Año</label>
+                    <input type="text" x-model="album.year" class="w-full bg-white/5 border border-white/10 rounded px-2 py-2 text-white outline-none focus:border-red-500 text-xs text-center" placeholder="2026">
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[0.6rem] text-white/40 uppercase mb-1 flex items-center gap-1"><img src="https://flagcdn.com/w20/es.png" class="w-3"> Descripción corta</label>
+                  <input type="text" x-model="album.desc_es" class="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-white outline-none focus:border-red-500 text-xs">
+                </div>
+                <div>
+                  <label class="text-[0.6rem] text-white/40 uppercase mb-1 flex items-center gap-1"><img src="https://flagcdn.com/w20/gb.png" class="w-3"> Descripción corta (EN)</label>
+                  <input type="text" x-model="album.desc_en" class="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-white outline-none focus:border-red-500 text-xs">
+                </div>
+              </div>
+
+              <!-- ESTADO -->
+              <div class="flex gap-4 items-center">
+                <label class="flex items-center gap-2" :class="album.status === 'spotify' && album.id.indexOf('new') === -1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'">
+                  <input type="radio" x-model="album.status" value="proximamente" :name="'st-'+index" class="accent-red-500" :disabled="album.status === 'spotify' && album.id.indexOf('new') === -1">
+                  <span class="text-sm">Próximamente</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" x-model="album.status" value="spotify" :name="'st-'+index" class="accent-red-500">
+                  <span class="text-sm">Publicado en Spotify</span>
+                </label>
+              </div>
+
+              <!-- ARCHIVOS (PORTADA Y MP3) -->
+              <div class="grid grid-cols-2 gap-4 mt-2">
+                <!-- Portada -->
+                <div class="p-4 border border-white/10 rounded-lg flex flex-col items-center justify-center gap-2">
+                  <img :src="'http://localhost:3001/' + (album.coverUrl || 'images/album.jpg')" class="w-16 h-16 object-cover rounded shadow-lg" x-show="album.coverUrl">
+                  <label class="text-xs cursor-pointer bg-white/10 hover:bg-white/20 px-3 py-1 rounded mt-2">
+                    Cambiar Imagen
+                    <input type="file" accept="image/*" class="hidden" @change="subirArchivo($event, index, 'coverUrl')">
+                  </label>
+                </div>
+                <!-- Audio -->
+                <div class="p-4 border border-white/10 rounded-lg flex flex-col items-center justify-center gap-2 text-center">
+                  <i class="fa fa-music text-3xl text-white/20"></i>
+                  <span class="text-[0.65rem] truncate max-w-[120px] text-white/50" x-text="album.audioUrl"></span>
+                  <label class="text-[0.65rem] cursor-pointer bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1 rounded transition-colors mt-2">
+                    Cambiar MP3
+                    <input type="file" accept="audio/mpeg,audio/mp4" class="hidden" @change="subirArchivo($event, index, 'audioUrl')">
+                  </label>
+                </div>
+              </div>
+
+              <!-- ENLACE SPOTIFY (SOLO SI ESTÁ PUBLICADO) -->
+              <div x-show="album.status === 'spotify'" class="mt-2" x-transition>
+                <label class="text-xs text-green-500 uppercase mb-1 block font-bold flex items-center gap-2">
+                  <i class="fa-brands fa-spotify text-lg"></i> URL de Spotify
+                </label>
+                <input type="url" x-model="album.spotifyUrl" placeholder="https://open.spotify.com/..." class="w-full bg-white/5 border border-green-500/30 rounded px-3 py-2 text-white outline-none focus:border-green-500 text-sm">
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <!-- Sección: Plataformas -->
+      <section class="bg-white/5 rounded-2xl p-8 border border-white/10 mt-12">
+        <div class="flex justify-between items-center mb-8">
+          <h2 class="text-2xl font-black uppercase tracking-tight">Plataformas</h2>
+          <button @click="agregarPlataforma()" class="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all">
+            + Nueva Plataforma
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <template x-for="(platform, index) in data.platforms" :key="index">
+            <div class="bg-black border border-white/10 p-4 rounded-xl flex flex-col gap-3 relative group">
+              <button @click="eliminarPlataforma(index)" class="absolute top-2 right-2 text-red-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><i class="fa fa-times"></i></button>
+              
+              <div class="flex items-center gap-3">
+                <img :src="platform.customUrl || `https://cdn.simpleicons.org/${platform.slug}`" class="w-8 h-8 object-contain bg-white/5 rounded" @error="$event.target.src='images/MaciLogo.svg'">
+                <input type="text" x-model="platform.name" class="w-full bg-transparent border-b border-white/20 px-1 py-1 text-white font-bold text-sm outline-none focus:border-red-500" placeholder="Nombre">
+              </div>
+              
+              <div>
+                <label class="text-[0.6rem] text-white/40 uppercase block mb-1">ID Icono (SimpleIcons)</label>
+                <input type="text" x-model="platform.slug" class="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-white outline-none focus:border-red-500 text-xs" placeholder="ej: spotify">
+              </div>
+
+              <div>
+                <label class="text-[0.6rem] text-white/40 uppercase block mb-1 flex justify-between">
+                  <span>URL Logo Custom</span>
+                  <span class="text-green-500">(Opcional)</span>
+                </label>
+                <input type="text" x-model="platform.customUrl" class="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-white outline-none focus:border-green-500 text-xs" placeholder="https://...">
+              </div>
+              
+              <label class="flex items-center gap-2 cursor-pointer mt-1">
+                <input type="checkbox" x-model="platform.isDark" class="accent-red-500">
+                <span class="text-[0.6rem] uppercase font-bold text-white/60">¿Es oscuro el logo original?</span>
+              </label>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <!-- Sección: Textos -->
+      <section class="bg-white/5 rounded-2xl p-8 border border-white/10 mt-12 mb-20">
+        <h2 class="text-2xl font-black uppercase tracking-tight mb-8">Textos Globales (Biografía y Secciones)</h2>
+        <div class="space-y-6">
+          <template x-for="(txt, index) in data.texts" :key="index">
+            <div class="bg-black border border-white/10 p-6 rounded-xl flex flex-col md:flex-row gap-6">
+              <div class="md:w-1/4">
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-xs" x-text="txt.label"></h3>
+                <p class="text-[0.6rem] text-white/40 mt-1">ID Interno: <span x-text="txt.id"></span></p>
+              </div>
+              <div class="md:w-3/4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Txt Spanish -->
+                <div class="flex flex-col gap-2">
+                  <label class="text-[0.6rem] text-white/40 uppercase flex items-center gap-2"><img src="https://flagcdn.com/w20/es.png" class="w-4 shadow shadow-black"> Español</label>
+                  <textarea x-model="txt.es" rows="3" class="w-full bg-white/5 border border-white/10 rounded p-3 text-white outline-none focus:border-red-500 text-sm leading-relaxed resize-y"></textarea>
+                </div>
+                <!-- Txt English -->
+                <div class="flex flex-col gap-2">
+                  <label class="text-[0.6rem] text-white/40 uppercase flex items-center gap-2"><img src="https://flagcdn.com/w20/gb.png" class="w-4 shadow shadow-black"> Inglés</label>
+                  <textarea x-model="txt.en" rows="3" class="w-full bg-white/5 border border-white/10 rounded p-3 text-white outline-none focus:border-red-500 text-sm leading-relaxed resize-y"></textarea>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    function adminPanel() {
+      return {
+        loading: true,
+        data: { albums: [] },
+        
+        init() {
+          fetch('http://localhost:3001/api/content')
+            .then(res => res.json())
+            .then(resData => {
+              this.data = resData;
+              this.loading = false;
+            })
+            .catch(err => {
+              alert("Error conectando con el servidor CMS.");
+              console.error(err);
+            });
+        },
+
+        agregarAlbum() {
+          this.data.albums.push({
+            id: 'new_' + Date.now().toString(),
+            title: 'NUEVA CANCIÓN',
+            desc_es: 'Subidón electrónico',
+            desc_en: 'Electronic drop',
+            highlight_es: 'Nuevo Lanzamiento',
+            highlight_en: 'New Release',
+            year: new Date().getFullYear().toString(),
+            coverUrl: 'images/Album.jpg',
+            audioUrl: '',
+            status: 'proximamente',
+            spotifyUrl: ''
+          });
+        },
+
+        eliminarAlbum(index) {
+           if(confirm("¿Seguro que quieres borrar este álbum?")) {
+             this.data.albums.splice(index, 1);
+           }
+        },
+
+        agregarPlataforma() {
+          if(!this.data.platforms) this.data.platforms = [];
+          this.data.platforms.push({
+            name: 'Nueva Plataforma',
+            slug: 'discord',
+            customUrl: '',
+            isDark: false
+          });
+        },
+
+        eliminarPlataforma(index) {
+          if(confirm("¿Seguro que quieres eliminar esta plataforma?")) {
+            this.data.platforms.splice(index, 1);
+          }
+        },
+
+        async subirArchivo(event, index, targetField) {
+          const file = event.target.files[0];
+          if(!file) return;
+
+          const formData = new FormData();
+          formData.append('file', file);
+
+          try {
+            const res = await fetch('http://localhost:3001/api/upload', {
+              method: 'POST',
+              body: formData
+            });
+            const info = await res.json();
+            
+            if(info.success) {
+              this.data.albums[index][targetField] = info.url;
+            }
+          } catch(e) {
+            alert("Error subiendo el archivo");
+            console.error(e);
+          }
+        },
+
+        async subirBanner(event, field) {
+          const file = event.target.files[0];
+          if(!file) return;
+
+          const formData = new FormData();
+          formData.append('file', file);
+
+          try {
+            const res = await fetch('http://localhost:3001/api/upload', {
+              method: 'POST',
+              body: formData
+            });
+            const info = await res.json();
+            
+            if(info.success) {
+              this.data[field] = info.url;
+            }
+          } catch(e) {
+            alert("Error subiendo la imagen");
+            console.error(e);
+          }
+        },
+
+        async guardarCambios() {
+          try {
+            const res = await fetch('http://localhost:3001/api/content', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(this.data)
+            });
+            const info = await res.json();
+            if(info.success) {
+              alert("¡Página web actualizada correctamente! Ve a la web principal para verlo.");
+            }
+          } catch(e) {
+            alert("Error al aplicar los cambios.");
+            console.error(e);
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

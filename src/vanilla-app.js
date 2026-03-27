@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Auto Scroll ---
     let autoPlayInterval;
-    const autoPlayDelay = 4000;
+    const autoPlayDelay = 3000;
 
     const startAutoPlay = () => {
       autoPlayInterval = setInterval(() => {

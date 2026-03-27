@@ -238,13 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Bio Parallax
-    const bioData = document.querySelector('.bio-data-text');
-    if (bioData) {
+    document.querySelectorAll('.bio-data-text').forEach(bioData => {
       const bioRect = bioData.parentElement.getBoundingClientRect();
       if (bioRect.top < window.innerHeight && bioRect.bottom > 0) {
         const progress = (window.innerHeight - bioRect.top) / (window.innerHeight + bioRect.height);
         bioData.style.transform = `translateY(${(progress - 0.5) * 200}px)`;
       }
-    }
+    });
   });
 });

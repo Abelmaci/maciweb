@@ -84,7 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startAutoPlay = () => {
       autoPlayInterval = setInterval(() => {
-        emblaApi.scrollNext();
+        const snaps = emblaApi.scrollSnapList();
+        const current = emblaApi.selectedScrollSnap();
+        if (current >= snaps.length - 1) {
+          emblaApi.scrollTo(0);
+        } else {
+          emblaApi.scrollNext();
+        }
       }, autoPlayDelay);
     };
 

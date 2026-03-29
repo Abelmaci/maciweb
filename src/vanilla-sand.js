@@ -17,7 +17,7 @@ export class SandCanvas {
   }
 
   init() {
-    this.image.crossOrigin = "anonymous";
+    this.image.crossOrigin = "use-credentials";
     this.image.onload = () => {
       this.resize();
       this.initParticles();
@@ -30,7 +30,7 @@ export class SandCanvas {
     };
     
     this.image.onerror = () => {
-      // Fallback if provided image fails
+      console.error('Banner image failed to load:', this.imageUrl);
       this.image.src = 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2000&auto=format&fit=crop';
     };
     

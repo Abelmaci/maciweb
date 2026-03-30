@@ -187,23 +187,27 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('mouseenter', handleEnter);
     card.addEventListener('mouseleave', handleLeave);
     
-    // Mobile Touch Support
-    card.addEventListener('touchstart', (e) => {
-      // Toggle card state on mobile
-      if (!card.classList.contains('is-active')) {
-        // Remove active state from all other cards first
-        albumCards.forEach(c => {
-          if (c !== card && c.classList.contains('is-active')) {
-            // Need to trigger the leave logic for the other card
-            // But for simplicity, we'll just handle current card
-          }
-        });
-        handleEnter();
-      } else {
+    // Mobile Support: Only trigger when clicking the specific touch hint button
+    const touchBtn = card.querySelector('.mobile-touch-btn');
+    if (touchBtn) {
+      touchBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent card-level events
+        if (!card.classList.contains('is-active')) {
+          handleEnter();
+        } else {
+          handleLeave();
+        }
+      });
+    }
+
+    // Also toggle off if clicking the overlay while active
+    overlay.addEventListener('click', () => {
+      if (card.classList.contains('is-active')) {
         handleLeave();
       }
-    }, { passive: true });
+    });
   });
+
 
 
   // --- Intersection Observer for Animations ---

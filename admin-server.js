@@ -40,7 +40,7 @@ function getBaseAlbumHtml(id) {
   return `
   <div class="embla__slide">
     <div class="album-card group relative aspect-square bg-surface cursor-pointer overflow-hidden shadow-2xl rounded-3xl" data-id="${id}" data-audio="" data-duration="30">
-      <div class="vinyl-record absolute inset-0 flex items-center justify-center p-4 pointer-events-none opacity-0 transition-opacity duration-500">
+      <div class="vinyl-record absolute inset-0 flex items-center justify-center p-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
         <div class="w-full h-full flex items-center justify-center">
           <div class="w-1/3 h-1/3 bg-surface border-4 border-white/10 rounded-full flex items-center justify-center relative overflow-hidden shadow-inner">
             <img src="" class="absolute inset-0 w-full h-full object-cover opacity-60" referrerpolicy="no-referrer">

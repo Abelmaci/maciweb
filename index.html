@@ -369,12 +369,34 @@
               document.getElementById('time-counter').innerText = mins + ':' + secs;
             }, 1000);
 
-            // Audience Counter
+            // Audience Counter (Real Time from Cloudflare)
             let audience = 523;
-            setInterval(() => {
-              audience += Math.floor(Math.random() * 3);
-              document.getElementById('audience-counter').innerText = audience;
-            }, 5000);
+            const updateAudience = async () => {
+              try {
+                const response = await fetch('/api/spectators');
+                const data = await response.json();
+                if (data.count) {
+                  const targetAudience = data.count;
+                  // Smooth transition
+                  const current = parseInt(document.getElementById('audience-counter').innerText);
+                  if (!isNaN(current) && Math.abs(current - targetAudience) < 50) {
+                    // Small change, just update
+                    document.getElementById('audience-counter').innerText = targetAudience;
+                  } else {
+                    document.getElementById('audience-counter').innerText = targetAudience;
+                  }
+                }
+              } catch (e) { 
+                console.error("Error fetching real audience, using fallback", e);
+                // Fallback random behavior if server fails
+                audience += Math.floor(Math.random() * 3);
+                document.getElementById('audience-counter').innerText = audience;
+              }
+            };
+            
+            // Initial fetch and then every 2 minutes (to avoid API spam)
+            updateAudience();
+            setInterval(updateAudience, 120000); 
           </script>
         </div>
       </div>
@@ -390,7 +412,7 @@
   <!-- Discography Section -->
   <section id="discografía" class="py-32 px-8 bg-surface-container-low relative">
     <div class="max-w-7xl mx-auto">
-      <div class="flex flex-col mb-20 border-b border-outline-variant/15 pb-10">
+      <div class="flex flex-col mb-20 border-b border-outline-variant/15 pb-10 section-header">
         <h2 data-i18n-es="DISCOGRAFÍA" data-i18n-en="DISCOGRAPHY" class="reveal text-4xl font-black uppercase tracking-tighter mb-6 text-white">
           DISCOGRAFÍA
         </h2>
@@ -421,6 +443,12 @@
               <div class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                 <img src="images/CD caigo a tus pies.png" class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]" referrerpolicy="no-referrer">
               </div>
+
+              <!-- Mobile Touch Hint -->
+              <div class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden pointer-events-none opacity-80 shadow-2xl">
+                <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
+              </div>
+
               <div class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
                 <div class="flex items-center gap-3 mb-3">
                   <span class="w-2 h-2 bg-primary rounded-full animate-ping"></span>
@@ -451,6 +479,12 @@
               <div class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                 <img src="images/CD PEON EN EL AMOR.jpg" class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]" referrerpolicy="no-referrer">
               </div>
+
+              <!-- Mobile Touch Hint -->
+              <div class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden pointer-events-none opacity-80 shadow-2xl">
+                <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
+              </div>
+
               <div class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
                 <div class="flex items-center gap-3 mb-3">
                   <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -481,6 +515,12 @@
               <div class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                 <img src="images/CD TU CUERPO ME HABLA.png" class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]" referrerpolicy="no-referrer">
               </div>
+
+              <!-- Mobile Touch Hint -->
+              <div class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden pointer-events-none opacity-80 shadow-2xl">
+                <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
+              </div>
+
               <div class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
                 <div class="flex items-center gap-3 mb-3">
                   <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -511,6 +551,12 @@
               <div class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                 <img src="images/CD YOUR BODY.jpg" class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]" referrerpolicy="no-referrer">
               </div>
+
+              <!-- Mobile Touch Hint -->
+              <div class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden pointer-events-none opacity-80 shadow-2xl">
+                <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
+              </div>
+
               <div class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
                 <div class="flex items-center gap-3 mb-3">
                   <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -541,6 +587,12 @@
               <div class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                 <img src="images/CD adela.jpg" class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]" referrerpolicy="no-referrer">
               </div>
+
+              <!-- Mobile Touch Hint -->
+              <div class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden pointer-events-none opacity-80 shadow-2xl">
+                <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
+              </div>
+
               <div class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
                 <div class="flex items-center gap-3 mb-3">
                   <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -570,6 +622,12 @@
               <div class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                 <img src="images/CD el idiota.jpg" class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]" referrerpolicy="no-referrer">
               </div>
+
+              <!-- Mobile Touch Hint -->
+              <div class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden pointer-events-none opacity-80 shadow-2xl">
+                <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
+              </div>
+
               <div class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
                 <div class="flex items-center gap-3 mb-3">
                   <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>

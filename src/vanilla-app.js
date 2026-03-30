@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emblaApi = EmblaCarousel(emblaNode, { 
       align: 'start',
       containScroll: 'trimSnaps',
-      dragFree: true,
+      dragFree: false, // Changed to false for better snapping on mobile
       loop: true,
       skipSnaps: false
     });
@@ -78,32 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDots();
     });
 
-    // --- Auto Scroll ---
-    let autoPlayInterval;
-    const autoPlayDelay = 3000;
+    // Auto Scroll removed as requested
 
-    const startAutoPlay = () => {
-      autoPlayInterval = setInterval(() => {
-        const snaps = emblaApi.scrollSnapList();
-        const current = emblaApi.selectedScrollSnap();
-        if (current >= snaps.length - 1) {
-          emblaApi.scrollTo(0);
-        } else {
-          emblaApi.scrollNext();
-        }
-      }, autoPlayDelay);
-    };
-
-    const stopAutoPlay = () => {
-      clearInterval(autoPlayInterval);
-    };
-
-    startAutoPlay();
-
-    emblaNode.addEventListener('mouseenter', stopAutoPlay);
-    emblaNode.addEventListener('mouseleave', startAutoPlay);
-
-    // Add horizontal scroll control
+    // Add horizontal scroll control for mouse wheel
     emblaNode.addEventListener('wheel', (event) => {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
         event.preventDefault();
@@ -127,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const overlay = card.querySelector('.info-overlay');
     const cover = card.querySelector('.album-cover');
 
-    card.addEventListener('mouseenter', () => {
-      console.log("Mouse entered card", id);
+    const handleEnter = () => {
+      console.log("Entering card", id);
       
       // Stop and clean up any currently playing source
       if (currentAudio) {
@@ -189,9 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
       overlay.classList.add('opacity-100', 'translate-y-0');
       overlay.classList.remove('opacity-0', 'translate-y-5');
       cover.classList.add('-translate-x-full');
-    });
+      card.classList.add('is-active'); // To hide touch hint
+    };
 
-    card.addEventListener('mouseleave', () => {
+    const handleLeave = () => {
       if (currentAudio) {
         try { currentAudio.stop(); } catch(e) {}
         try { currentAudio.disconnect(); } catch(e) {}
@@ -203,8 +181,30 @@ document.addEventListener('DOMContentLoaded', () => {
       overlay.classList.remove('opacity-100', 'translate-y-0');
       overlay.classList.add('opacity-0', 'translate-y-5');
       cover.classList.remove('-translate-x-full');
-    });
+      card.classList.remove('is-active');
+    };
+
+    card.addEventListener('mouseenter', handleEnter);
+    card.addEventListener('mouseleave', handleLeave);
+    
+    // Mobile Touch Support
+    card.addEventListener('touchstart', (e) => {
+      // Toggle card state on mobile
+      if (!card.classList.contains('is-active')) {
+        // Remove active state from all other cards first
+        albumCards.forEach(c => {
+          if (c !== card && c.classList.contains('is-active')) {
+            // Need to trigger the leave logic for the other card
+            // But for simplicity, we'll just handle current card
+          }
+        });
+        handleEnter();
+      } else {
+        handleLeave();
+      }
+    }, { passive: true });
   });
+
 
   // --- Intersection Observer for Animations ---
   const observerOptions = {

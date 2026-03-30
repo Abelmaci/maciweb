@@ -87,7 +87,7 @@ body {
   margin-left: -1rem;
 }
 .embla__slide {
-  flex: 0 0 100%;
+  flex: 0 0 92%; /* Shows about 8% of the next disc on mobile */
   min-width: 0;
   padding-left: 1rem;
 }
@@ -98,9 +98,71 @@ body {
   .embla__slide { flex: 0 0 33.333%; }
 }
 
+/* Mobile specific fixes for the section padding */
+@media (max-width: 640px) {
+  #discografía {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .section-header {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .embla__container {
+    margin-left: 0;
+  }
+  .embla__slide {
+    flex: 0 0 90%; /* Larger CD size (90% of screen) */
+    padding-left: 1.25rem; /* Reduced starting gap */
+    padding-right: 0.25rem; /* Very tight gap between slides */
+  }
+}
+
+
+
+
+
+.mobile-touch-btn {
+  animation: touchPulse 2s infinite ease-in-out;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes touchPulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, 0.2); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+}
+
+/* Hide touch hint when content is active */
+.album-card.is-active .mobile-touch-btn,
+.album-card:active .mobile-touch-btn,
+.album-card:focus .mobile-touch-btn {
+  opacity: 0 !important;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .info-overlay {
+    padding: 1.5rem !important; /* Smaller padding on mobile */
+  }
+  .info-overlay h3 {
+    font-size: 1.5rem !important; /* Consistent title size */
+    line-height: 1;
+  }
+  /* Ensure badge doesn't collide */
+  .album-card [class*="bg-blue-600"] {
+    top: 1rem !important;
+    left: 1rem !important;
+    font-size: 0.5rem !important;
+  }
+}
+
 .animate-in {
   animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
+
+
 
 /* New Title Specific Animation */
 .animate-in h1, 

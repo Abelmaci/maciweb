@@ -120,9 +120,13 @@
   <link rel="preconnect" href="https://cdn.skypack.dev">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   
-  <!-- Font Preloading -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Optimized Font & CSS Loading (Non-blocking) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  </noscript>
 
   <!-- Module Preloads -->
   <link rel="modulepreload" href="src/vanilla-app.js">
@@ -136,7 +140,7 @@
   <link rel="preload" href="music-preview/el-idiota.mp3" as="fetch" crossorigin="">
   <link rel="preload" href="music-preview/caigo-a-tus-pies.mp3" as="fetch" crossorigin="">
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN (Lower priority for initial paint) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {

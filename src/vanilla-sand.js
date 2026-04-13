@@ -152,8 +152,8 @@ class Particle {
     
     this.forceX = 0;
     this.forceY = 0;
-    this.friction = 0.85;
-    this.ease = 0.25;
+    this.friction = 0.80; // Stop sliding sooner for crisp feeling
+    this.ease = 0.35; // Snap back faster
   }
 
   update(mouse, time) {
@@ -167,7 +167,7 @@ class Particle {
     if (distance > 0 && distance < mouse.radius) {
       // Extremely optimized vector physics (bypassing heavy atan2, cos, sin)
       const force = (mouse.radius - distance) / mouse.radius;
-      const forceMultiplier = force * 25 / distance;
+      const forceMultiplier = force * 60 / distance; // Increased from 25 to 60 for extreme speed
       this.forceX -= dx * forceMultiplier;
       this.forceY -= dy * forceMultiplier;
     }

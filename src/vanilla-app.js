@@ -146,8 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const vinyl = card.querySelector('.vinyl-record');
           if (vinyl) {
             vinyl.classList.remove('animate-spin-vinyl');
-            void vinyl.offsetWidth; // Force reflow
-            vinyl.classList.add('is-stopping');
+            // Using rAF instead of forcing reflow
+            requestAnimationFrame(() => {
+              vinyl.classList.add('is-stopping');
+            });
           }
         };
         
@@ -160,8 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const vinyl = card.querySelector('.vinyl-record');
           if (vinyl) {
             vinyl.classList.remove('animate-spin-vinyl');
-            void vinyl.offsetWidth;
-            vinyl.classList.add('is-stopping');
+            requestAnimationFrame(() => {
+              vinyl.classList.add('is-stopping');
+            });
           }
         };
         const playPromise = currentAudio.play();
@@ -238,26 +241,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, observerOptions);
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  // --- Optimized Scroll Handling with geometric caching ---
+  let isScrollTicking = false;
+  const bioItems = Array.from(document.querySelectorAll('.bio-data-text')).map(el => ({
+    element: el,
+    parent: el.parentElement,
+    top: 0,
+    height: 0
+  }));
 
-  // --- Parallax Effects (Simple Version) ---
-  window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    
-    // Hero Parallax
-    const heroContent = document.querySelector('#inicio .max-w-7xl');
-    if (heroContent) {
-      heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
-      heroContent.style.opacity = 1 - (scrolled / 700);
-    }
-
-    // Bio Parallax
-    document.querySelectorAll('.bio-data-text').forEach(bioData => {
-      const bioRect = bioData.parentElement.getBoundingClientRect();
-      if (bioRect.top < window.innerHeight && bioRect.bottom > 0) {
-        const progress = (window.innerHeight - bioRect.top) / (window.innerHeight + bioRect.height);
-        bioData.style.transform = `translateY(${(progress - 0.5) * 200}px)`;
-      }
+  const updateGeometricCache = () => {
+    bioItems.forEach(item => {
+      item.top = item.parent.offsetTop;
+      item.height = item.parent.offsetHeight;
     });
-  });
+  };
+
+  // Initial and on resize cache update
+  updateGeometricCache();
+  window.addEventListener('resize', updateGeometricCache, { passive: true });
+  
+  window.addEventListener('scroll', () => {
+    if (!isScrollTicking) {
+      window.requestAnimationFrame(() => {
+        const scrolled = window.scrollY || window.pageYOffset;
+        
+        // Hero Parallax
+        const heroContent = document.querySelector('#inicio .max-w-7xl');
+        if (heroContent) {
+          heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+          heroContent.style.opacity = 1 - (scrolled / 700);
+        }
+
+        // Bio Parallax - Using Memory Cache (ZERO READS to DOM)
+        const viewportBottom = scrolled + window.innerHeight;
+        bioItems.forEach(item => {
+          if (viewportBottom > item.top && scrolled < item.top + item.height) {
+            const progress = (viewportBottom - item.top) / (window.innerHeight + item.height);
+            item.element.style.transform = `translateY(${(progress - 0.5) * 200}px)`;
+          }
+        });
+
+        isScrollTicking = false;
+      });
+      isScrollTicking = true;
+    }
+  }, { passive: true });
 });

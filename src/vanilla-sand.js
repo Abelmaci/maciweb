@@ -69,9 +69,9 @@ export class SandCanvas {
   }
 
   initParticles() {
-    // Balanced skip: dense enough for good visual noise, but fluid (prevents cursor freezing)
+    // Perfected skip: slightly less dense for absolute fluidity, but maintaining the aesthetic
     const isMobile = window.innerWidth < 768;
-    const skip = isMobile ? 6 : 3; 
+    const skip = isMobile ? 8 : 4; 
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
 
     for (let y = 0; y < this.canvas.height; y += skip) {
@@ -164,11 +164,12 @@ class Particle {
     const dy = mouse.y - this.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     
-    if (distance < mouse.radius) {
-      const angle = Math.atan2(dy, dx);
+    if (distance > 0 && distance < mouse.radius) {
+      // Extremely optimized vector physics (bypassing heavy atan2, cos, sin)
       const force = (mouse.radius - distance) / mouse.radius;
-      this.forceX -= Math.cos(angle) * force * 25;
-      this.forceY -= Math.sin(angle) * force * 25;
+      const forceMultiplier = force * 25 / distance;
+      this.forceX -= dx * forceMultiplier;
+      this.forceY -= dy * forceMultiplier;
     }
 
     this.x += (this.originX - this.x + this.forceX) * this.ease;

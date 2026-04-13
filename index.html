@@ -490,6 +490,7 @@
           <div class="flex flex-col gap-6 w-full md:w-fit">
             <a href="https://open.spotify.com/intl-es/artist/08npv9JFamVUX30C0XT695?si=__gUyqpOQde4pFvW6nBfnA"
               target="_blank"
+              aria-label="Explorar música de MACI en Spotify"
               class="btn-primary-gradient px-10 py-5 text-on-primary font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-3 active:scale-95 transition-transform shadow-lg shadow-primary/20 cursor-pointer rounded-full w-full">
               <i data-lucide="play" class="w-4 h-4 fill-current"></i>
               <span data-i18n-es="Explorar" data-i18n-en="Explore">Explorar</span>
@@ -527,27 +528,12 @@
 
               // Audience Counter (Real Time from Cloudflare)
               let audience = 523;
-                const updateAudience = async () => {
-                  try {
-                    const response = await fetch('/api/spectators');
-                    
-                    if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) {
-                      throw new Error('Endpoint not available or not returning JSON');
-                    }
-
-                    const data = await response.json();
-                    if (data && data.count) {
-                      const targetAudience = data.count;
-                      document.getElementById('audience-counter').innerText = targetAudience;
-                    }
-                  } catch (e) {
-                    // Fail silently or with a cleaner log to avoid cluttering console with SyntaxErrors
-                    console.debug("Audience API unavailable, using local simulation.");
-                  // Fallback random behavior if server fails
-                  audience += Math.floor(Math.random() * 3);
+                const updateAudience = () => {
+                  // Simulate real-time variation locally for static site
+                  audience += Math.floor(Math.random() * 5) - 2; 
+                  if (audience < 500) audience = 500;
                   document.getElementById('audience-counter').innerText = audience;
-                }
-              };
+                };
 
               // Initial fetch and then every 2 minutes (to avoid API spam)
               updateAudience();
@@ -614,7 +600,7 @@
                 <!-- Mobile Touch Hint -->
                 <button
                   class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
-                  aria-label="Activar vista previa del disco">
+                  aria-label="Escuchar adelanto de Caigo a tus pies">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
                 </button>
 
@@ -673,7 +659,7 @@
                 <!-- Mobile Touch Hint -->
                 <button
                   class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
-                  aria-label="Activar vista previa del disco">
+                  aria-label="Escuchar adelanto de Peón en el Amor">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
                 </button>
 
@@ -732,7 +718,7 @@
                 <!-- Mobile Touch Hint -->
                 <button
                   class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
-                  aria-label="Activar vista previa del disco">
+                  aria-label="Escuchar adelanto de Tu cuerpo me habla">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
                 </button>
 
@@ -790,7 +776,7 @@
                 <!-- Mobile Touch Hint -->
                 <button
                   class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
-                  aria-label="Activar vista previa del disco">
+                  aria-label="Escuchar adelanto de Your Body Wants to Speak to Me">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
                 </button>
 
@@ -850,7 +836,7 @@
                 <!-- Mobile Touch Hint -->
                 <button
                   class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
-                  aria-label="Activar vista previa del disco">
+                  aria-label="Escuchar adelanto de Adela">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
                 </button>
 
@@ -903,7 +889,7 @@
                 <!-- Mobile Touch Hint -->
                 <button
                   class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
-                  aria-label="Activar vista previa del disco">
+                  aria-label="Escuchar adelanto de El Idiota">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
                 </button>
 
@@ -1306,7 +1292,7 @@
         lucide.createIcons();
       });
     </script>
-    <script type="module" src="src/vanilla-app.js?v=2"></script>
+    <script type="module" src="src/vanilla-app.js"></script>
     <script>
       const menuBtn = document.getElementById('mobile-menu-btn');
       const closeBtn = document.getElementById('close-menu-btn');

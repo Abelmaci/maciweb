@@ -243,6 +243,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, observerOptions);
 
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
   // --- Optimized Scroll Handling with geometric caching ---
   let isScrollTicking = false;
   const bioItems = Array.from(document.querySelectorAll('.bio-data-text')).map(el => ({

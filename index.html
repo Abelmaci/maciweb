@@ -286,14 +286,8 @@
       const stop2 = document.getElementById('fill-stop-2');
 
       const images = Array.from(document.images);
-      const audioSources = [
-        "music-preview/peon-en-el-amor.mp3",
-        "music-preview/tu-cuerpo-me-habla.mp3",
-        "music-preview/your-body.mp3",
-        "music-preview/adela-v5.mp3",
-        "music-preview/el-idiota.mp3",
-        "music-preview/caigo-a-tus-pies.mp3"
-      ];
+      // Dynamically discover all unique audio sources from the album cards
+      const audioSources = [...new Set([...document.querySelectorAll('.album-card')].map(card => card.dataset.audio))].filter(Boolean);
 
       const totalAssets = images.length + audioSources.length;
       let loadedCount = 0;
@@ -308,14 +302,14 @@
         stop2.setAttribute('offset', `${percent}%`);
 
         if (audioLoaded > 0 && audioLoaded < audioSources.length) {
-          statusText.innerText = `AUDIO ${audioLoaded}/${audioSources.length}`;
+          statusText.innerText = `DECODING AUDIO ${audioLoaded}/${audioSources.length}`;
         }
 
         if (loadedCount >= totalAssets) {
-          statusText.innerText = 'READY';
+          statusText.innerText = 'SOUND SYSTEM READY';
           setTimeout(() => {
             splash.classList.add('fade-out');
-          }, 400);
+          }, 600);
         }
       }
 
@@ -329,24 +323,27 @@
         }
       });
 
-      // Preload Audio into Web Audio API for ZERO latency playback
+      // Unified Audio Context and Buffers
       window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      window.audioBuffers = {};
+      window.audioBuffers = window.audioBuffers || {};
 
-      Promise.all(audioSources.map(src => {
-        return fetch(src)
-          .then(response => response.arrayBuffer())
+      // Load all discovered songs in parallel
+      audioSources.forEach(src => {
+        fetch(src)
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.arrayBuffer();
+          })
           .then(arrayBuffer => window.audioCtx.decodeAudioData(arrayBuffer))
           .then(audioBuffer => {
-            // Store the completely decoded, raw audio memory buffer
             window.audioBuffers[src] = audioBuffer;
             updateProgress(true);
           })
           .catch(err => {
-            console.error("Audio fetch/decode failed", err);
-            updateProgress(true);
+            console.warn(`Audio preload failed for ${src}:`, err);
+            updateProgress(true); // Still count as 'processed' to avoid blocking loader
           });
-      }));
+      });
 
       // Unlock Audio Context on any user interaction globally
       const unlockAudio = () => {

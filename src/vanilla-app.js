@@ -7,7 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const initApp = () => {
     // --- Initialize Lucide Icons ---
     if (window.lucide) {
-      window.lucide.createIcons();
+      // Targeted icon creation instead of full-DOM scan to save Main Thread work
+      const containers = ['nav', '#inicio', '.embla', 'footer'];
+      containers.forEach(selector => {
+        const el = document.querySelector(selector);
+        if (el) window.lucide.createIcons({ props: {}, attrs: {}, root: el });
+      });
     }
 
     // --- SandCanvas Initialization ---
@@ -18,12 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Run initializations after splash screen is done or idle
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(() => initApp());
-  } else {
-    setTimeout(initApp, 100);
-  }
+  // Run initializations ONLY after the splash screen is fully faded (e.g. 800ms)
+  // this prevents the heavy particle engine from competing with the splash animation.
+  setTimeout(initApp, 800);
 
   // --- Navigation Scroll Effect ---
   const nav = document.querySelector('nav');

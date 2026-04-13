@@ -113,6 +113,21 @@
   <!-- Preload Critical Hero Image -->
   <link rel="preload" href="images/Banner-MACI-optimized.jpg" as="image" fetchpriority="high">
 
+  <!-- Resource Preconnects -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdn.skypack.dev">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  
+  <!-- Font Preloading -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Module Preloads -->
+  <link rel="modulepreload" href="src/vanilla-app.js">
+  <link rel="modulepreload" href="src/vanilla-sand.js">
+
   <!-- Preload Audio Files (starts downloading before JS) -->
   <link rel="preload" href="music-preview/peon-en-el-amor.mp3" as="fetch" crossorigin="">
   <link rel="preload" href="music-preview/tu-cuerpo-me-habla.mp3" as="fetch" crossorigin="">
@@ -152,7 +167,7 @@
     };
   </script>
   <link rel="stylesheet" href="src/style.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
   <style>
     :root {
       --wave-color: #FF4444;
@@ -1262,7 +1277,7 @@
 
     <!-- Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();

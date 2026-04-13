@@ -293,6 +293,18 @@
       let loadedCount = 0;
       let audioLoaded = 0;
 
+      let isDismissed = false;
+      const dismissLoader = () => {
+        if (isDismissed) return;
+        isDismissed = true;
+        splash.classList.add('fade-out');
+        // Trigger hero animations synchronously with loader exit
+        document.querySelectorAll('.hero-reveal').forEach(el => {
+          el.classList.remove('opacity-0');
+          el.classList.add('animate-in');
+        });
+      };
+
       function updateProgress(isAudio) {
         if (isAudio) {
           audioLoaded++;
@@ -312,11 +324,7 @@
 
         if (loadedCount >= totalAssets) {
           statusText.innerText = 'SOUND SYSTEM READY';
-          setTimeout(() => {
-            splash.classList.add('fade-out');
-            // Synchronize hero animations to trigger exactly as splash fades
-            document.querySelectorAll('.hero-reveal').forEach(el => el.classList.add('animate-in'));
-          }, 1200); // Restored slight delay for visual loading effect
+          setTimeout(dismissLoader, 1200); // Restored slight delay for visual loading effect
         }
       }
 
@@ -367,9 +375,7 @@
 
       // Fallback failsafe (reduced from 15s to 3s for better LCP)
       setTimeout(() => {
-        if (!splash.classList.contains('fade-out')) {
-          splash.classList.add('fade-out');
-        }
+        if (typeof dismissLoader === 'function') dismissLoader();
       }, 3000);
     });
   </script>

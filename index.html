@@ -110,6 +110,9 @@
   <link rel="icon" href="images/MaciLogo.svg" type="image/svg+xml">
   <title>MACI – Artista Digital AI | Música con Inteligencia Artificial</title>
 
+  <!-- Preload Critical Hero Image -->
+  <link rel="preload" href="images/Banner-MACI-optimized.jpg" as="image" fetchpriority="high">
+
   <!-- Preload Audio Files (starts downloading before JS) -->
   <link rel="preload" href="music-preview/peon-en-el-amor.mp3" as="fetch" crossorigin="">
   <link rel="preload" href="music-preview/tu-cuerpo-me-habla.mp3" as="fetch" crossorigin="">
@@ -378,7 +381,7 @@
         </div>
 
         <!-- Mobile Menu Icon -->
-        <button id="mobile-menu-btn" class="lg:hidden text-white z-50 relative">
+        <button id="mobile-menu-btn" aria-label="Abrir menú de navegación" class="lg:hidden text-white z-50 relative">
           <i class="fa-solid fa-bars text-2xl"></i>
         </button>
 
@@ -401,7 +404,7 @@
 
     <div id="mobile-menu"
       class="hidden fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out opacity-0 translate-x-full">
-      <button id="close-menu-btn" class="absolute top-8 right-8 text-white z-[101]">
+      <button id="close-menu-btn" aria-label="Cerrar menú de navegación" class="absolute top-8 right-8 text-white z-[101]">
         <i class="fa-solid fa-times text-3xl"></i>
       </button>
       <a href="#inicio" data-i18n-es="INICIO" data-i18n-en="HOME"
@@ -565,7 +568,7 @@
                   <div class="w-full h-full flex items-center justify-center">
                     <div
                       class="w-1/3 h-1/3 bg-surface border-4 border-white/10 rounded-full flex items-center justify-center relative overflow-hidden shadow-inner">
-                      <img src="images/CD caigo a tus pies.png"
+                      <img src="images/CD_caigo_a_tus_pies.jpg" alt=""
                         class="absolute inset-0 w-full h-full object-cover opacity-60" referrerpolicy="no-referrer">
                       <div class="w-2 h-2 bg-background rounded-full z-10 shadow-[0_0_5px_rgba(255,255,255,0.5)]"></div>
                     </div>
@@ -573,16 +576,18 @@
                 </div>
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
-                  <img src="images/CD caigo a tus pies.png"
+                  <img src="images/CD_caigo_a_tus_pies.jpg" alt="Portada del single Caigo a tus pies"
+                    fetchpriority="high"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
                 </div>
 
                 <!-- Mobile Touch Hint -->
-                <div
-                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl">
+                <button
+                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
+                  aria-label="Activar vista previa del disco">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
-                </div>
+                </button>
 
                 <div
                   class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
@@ -604,6 +609,7 @@
                   <p class="text-[0.5rem] text-white/30 mt-2 tracking-[0.3em] uppercase font-light">composición humana ·
                     inteligencia artificial</p>
                   <a href="#" data-i18n-es="Escuchar adelanto" data-i18n-en="Listen to preview"
+                    aria-label="Escuchar adelanto de la canción Caigo a tus pies"
                     class="inline-block bg-primary text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-red-700 transition-colors">Escuchar
                     adelanto</a>
                 </div>
@@ -620,7 +626,8 @@
                   <div class="w-full h-full flex items-center justify-center">
                     <div
                       class="w-1/3 h-1/3 bg-surface border-4 border-white/10 rounded-full flex items-center justify-center relative overflow-hidden shadow-inner">
-                      <img src="images/CD PEON EN EL AMOR.jpg"
+                      <img src="images/CD PEON EN EL AMOR.jpg" alt=""
+                        loading="lazy"
                         class="absolute inset-0 w-full h-full object-cover opacity-60" referrerpolicy="no-referrer">
                       <div class="w-2 h-2 bg-background rounded-full z-10 shadow-[0_0_5px_rgba(255,255,255,0.5)]"></div>
                     </div>
@@ -628,16 +635,18 @@
                 </div>
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
-                  <img src="images/CD PEON EN EL AMOR.jpg"
+                  <img src="images/CD PEON EN EL AMOR.jpg" alt="Portada del álbum Peón en el Amor"
+                    loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
                 </div>
 
                 <!-- Mobile Touch Hint -->
-                <div
-                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl">
+                <button
+                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
+                  aria-label="Activar vista previa del disco">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
-                </div>
+                </button>
 
                 <div
                   class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
@@ -660,6 +669,7 @@
                     algoritmo y emoción</p>
                   <a href="https://open.spotify.com/intl-es/album/2hIg1cw13PAnnYrjdDQL39?si=ZnvN6U-tTsGMs9KR68fhMg"
                     target="_blank" data-i18n-es="Escuchar en Spotify" data-i18n-en="Listen on Spotify"
+                    aria-label="Escuchar álbum Peón en el Amor en Spotify"
                     class="inline-block bg-[#1DB954] text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-[#1ed760] transition-colors">Escuchar
                     en Spotify</a>
                 </div>
@@ -675,7 +685,8 @@
                   <div class="w-full h-full flex items-center justify-center">
                     <div
                       class="w-1/3 h-1/3 bg-surface border-4 border-white/10 rounded-full flex items-center justify-center relative overflow-hidden shadow-inner">
-                      <img src="images/CD TU CUERPO ME HABLA.png"
+                      <img src="images/CD_TU_CUERPO_ME_HABLA.jpg" alt=""
+                        loading="lazy"
                         class="absolute inset-0 w-full h-full object-cover opacity-60" referrerpolicy="no-referrer">
                       <div class="w-2 h-2 bg-background rounded-full z-10 shadow-[0_0_5px_rgba(255,255,255,0.5)]"></div>
                     </div>
@@ -683,16 +694,18 @@
                 </div>
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
-                  <img src="images/CD TU CUERPO ME HABLA.png"
+                  <img src="images/CD_TU_CUERPO_ME_HABLA.jpg" alt="Portada del single Tu cuerpo me habla"
+                    loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
                 </div>
 
                 <!-- Mobile Touch Hint -->
-                <div
-                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl">
+                <button
+                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
+                  aria-label="Activar vista previa del disco">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
-                </div>
+                </button>
 
                 <div
                   class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
@@ -714,6 +727,7 @@
                     artificial · ritmo humano</p>
                   <a href="https://open.spotify.com/intl-es/album/6nNrSIhqqB5kNyF2rgRRHw?si=MtbspESSTryaL2VsUg2Uhg"
                     target="_blank" data-i18n-es="Escuchar en Spotify" data-i18n-en="Listen on Spotify"
+                    aria-label="Escuchar álbum Tu cuerpo me habla en Spotify"
                     class="inline-block bg-[#1DB954] text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-[#1ed760] transition-colors">Escuchar
                     en Spotify</a>
                 </div>
@@ -729,7 +743,8 @@
                   <div class="w-full h-full flex items-center justify-center">
                     <div
                       class="w-1/3 h-1/3 bg-surface border-4 border-white/10 rounded-full flex items-center justify-center relative overflow-hidden shadow-inner">
-                      <img src="images/CD YOUR BODY.jpg" class="absolute inset-0 w-full h-full object-cover opacity-60"
+                      <img src="images/CD_YOUR_BODY_optimized.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-60"
+                        loading="lazy"
                         referrerpolicy="no-referrer">
                       <div class="w-2 h-2 bg-background rounded-full z-10 shadow-[0_0_5px_rgba(255,255,255,0.5)]"></div>
                     </div>
@@ -737,16 +752,18 @@
                 </div>
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
-                  <img src="images/CD YOUR BODY.jpg"
+                  <img src="images/CD_YOUR_BODY_optimized.jpg" alt="Portada del single Your Body"
+                    loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
                 </div>
 
                 <!-- Mobile Touch Hint -->
-                <div
-                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl">
+                <button
+                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
+                  aria-label="Activar vista previa del disco">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
-                </div>
+                </button>
 
                 <div
                   class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
@@ -770,6 +787,7 @@
                     sin fronteras</p>
                   <a href="https://open.spotify.com/intl-es/album/2H6d5kkstQSDKDP8L5rqvn?si=-0AjHbAGTYGTaqAoCUIOyg"
                     target="_blank" data-i18n-es="Escuchar en Spotify" data-i18n-en="Listen on Spotify"
+                    aria-label="Escuchar álbum Your Body Wants to Speak to Me en Spotify"
                     class="inline-block bg-[#1DB954] text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-[#1ed760] transition-colors">Escuchar
                     en Spotify</a>
                 </div>
@@ -785,7 +803,8 @@
                   <div class="w-full h-full flex items-center justify-center">
                     <div
                       class="w-1/3 h-1/3 bg-surface border-4 border-white/10 rounded-full flex items-center justify-center relative overflow-hidden shadow-inner">
-                      <img src="images/CD adela.jpg" class="absolute inset-0 w-full h-full object-cover opacity-60"
+                      <img src="images/CD_adela_optimized.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-60"
+                        loading="lazy"
                         referrerpolicy="no-referrer">
                       <div class="w-2 h-2 bg-background rounded-full z-10 shadow-[0_0_5px_rgba(255,255,255,0.5)]"></div>
                     </div>
@@ -793,15 +812,18 @@
                 </div>
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
-                  <img src="images/CD adela.jpg" class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
+                  <img src="images/CD_adela_optimized.jpg" alt="Portada del single Adela"
+                    loading="lazy"
+                    class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
                 </div>
 
                 <!-- Mobile Touch Hint -->
-                <div
-                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl">
+                <button
+                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
+                  aria-label="Activar vista previa del disco">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
-                </div>
+                </button>
 
                 <div
                   class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
@@ -818,6 +840,7 @@
                     class="text-[0.65rem] text-white/60 mt-2 uppercase tracking-widest">Nuevas sonoridades cubanas.</p>
                   <a href="https://open.spotify.com/intl-es/album/6RjaoKxCjvtrLyof22SJG4?si=W9TgBclLTI-MRmuZgX0vPg"
                     target="_blank" data-i18n-es="Escuchar en Spotify" data-i18n-en="Listen on Spotify"
+                    aria-label="Escuchar álbum Adela en Spotify"
                     class="inline-block bg-[#1DB954] text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-[#1ed760] transition-colors">Escuchar
                     en Spotify</a>
                 </div>
@@ -833,7 +856,8 @@
                   <div class="w-full h-full flex items-center justify-center">
                     <div
                       class="w-1/3 h-1/3 bg-surface border-4 border-white/10 rounded-full flex items-center justify-center relative overflow-hidden shadow-inner">
-                      <img src="images/CD el idiota.jpg" class="absolute inset-0 w-full h-full object-cover opacity-60"
+            <img src="images/CD el idiota.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-60"
+                        loading="lazy"
                         referrerpolicy="no-referrer">
                       <div class="w-2 h-2 bg-background rounded-full z-10 shadow-[0_0_5px_rgba(255,255,255,0.5)]"></div>
                     </div>
@@ -841,16 +865,18 @@
                 </div>
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
-                  <img src="images/CD el idiota.jpg"
+                  <img src="images/CD el idiota.jpg" alt="Portada del álbum El Idiota"
+                    loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
                 </div>
 
                 <!-- Mobile Touch Hint -->
-                <div
-                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl">
+                <button
+                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
+                  aria-label="Activar vista previa del disco">
                   <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
-                </div>
+                </button>
 
                 <div
                   class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
@@ -871,6 +897,7 @@
                     emocional · artista digital AI</p>
                   <a href="https://open.spotify.com/intl-es/album/6AK6rSclmMrRnTy3gepDol?si=N8NZCcJATxKl0YAbpTBKqA"
                     target="_blank" data-i18n-es="Escuchar en Spotify" data-i18n-en="Listen on Spotify"
+                    aria-label="Escuchar álbum El Idiota en Spotify"
                     class="inline-block bg-[#1DB954] text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-[#1ed760] transition-colors">Escuchar
                     en Spotify</a>
                 </div>
@@ -897,7 +924,8 @@
           </div>
           <div
             class="reveal relative bg-surface-container-highest p-1 rounded-3xl overflow-hidden shadow-2xl max-w-md mx-auto">
-            <img src="images/Biomaci.jpeg" alt="MACI Bio"
+            <img src="images/Biomaci.jpeg" alt="Retrato de MACI, artista digital AI de estética brutalista"
+              loading="lazy"
               class="w-full aspect-[4/5] object-cover hover:brightness-110 transition-all duration-700 rounded-2xl"
               referrerpolicy="no-referrer">
             <!-- Gradient overlay for text readability -->
@@ -969,7 +997,8 @@
           </div>
           <div
             class="reveal relative bg-surface-container-highest p-1 rounded-3xl overflow-hidden shadow-2xl max-w-md mx-auto">
-            <img src="images/adela2.jpg" alt="Adela"
+            <img src="images/adela2.jpg" alt="Retrato artístico de Adela, inspiración principal de la canción"
+              loading="lazy"
               class="w-full aspect-[4/5] object-cover hover:brightness-110 transition-all duration-700 rounded-2xl"
               referrerpolicy="no-referrer">
             <div
@@ -1182,6 +1211,7 @@
             <div class="flex flex-wrap justify-center gap-6">
               <a href="https://www.instagram.com/maci_ai_music/" target="_blank" rel="noopener noreferrer"
                 data-i18n-es="CONTACTAME" data-i18n-en="CONTACT ME"
+                aria-label="Contactar con MACI por Instagram"
                 class="px-8 py-4 bg-primary text-black font-bold uppercase tracking-widest text-sm hover:bg-white transition-all shadow-[0_0_15px_rgba(255,68,68,0.3)] hover:shadow-[0_0_25px_rgba(255,68,68,0.6)] rounded-full">CONTACTAME</a>
             </div>
           </div>
@@ -1212,12 +1242,15 @@
               data-i18n-en="FOLLOW ME ON:">SÍGUEME EN:</span>
             <div class="flex gap-6">
               <a href="https://www.youtube.com/@Maciaimusic" target="_blank" rel="noopener noreferrer"
+                aria-label="Seguir a MACI en YouTube"
                 class="text-primary/70 hover:text-primary transition-all hover:scale-110 cursor-pointer"><i
                   class="fa-brands fa-youtube text-2xl"></i></a>
               <a href="https://www.tiktok.com/@maciaimusic" target="_blank" rel="noopener noreferrer"
+                aria-label="Seguir a MACI en TikTok"
                 class="text-primary/70 hover:text-primary transition-all hover:scale-110 cursor-pointer"><i
                   class="fa-brands fa-tiktok text-2xl"></i></a>
               <a href="https://www.instagram.com/maci_ai_music" target="_blank" rel="noopener noreferrer"
+                aria-label="Seguir a MACI en Instagram"
                 class="text-primary/70 hover:text-primary transition-all hover:scale-110 cursor-pointer"><i
                   class="fa-brands fa-instagram text-2xl"></i></a>
             </div>
@@ -1280,6 +1313,10 @@
     <span class="text-[0.65rem] font-bold tracking-[0.2em] transition-colors duration-300" id="label-es">ES</span>
 
     <div onclick="toggleLanguage()"
+      role="button"
+      tabindex="0"
+      aria-label="Cambiar idioma entre español e inglés"
+      onkeydown="if(event.key==='Enter'||event.key===' ') toggleLanguage()"
       class="relative w-12 h-6 bg-white/10 rounded-full cursor-pointer p-1 transition-all hover:bg-white/20">
       <div id="toggle-circle"
         class="absolute left-1 w-4 h-4 bg-primary rounded-full transition-all duration-200 ease-out shadow-[0_0_10px_rgba(255,68,68,0.5)]">

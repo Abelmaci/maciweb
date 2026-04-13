@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- SandCanvas Initialization ---
   const heroCanvas = document.getElementById('hero-canvas');
   if (heroCanvas) {
-    const HERO_IMAGE = "images/Banner-MACI.png";
+    const HERO_IMAGE = "images/Banner-MACI-optimized.jpg";
     new SandCanvas(heroCanvas, HERO_IMAGE);
   }
 

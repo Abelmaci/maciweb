@@ -69,9 +69,9 @@ export class SandCanvas {
   }
 
   initParticles() {
-    // Restored adaptive skip for better visual density (granulation)
+    // Balanced skip: dense enough for good visual noise, but fluid (prevents cursor freezing)
     const isMobile = window.innerWidth < 768;
-    const skip = isMobile ? 4 : 2; 
+    const skip = isMobile ? 6 : 3; 
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
 
     for (let y = 0; y < this.canvas.height; y += skip) {

@@ -116,7 +116,6 @@
   <!-- Resource Preconnects -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <link rel="preconnect" href="https://cdn.skypack.dev">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   
@@ -139,37 +138,8 @@
   <link rel="preload" href="music-preview/caigo-a-tus-pies.mp3" as="fetch" crossorigin="">
 
   <!-- Tailwind CSS CDN (Lower priority for initial paint) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: "#FF4444",
-            "on-primary": "#FFFFFF",
-            background: "#0E0E0F",
-            surface: "#151619",
-            "surface-container-low": "#1A1B1E",
-            "surface-container-high": "#222327",
-            "surface-container-highest": "#2B2C31",
-            "on-surface": "#E6E6E6",
-            "on-surface-variant": "#8E9299",
-            outline: "#44474D",
-            "outline-variant": "#2E3136",
-          },
-          fontFamily: {
-            sans: ["Inter", "sans-serif"],
-          },
-          animation: {
-            "spin-slow": "spin 8s linear infinite",
-            "spin-vinyl": "spin 2s linear infinite",
-          },
-        },
-      },
-    };
-  </script>
-  <link rel="stylesheet" href="src/style.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="src/style.css"></noscript>
+  <link rel="stylesheet" href="src/compiled.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="src/compiled.css"></noscript>
   <script src="https://unpkg.com/lucide@0.418.0/dist/umd/lucide.min.js" defer></script>
   <style>
     :root {

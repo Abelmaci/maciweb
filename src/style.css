@@ -1,8 +1,6 @@
-
-
-
-
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .btn-primary-gradient {
   background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
@@ -115,10 +113,6 @@
   }
 }
 
-
-
-
-
 .mobile-touch-btn {
   animation: touchPulse 2s infinite ease-in-out;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
@@ -147,14 +141,11 @@
     font-size: 1.5rem !important; /* Consistent title size */
     line-height: 1;
   }
-  }
 }
 
 .animate-in {
   animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-
-
 
 /* New Title Specific Animation */
 .animate-in h1, 
@@ -235,6 +226,3 @@ a.animate-in {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 0.8; }
 }
-
-/* Custom Scrollbar */
-

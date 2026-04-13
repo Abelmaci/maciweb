@@ -69,9 +69,8 @@ export class SandCanvas {
   }
 
   initParticles() {
-    // Perfected skip: slightly less dense for absolute fluidity, but maintaining the aesthetic
-    const isMobile = window.innerWidth < 768;
-    const skip = isMobile ? 8 : 4; 
+    // Equalized density across all devices as requested
+    const skip = 4; 
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
 
     for (let y = 0; y < this.canvas.height; y += skip) {

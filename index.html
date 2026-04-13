@@ -129,17 +129,11 @@
   <link rel="modulepreload" href="src/vanilla-app.js">
   <link rel="modulepreload" href="src/vanilla-sand.js">
 
-  <!-- Preload Audio Files (starts downloading before JS) -->
-  <link rel="preload" href="music-preview/peon-en-el-amor.mp3" as="fetch" crossorigin="">
-  <link rel="preload" href="music-preview/tu-cuerpo-me-habla.mp3" as="fetch" crossorigin="">
-  <link rel="preload" href="music-preview/your-body.mp3" as="fetch" crossorigin="">
-  <link rel="preload" href="music-preview/adela-v5.mp3" as="fetch" crossorigin="">
-  <link rel="preload" href="music-preview/el-idiota.mp3" as="fetch" crossorigin="">
-  <link rel="preload" href="music-preview/caigo-a-tus-pies.mp3" as="fetch" crossorigin="">
+  <!-- Preload Critical LCP Asset (Hero Image) -->
+  <link rel="preload" href="images/Banner-MACI-optimized.webp" as="image" type="image/webp">
 
-  <!-- Tailwind CSS CDN (Lower priority for initial paint) -->
-  <link rel="stylesheet" href="src/compiled.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="src/compiled.css"></noscript>
+  <!-- Core Static CSS (Highly Minified, Eagerly Loaded for FCP) -->
+  <link rel="stylesheet" href="src/compiled.css">
   <script src="https://unpkg.com/lucide@0.418.0/dist/umd/lucide.min.js" defer></script>
   <style>
     :root {

@@ -117,6 +117,37 @@
   <link rel="preload" href="music-preview/adela-v5.mp3" as="fetch" crossorigin="">
   <link rel="preload" href="music-preview/el-idiota.mp3" as="fetch" crossorigin="">
   <link rel="preload" href="music-preview/caigo-a-tus-pies.mp3" as="fetch" crossorigin="">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#FF4444",
+            "on-primary": "#FFFFFF",
+            background: "#0E0E0F",
+            surface: "#151619",
+            "surface-container-low": "#1A1B1E",
+            "surface-container-high": "#222327",
+            "surface-container-highest": "#2B2C31",
+            "on-surface": "#E6E6E6",
+            "on-surface-variant": "#8E9299",
+            outline: "#44474D",
+            "outline-variant": "#2E3136",
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+          },
+          animation: {
+            "spin-slow": "spin 8s linear infinite",
+            "spin-vinyl": "spin 2s linear infinite",
+          },
+        },
+      },
+    };
+  </script>
   <link rel="stylesheet" href="src/style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -981,9 +1012,7 @@
               mismo —o incluso mayor— amor. De esas mujeres que luchan sin descanso, que cuidan sin medida y que
               entregan su vida sin pedir nada a cambio.
             </p>
-            <p data-i18n-es="" Adela" habla de raíces, de sacrificio y de amor incondicional. De recuerdos que no se
-              borran y de enseñanzas que permanecen para siempre. Pero también es una canción sobre la distancia, el
-              tiempo y las dificultades que separan… y sobre la fuerza invisible que mantiene esos lazos intactos."
+            <p data-i18n-es="&quot;Adela&quot; habla de raíces, de sacrificio y de amor incondicional. De recuerdos que no se borran y de enseñanzas que permanecen para siempre. Pero también es una canción sobre la distancia, el tiempo y las dificultades que separan… y sobre la fuerza invisible que mantiene esos lazos intactos."
               data-i18n-en="&quot;Adela&quot; speaks of roots, sacrifice and unconditional love. Of memories that don't erase and lessons that remain forever. But it's also a song about distance, time and difficulties that separate... and about the invisible force that keeps those bonds intact.">
               "Adela" habla de raíces, de sacrificio y de amor incondicional. De recuerdos que no se borran y de
               enseñanzas que permanecen para siempre. Pero también es una canción sobre la distancia, el tiempo y las

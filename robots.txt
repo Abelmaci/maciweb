@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
+
 Disallow: /admin.html
 Disallow: /admin-server.js
 
-Sitemap: https://abelmaci.github.io/maciweb/sitemap.xml
+Sitemap: https://macimusic.es/sitemap.xml

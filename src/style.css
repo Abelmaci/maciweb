@@ -161,12 +161,12 @@ a.animate-in {
 
 @keyframes titleTracking {
   from {
-    letter-spacing: -0.5em;
+    letter-spacing: -0.6em;
     filter: blur(12px);
     opacity: 0;
   }
   to {
-    /* Inherits from Tailwind classes like tracking-tighter */
+    letter-spacing: -0.05em; /* Equals tracking-tighter */
     opacity: 1;
     filter: blur(0);
   }

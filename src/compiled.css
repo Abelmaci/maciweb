@@ -2298,7 +2298,7 @@ a.animate-in {
 }
 
 .reveal {
-  opacity: 1;
+  opacity: 0;
   transition: opacity 0.5s ease;
 }
 

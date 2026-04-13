@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head><title>WebP Converter Machine</title></head>
+<body>
+  <h1>MACI WebP Engine</h1>
+  <div id="status">Idle</div>
+  <div id="results"></div>
+  <script>
+    const images = [
+      'images/Banner-MACI-optimized.jpg',
+      'images/CD_caigo_a_tus_pies.jpg',
+      'images/CD_PEON_EN_EL_AMOR_optimized.jpg',
+      'images/CD_TU_CUERPO_ME_HABLA.jpg',
+      'images/CD_YOUR_BODY_optimized.jpg',
+      'images/CD_adela_optimized.jpg',
+      'images/CD_el_idiota_optimized.jpg',
+      'images/Biomaci.jpeg',
+      'images/adela2.jpg'
+    ];
+
+    async function convert(src) {
+      document.getElementById('status').innerText = 'Converting ' + src + '...';
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = src;
+      await new Promise(r => img.onload = r);
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      
+      const dataUrl = canvas.toDataURL('image/webp', 0.85);
+      const div = document.createElement('div');
+      div.id = 'result-' + src.split('/').pop().split('.')[0];
+      div.innerText = dataUrl;
+      document.getElementById('results').appendChild(div);
+    }
+
+    async function run() {
+      for (const i of images) {
+        try { await convert(i); } catch(e) { console.error(e); }
+      }
+      document.getElementById('status').innerText = 'FINISHED';
+    }
+    
+    // Trigger from exterior or auto
+    run();
+  </script>
+</body>
+</html>

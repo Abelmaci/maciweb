@@ -17,7 +17,7 @@ export class SandCanvas {
   }
 
   init() {
-    this.image.crossOrigin = "use-credentials";
+    this.image.crossOrigin = "anonymous";
     this.image.onload = () => {
       this.resize();
       this.initParticles();
@@ -69,8 +69,8 @@ export class SandCanvas {
   }
 
   initParticles() {
-    this.particles = [];
-    const skip = 4; // Initial skip value
+    // Adaptive skip: more particles on desktop, fewer on mobile for performance
+    const skip = window.innerWidth < 768 ? 8 : 4; 
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
 
     for (let y = 0; y < this.canvas.height; y += skip) {

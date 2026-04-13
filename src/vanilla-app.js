@@ -3,16 +3,26 @@ import { SandCanvas } from './vanilla-sand.js';
 import EmblaCarousel from 'embla-carousel';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Initialize Lucide Icons ---
-  if (window.lucide) {
-    window.lucide.createIcons();
-  }
+  // --- Deferred Initialization for better LCP ---
+  const initApp = () => {
+    // --- Initialize Lucide Icons ---
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
 
-  // --- SandCanvas Initialization ---
-  const heroCanvas = document.getElementById('hero-canvas');
-  if (heroCanvas) {
-    const HERO_IMAGE = "images/Banner-MACI-optimized.jpg";
-    new SandCanvas(heroCanvas, HERO_IMAGE);
+    // --- SandCanvas Initialization ---
+    const heroCanvas = document.getElementById('hero-canvas');
+    if (heroCanvas) {
+      const HERO_IMAGE = "images/Banner-MACI-optimized.jpg";
+      new SandCanvas(heroCanvas, HERO_IMAGE);
+    }
+  };
+
+  // Run initializations after splash screen is done or idle
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => initApp());
+  } else {
+    setTimeout(initApp, 100);
   }
 
   // --- Navigation Scroll Effect ---

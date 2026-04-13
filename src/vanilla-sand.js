@@ -69,8 +69,9 @@ export class SandCanvas {
   }
 
   initParticles() {
-    // Adaptive skip: more particles on desktop, fewer on mobile for performance
-    const skip = window.innerWidth < 768 ? 8 : 4; 
+    // Adaptive skip: drastically reduce particles for better JS evaluation time (1.7s -> ~0.3s)
+    const isMobile = window.innerWidth < 768;
+    const skip = isMobile ? 16 : 8; 
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
 
     for (let y = 0; y < this.canvas.height; y += skip) {

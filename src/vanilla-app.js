@@ -145,12 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
         gainNode.connect(window.audioCtx.destination);
         
         currentAudio.onended = () => {
-          const vinyl = card.querySelector('.vinyl-record');
-          if (vinyl) {
-            vinyl.classList.remove('animate-spin-vinyl');
-            // Using rAF instead of forcing reflow
+          const disc = card.querySelector('.vinyl-disc');
+          if (disc) {
+            disc.classList.remove('animate-spin-vinyl');
             requestAnimationFrame(() => {
-              vinyl.classList.add('is-stopping');
+              disc.classList.add('is-stopping');
             });
           }
         };
@@ -161,11 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
         currentAudio = new Audio(audioUrl);
         currentAudio.volume = 0.5;
         currentAudio.onended = () => {
-          const vinyl = card.querySelector('.vinyl-record');
-          if (vinyl) {
-            vinyl.classList.remove('animate-spin-vinyl');
+          const disc = card.querySelector('.vinyl-disc');
+          if (disc) {
+            disc.classList.remove('animate-spin-vinyl');
             requestAnimationFrame(() => {
-              vinyl.classList.add('is-stopping');
+              disc.classList.add('is-stopping');
             });
           }
         };
@@ -175,8 +174,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       
+      const disc = card.querySelector('.vinyl-disc');
+      if (disc) {
+        disc.classList.remove('is-stopping');
+        disc.classList.add('animate-spin-vinyl');
+      }
       vinyl.classList.remove('is-stopping');
-      vinyl.classList.add('opacity-100', 'animate-spin-vinyl');
+      vinyl.classList.add('opacity-100');
       vinyl.classList.remove('opacity-0');
       overlay.classList.add('opacity-100', 'translate-y-0');
       overlay.classList.remove('opacity-0', 'translate-y-5');
@@ -191,7 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
         try { currentAudio.pause(); currentAudio.currentTime = 0; } catch(e) {}
         currentAudio = null;
       }
-      vinyl.classList.remove('opacity-100', 'animate-spin-vinyl', 'is-stopping');
+      const disc = card.querySelector('.vinyl-disc');
+      if (disc) {
+        disc.classList.remove('animate-spin-vinyl', 'is-stopping');
+      }
+      vinyl.classList.remove('opacity-100');
       vinyl.classList.add('opacity-0');
       overlay.classList.remove('opacity-100', 'translate-y-0');
       overlay.classList.add('opacity-0', 'translate-y-5');

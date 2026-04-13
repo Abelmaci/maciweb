@@ -320,20 +320,26 @@
       const stop2 = document.getElementById('fill-stop-2');
 
       const images = Array.from(document.images);
-      // Dynamically discover all unique audio sources from the album cards
       const audioSources = [...new Set([...document.querySelectorAll('.album-card')].map(card => card.dataset.audio))].filter(Boolean);
 
-      const totalAssets = images.length + audioSources.length;
+      // CRITICAL PERFORMANCE FIX: Only wait for images to dismiss splash. 
+      // Do NOT wait for binary audio files as they block LCP for up to 50 seconds.
+      const totalAssets = images.length;
       let loadedCount = 0;
       let audioLoaded = 0;
 
       function updateProgress(isAudio) {
-        loadedCount++;
-        if (isAudio) audioLoaded++;
-        const percent = Math.min(Math.round((loadedCount / totalAssets) * 100), 100);
-        pctText.innerText = `${percent}%`;
-        stop1.setAttribute('offset', `${percent}%`);
-        stop2.setAttribute('offset', `${percent}%`);
+        if (isAudio) {
+          audioLoaded++;
+        } else {
+          loadedCount++;
+        }
+        
+        // Progress bar reflects images only for UI blocking
+        const visualPercent = Math.min(Math.round((loadedCount / totalAssets) * 100), 100);
+        pctText.innerText = `${visualPercent}%`;
+        stop1.setAttribute('offset', `${visualPercent}%`);
+        stop2.setAttribute('offset', `${visualPercent}%`);
 
         if (audioLoaded > 0 && audioLoaded < audioSources.length) {
           statusText.innerText = `DECODING AUDIO ${audioLoaded}/${audioSources.length}`;
@@ -343,7 +349,7 @@
           statusText.innerText = 'SOUND SYSTEM READY';
           setTimeout(() => {
             splash.classList.add('fade-out');
-          }, 600);
+          }, 400); // Faster dismissal
         }
       }
 
@@ -392,12 +398,12 @@
       document.addEventListener('scroll', unlockAudio);
       document.addEventListener('keydown', unlockAudio);
 
-      // Fallback (generous timeout for large audio files)
+      // Fallback failsafe (reduced from 15s to 3s for better LCP)
       setTimeout(() => {
         if (!splash.classList.contains('fade-out')) {
           splash.classList.add('fade-out');
         }
-      }, 15000);
+      }, 3000);
     });
   </script>
 
@@ -407,6 +413,7 @@
       <div class="max-w-[1440px] mx-auto px-6 flex justify-between items-center">
         <div class="flex items-center gap-4">
           <img src="images/MaciLogo.svg" alt="Logotipo oficial de MACI, artista de música AI"
+            width="1735" height="679"
             class="h-8 w-auto brightness-0 invert opacity-90 transition-all hover:opacity-100"
             referrerpolicy="no-referrer">
         </div>
@@ -594,6 +601,7 @@
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                   <img src="images/CD_caigo_a_tus_pies.jpg" alt="Portada del single Caigo a tus pies"
+                    width="2048" height="2048"
                     fetchpriority="high"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
@@ -653,6 +661,7 @@
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                   <img src="images/CD_PEON_EN_EL_AMOR_optimized.jpg" alt="Portada del álbum Peón en el Amor"
+                    width="2048" height="2048"
                     loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
@@ -712,6 +721,7 @@
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                   <img src="images/CD_TU_CUERPO_ME_HABLA.jpg" alt="Portada del single Tu cuerpo me habla"
+                    width="3000" height="3000"
                     loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
@@ -770,6 +780,7 @@
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                   <img src="images/CD_YOUR_BODY_optimized.jpg" alt="Portada del single Your Body"
+                    width="3000" height="3000"
                     loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
@@ -830,6 +841,7 @@
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                   <img src="images/CD_adela_optimized.jpg" alt="Portada del single Adela"
+                    width="3000" height="3000"
                     loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
@@ -883,6 +895,7 @@
                 <div
                   class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
                   <img src="images/CD_el_idiota_optimized.jpg" alt="Portada del álbum El Idiota"
+                    width="800" height="800"
                     loading="lazy"
                     class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
                     referrerpolicy="no-referrer">
@@ -942,6 +955,7 @@
           <div
             class="reveal relative bg-surface-container-highest p-1 rounded-3xl overflow-hidden shadow-2xl max-w-md mx-auto">
             <img src="images/Biomaci.jpeg" alt="Retrato de MACI, artista digital AI de estética brutalista"
+              width="1024" height="1024"
               loading="lazy"
               class="w-full aspect-[4/5] object-cover hover:brightness-110 transition-all duration-700 rounded-2xl"
               referrerpolicy="no-referrer">
@@ -1015,6 +1029,7 @@
           <div
             class="reveal relative bg-surface-container-highest p-1 rounded-3xl overflow-hidden shadow-2xl max-w-md mx-auto">
             <img src="images/adela2.jpg" alt="Retrato artístico de Adela, inspiración principal de la canción"
+              width="813" height="1089"
               loading="lazy"
               class="w-full aspect-[4/5] object-cover hover:brightness-110 transition-all duration-700 rounded-2xl"
               referrerpolicy="no-referrer">

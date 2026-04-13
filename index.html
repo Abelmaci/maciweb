@@ -166,13 +166,27 @@
       },
     };
   </script>
-  <link rel="stylesheet" href="src/style.css">
+  <link rel="stylesheet" href="src/style.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="src/style.css"></noscript>
   <script src="https://unpkg.com/lucide@0.418.0/dist/umd/lucide.min.js" defer></script>
   <style>
     :root {
       --wave-color: #FF4444;
       --wave-max-height: 40px;
     }
+
+    body {
+      background-color: #0E0E0F;
+      color: #E6E6E6;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar Critical */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0E0E0F; }
+    ::-webkit-scrollbar-thumb { background: #222327; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2B2C31; }
 
     .sound-wave {
       display: flex;

@@ -467,23 +467,22 @@
 
               // Audience Counter (Real Time from Cloudflare)
               let audience = 523;
-              const updateAudience = async () => {
-                try {
-                  const response = await fetch('/api/spectators');
-                  const data = await response.json();
-                  if (data.count) {
-                    const targetAudience = data.count;
-                    // Smooth transition
-                    const current = parseInt(document.getElementById('audience-counter').innerText);
-                    if (!isNaN(current) && Math.abs(current - targetAudience) < 50) {
-                      // Small change, just update
-                      document.getElementById('audience-counter').innerText = targetAudience;
-                    } else {
+                const updateAudience = async () => {
+                  try {
+                    const response = await fetch('/api/spectators');
+                    
+                    if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) {
+                      throw new Error('Endpoint not available or not returning JSON');
+                    }
+
+                    const data = await response.json();
+                    if (data && data.count) {
+                      const targetAudience = data.count;
                       document.getElementById('audience-counter').innerText = targetAudience;
                     }
-                  }
-                } catch (e) {
-                  console.error("Error fetching real audience, using fallback", e);
+                  } catch (e) {
+                    // Fail silently or with a cleaner log to avoid cluttering console with SyntaxErrors
+                    console.debug("Audience API unavailable, using local simulation.");
                   // Fallback random behavior if server fails
                   audience += Math.floor(Math.random() * 3);
                   document.getElementById('audience-counter').innerText = audience;

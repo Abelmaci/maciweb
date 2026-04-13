@@ -314,6 +314,8 @@
           statusText.innerText = 'SOUND SYSTEM READY';
           setTimeout(() => {
             splash.classList.add('fade-out');
+            // Synchronize hero animations to trigger exactly as splash fades
+            document.querySelectorAll('.hero-reveal').forEach(el => el.classList.add('animate-in'));
           }, 1200); // Restored slight delay for visual loading effect
         }
       }
@@ -432,15 +434,15 @@
 
       <div class="max-w-7xl mx-auto w-full relative z-10 pb-24 md:pb-32">
         <div
-          class="reveal inline-block px-3 py-1 bg-primary text-black font-bold text-[0.65rem] tracking-[0.2em] uppercase mb-8">
+          class="hero-reveal opacity-0 inline-block px-3 py-1 bg-primary text-black font-bold text-[0.65rem] tracking-[0.2em] uppercase mb-8">
           23°08'09.6"N 82°21'47.8"W
         </div>
 
         <h1
-          class="reveal font-black text-[5rem] md:text-[10rem] leading-[0.85] tracking-tighter uppercase mb-4 text-white drop-shadow-2xl">
+          class="hero-reveal opacity-0 font-black text-[5rem] md:text-[10rem] leading-[0.85] tracking-tighter uppercase mb-4 text-white drop-shadow-2xl">
           MACI
         </h1>
-        <h2 class="reveal text-white/60 text-[0.8rem] md:text-[1rem] font-bold tracking-[0.4em] uppercase mb-10"
+        <h2 class="hero-reveal opacity-0 text-white/60 text-[0.8rem] md:text-[1rem] font-bold tracking-[0.4em] uppercase mb-10"
           aria-label="artista digital AI">
           artista digital AI
         </h2>

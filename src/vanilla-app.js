@@ -257,8 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(el);
   });
 
-  // --- Optimized Scroll Handling with geometric caching ---
+  // --- Optimized Scroll Handling with geometric caching and lazy parallax initialization ---
   let isScrollTicking = false;
+  let parallaxEnabled = false; // Defer parallax until after LCP
   const isMobileDevice = window.matchMedia('(max-width: 768px)').matches;
   const bioItems = Array.from(document.querySelectorAll('.bio-data-text')).map(el => ({
     element: el,
@@ -271,18 +272,40 @@ document.addEventListener('DOMContentLoaded', () => {
     bioItems.forEach(item => {
       item.top = item.parent.offsetTop;
       item.height = item.parent.offsetHeight;
-      // Add will-change hint for better GPU acceleration
-      item.element.style.willChange = 'transform';
     });
   };
 
-  // Initial and on resize cache update
-  updateGeometricCache();
-  window.addEventListener('resize', updateGeometricCache, { passive: true });
+  // Enable parallax after LCP (1500ms safe window)
+  const enableParallax = () => {
+    if (!parallaxEnabled) {
+      parallaxEnabled = true;
+      updateGeometricCache();
+      // Only add will-change AFTER parallax is enabled and cached
+      bioItems.forEach(item => {
+        item.element.style.willChange = 'transform';
+      });
+    }
+  };
+  
+  // Defer parallax initialization if requestIdleCallback available
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => setTimeout(enableParallax, 1200), { timeout: 3000 });
+  } else {
+    setTimeout(enableParallax, 1500);
+  }
+
+  window.addEventListener('resize', () => {
+    if (parallaxEnabled) updateGeometricCache();
+  }, { passive: true });
   
   window.addEventListener('scroll', () => {
-    if (!isScrollTicking) {
+    if (!parallaxEnabled || !isScrollTicking) {
       window.requestAnimationFrame(() => {
+        if (!parallaxEnabled) {
+          isScrollTicking = false;
+          return;
+        }
+        
         const scrolled = window.scrollY || window.pageYOffset;
         
         // Hero Parallax - Reduced effect on mobile

@@ -12,35 +12,185 @@
 }
 
 .vinyl-disc {
-  background: repeating-radial-gradient(#000, #141414 3px, #141414 3px);
+  /* Ultra-realistic vinyl with dramatic grooves and highlights */
+  background: 
+    /* Intense specular highlight - main shine (center-left) */
+    radial-gradient(ellipse 30% 50% at 25% 20%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.35) 25%, transparent 70%),
+    /* Secondary bright reflection (opposite side) */
+    radial-gradient(ellipse 25% 35% at 75% 75%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.1) 40%, transparent 100%),
+    /* Concentric groove pattern - highly detailed */
+    repeating-radial-gradient(
+      circle,
+      #000000 0px,
+      #0a0a0a 0.5px,
+      #151515 0.5px,
+      #0a0a0a 1.5px,
+      #050505 1.5px,
+      #0f0f0f 2px,
+      #050505 2px,
+      #000000 3px
+    ),
+    /* Mid-tone grooves for depth */
+    repeating-radial-gradient(
+      circle,
+      transparent 0px,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 2px,
+      transparent 4px
+    ),
+    /* Dark base */
+    #000000;
+  
   border-radius: 50%;
   position: relative;
   box-shadow: 
-    3px 3px 15px rgba(0, 0, 0, 0.3),
-    -3px -3px 15px rgba(0, 0, 0, 0.3);
-  border: 8px solid #141414;
+    /* Intense outer shadow */
+    0px 25px 60px rgba(0, 0, 0, 0.95),
+    0px 10px 30px rgba(0, 0, 0, 0.8),
+    /* Outer halo glow */
+    0px 0px 40px rgba(255, 255, 255, 0.12),
+    0px 0px 70px rgba(0, 0, 0, 1),
+    /* Inner rim light shadow */
+    inset 0px 3px 10px rgba(0, 0, 0, 0.9),
+    inset 0px -3px 10px rgba(255, 255, 255, 0.15),
+    /* Emboss effect on edges */
+    inset -3px -3px 8px rgba(0, 0, 0, 0.7),
+    inset 2px 2px 5px rgba(255, 255, 255, 0.08);
+  
+  border: 14px solid #000000;
+  overflow: hidden;
 }
+
+/* Enhanced specular reflection that rotates with the vinyl */
+.vinyl-disc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 45deg at 25% 20%,
+    rgba(255, 255, 255, 0.6) 0deg,
+    rgba(255, 255, 255, 0.35) 20deg,
+    rgba(255, 255, 255, 0.15) 50deg,
+    transparent 120deg,
+    transparent 240deg,
+    rgba(255, 255, 255, 0.1) 280deg,
+    transparent 360deg
+  );
+  pointer-events: none;
+  z-index: 6;
+  mix-blend-mode: screen;
+  box-shadow: inset -5px -5px 15px rgba(0, 0, 0, 0.4);
+}
+
 .vinyl-disc::after {
   content: "";
   position: absolute;
-  left: auto;
-  top: auto;
-  width: 100%;
-  height: 100%;
-  background: conic-gradient(
-    transparent 20deg,
-    rgba(255, 255, 255, 0.1) 40deg,
-    rgba(255, 255, 255, 0.1) 50deg,
-    transparent 60deg,
-    transparent 200deg,
-    rgba(255, 255, 255, 0.08) 220deg,
-    rgba(255, 255, 255, 0.08) 240deg,
-    transparent 250deg,
-    transparent 340deg
-  );
+  inset: 0;
   border-radius: 50%;
+  /* Intense secondary shine layer */
+  background: radial-gradient(
+    ellipse 50% 40% at 70% 75%,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.2) 25%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
   pointer-events: none;
   z-index: 5;
+  mix-blend-mode: screen;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Dynamic shine animation when spinning */
+.vinyl-disc.animate-spin-vinyl::before {
+  animation: vinylShine 2s linear infinite;
+}
+
+@keyframes vinylShine {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.05));
+  }
+  15% {
+    filter: brightness(1.4) drop-shadow(0 0 40px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 20px rgba(255, 200, 100, 0.2));
+  }
+  30% {
+    filter: brightness(1.25) drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+  }
+  50% {
+    filter: brightness(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.05));
+  }
+  65% {
+    filter: brightness(1.35) drop-shadow(0 0 35px rgba(255, 255, 255, 0.35)) drop-shadow(0 0 15px rgba(255, 200, 100, 0.15));
+  }
+  80% {
+    filter: brightness(1.2) drop-shadow(0 0 25px rgba(255, 255, 255, 0.25));
+  }
+  100% {
+    filter: brightness(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.05));
+  }
+}
+
+/* Edge light reflection during rotation */
+.vinyl-disc.animate-spin-vinyl::after {
+  animation: vinylEdgeLight 2s linear infinite;
+}
+
+@keyframes vinylEdgeLight {
+  0% {
+    background: radial-gradient(
+      ellipse 50% 40% at 70% 75%,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.2) 25%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+  }
+  20% {
+    background: radial-gradient(
+      ellipse 50% 40% at 20% 15%,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0.35) 20%,
+      rgba(255, 255, 255, 0.08) 45%,
+      transparent 100%
+    );
+  }
+  40% {
+    background: radial-gradient(
+      ellipse 45% 45% at 75% 25%,
+      rgba(255, 255, 255, 0.60) 0%,
+      rgba(255, 255, 255, 0.30) 25%,
+      rgba(255, 255, 255, 0.07) 50%,
+      transparent 100%
+    );
+  }
+  60% {
+    background: radial-gradient(
+      ellipse 50% 40% at 40% 80%,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.25) 30%,
+      rgba(255, 255, 255, 0.05) 55%,
+      transparent 100%
+    );
+  }
+  80% {
+    background: radial-gradient(
+      ellipse 48% 38% at 70% 20%,
+      rgba(255, 255, 255, 0.60) 0%,
+      rgba(255, 255, 255, 0.32) 22%,
+      rgba(255, 255, 255, 0.07) 48%,
+      transparent 100%
+    );
+  }
+  100% {
+    background: radial-gradient(
+      ellipse 50% 40% at 70% 75%,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.2) 25%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+  }
 }
 
 .album-card {
@@ -50,6 +200,42 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  perspective: 1200px;
+}
+
+/* Vinyl record container with 3D perspective */
+.vinyl-record {
+  transform-style: preserve-3d;
+  background: linear-gradient(135deg, rgba(50,50,50,0.8) 0%, rgba(30,30,30,0.9) 100%);
+}
+
+.vinyl-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28%;
+  height: 28%;
+  transform: translateX(-50%) translateY(-50%);
+  border-radius: 50%;
+  overflow: hidden;
+  border: 6px solid #0a0a0a;
+  z-index: 10;
+  box-shadow: 
+    inset 0 1px 3px rgba(255, 255, 255, 0.3),
+    0 3px 10px rgba(0, 0, 0, 0.8);
+}
+
+.vinyl-hole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2.5%;
+  height: 2.5%;
+  transform: translateX(-50%) translateY(-50%);
+  background: radial-gradient(circle at 30% 30%, #1a1a1a, #050505);
+  border-radius: 50%;
+  z-index: 20;
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.9);
 }
 
 .info-overlay {

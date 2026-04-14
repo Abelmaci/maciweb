@@ -21,7 +21,13 @@ module.exports = {
       },
       animation: {
         "spin-slow": "spin 8s linear infinite",
-        "spin-vinyl": "spin 2s linear infinite",
+        "spin-vinyl": "vinylSpin 2s cubic-bezier(0.3, 0, 0.7, 1) infinite",
+      },
+      keyframes: {
+        vinylSpin: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
     },
   },

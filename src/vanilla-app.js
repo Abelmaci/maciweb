@@ -234,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // --- Intersection Observer for Animations ---
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
@@ -242,10 +243,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, index) => {
       if (entry.isIntersecting) {
-        // Add a slight staggered delay based on appearance order
+        // Faster reveal on mobile
+        const delay = isMobile ? 0 : 20;
         setTimeout(() => {
           entry.target.classList.add('animate-in');
-        }, 100); 
+        }, delay); 
         observer.unobserve(entry.target);
       }
     });
@@ -257,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Optimized Scroll Handling with geometric caching ---
   let isScrollTicking = false;
+  const isMobileDevice = window.matchMedia('(max-width: 768px)').matches;
   const bioItems = Array.from(document.querySelectorAll('.bio-data-text')).map(el => ({
     element: el,
     parent: el.parentElement,
@@ -268,6 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
     bioItems.forEach(item => {
       item.top = item.parent.offsetTop;
       item.height = item.parent.offsetHeight;
+      // Add will-change hint for better GPU acceleration
+      item.element.style.willChange = 'transform';
     });
   };
 
@@ -280,19 +285,22 @@ document.addEventListener('DOMContentLoaded', () => {
       window.requestAnimationFrame(() => {
         const scrolled = window.scrollY || window.pageYOffset;
         
-        // Hero Parallax
+        // Hero Parallax - Reduced effect on mobile
         const heroContent = document.querySelector('#inicio .max-w-7xl');
         if (heroContent) {
-          heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+          const parallaxStrength = isMobileDevice ? 0.15 : 0.3;
+          heroContent.style.transform = `translate3d(0, ${scrolled * parallaxStrength}px, 0)`;
           heroContent.style.opacity = 1 - (scrolled / 700);
         }
 
         // Bio Parallax - Using Memory Cache (ZERO READS to DOM)
+        // Reduced parallax range on mobile for better performance
         const viewportBottom = scrolled + window.innerHeight;
+        const parallaxRange = isMobileDevice ? 100 : 200;
         bioItems.forEach(item => {
           if (viewportBottom > item.top && scrolled < item.top + item.height) {
             const progress = (viewportBottom - item.top) / (window.innerHeight + item.height);
-            item.element.style.transform = `translateY(${(progress - 0.5) * 200}px)`;
+            item.element.style.transform = `translate3d(0, ${(progress - 0.5) * parallaxRange}px, 0)`;
           }
         });
 

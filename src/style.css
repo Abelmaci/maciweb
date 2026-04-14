@@ -96,7 +96,7 @@
 }
 
 .mobile-touch-btn {
-  animation: touchPulse 2s infinite ease-in-out;
+  animation: touchPulse 1.2s infinite ease-in-out;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
@@ -126,7 +126,13 @@
 }
 
 .animate-in {
-  animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (max-width: 768px) {
+  .animate-in {
+    animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
 }
 
 /* New Title Specific Animation */
@@ -138,7 +144,20 @@ h1.animate-in,
 h2.animate-in,
 h3.animate-in,
 a.animate-in {
-  animation: titleTracking 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: titleTracking 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (max-width: 768px) {
+  .animate-in h1, 
+  .animate-in h2, 
+  .animate-in h3,
+  .animate-in a,
+  h1.animate-in,
+  h2.animate-in,
+  h3.animate-in,
+  a.animate-in {
+    animation: titleTracking 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
 }
 
 @keyframes titleTracking {
@@ -196,12 +215,24 @@ a.animate-in {
   letter-spacing: 0.4em;
   text-transform: uppercase;
   opacity: 0.6;
-  animation: pulse 2.5s infinite ease-in-out;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .glow-text {
+    animation: pulse 1.2s infinite ease-in-out;
+  }
 }
 
 /* Vinyl Slow Stop */
 .vinyl-disc.is-stopping {
-  animation: spin 4s cubic-bezier(0.1, 0.4, 0.2, 1) forwards !important;
+  animation: spin 2.5s cubic-bezier(0.1, 0.4, 0.2, 1) forwards !important;
+}
+
+@media (max-width: 768px) {
+  .vinyl-disc.is-stopping {
+    animation: spin 1.8s cubic-bezier(0.1, 0.4, 0.2, 1) forwards !important;
+  }
 }
 
 @keyframes pulse {

@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const autoplay = Autoplay({ 
           delay: 5000, 
           stopOnInteraction: true, 
-          stopOnMouseEnter: false 
+          stopOnMouseEnter: true
         });
 
         const emblaApi = EmblaCarousel(emblaNode, { 
@@ -107,7 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
           updateDots();
         });
 
-        // Add horizontal scroll control for mouse wheel
+        // Pause autoplay on hover, resume on leave
+        emblaNode.addEventListener('mouseenter', () => {
+          autoplay.stop();
+        });
+        emblaNode.addEventListener('mouseleave', () => {
+          autoplay.play();
+        });
         emblaNode.addEventListener('wheel', (event) => {
           if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
             event.preventDefault();
@@ -143,11 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const disc = card.querySelector('.vinyl-disc');
         if (disc) {
           disc.classList.remove('is-stopping');
+          disc.style.animationPlayState = '';
           disc.classList.add('animate-spin-vinyl');
+          console.log('Vinyl spinning:', disc.classList, disc.style.animation);
         }
-        vinyl.classList.remove('is-stopping');
+        vinyl.classList.remove('opacity-0', 'is-stopping');
         vinyl.classList.add('opacity-100');
-        vinyl.classList.remove('opacity-0');
         overlay.classList.add('opacity-100', 'translate-y-0');
         overlay.classList.remove('opacity-0', 'translate-y-5');
         cover.classList.add('-translate-x-full');
@@ -207,8 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const disc = card.querySelector('.vinyl-disc');
         if (disc) {
           disc.classList.remove('animate-spin-vinyl');
+          disc.style.animationPlayState = 'paused';
           requestAnimationFrame(() => {
             disc.classList.add('is-stopping');
+            disc.style.animationPlayState = '';
           });
         }
       };

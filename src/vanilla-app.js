@@ -193,33 +193,60 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       const playPromise = currentAudio.play();
       if (playPromise !== undefined) {
-        playPromise.catch(e => {
-          // Only log if it's not a suspended context error (those are expected initially)
-          if (e.name !== 'NotAllowedError') {
-            console.warn('Audio playback error:', e);
-          }
-        });
+        playPromise
+          .then(() => {
+            // Only update UI if still active (not interrupted by handleLeave)
+            if (currentAudio && currentAudio.src === audioUrl) {
+              const disc = card.querySelector('.vinyl-disc');
+              if (disc) {
+                disc.classList.remove('is-stopping');
+                disc.classList.add('animate-spin-vinyl');
+              }
+              vinyl.classList.remove('is-stopping');
+              vinyl.classList.add('opacity-100');
+              vinyl.classList.remove('opacity-0');
+              overlay.classList.add('opacity-100', 'translate-y-0');
+              overlay.classList.remove('opacity-0', 'translate-y-5');
+              cover.classList.add('-translate-x-full');
+              card.classList.add('is-active');
+            }
+          })
+          .catch(e => {
+            // Only log if it's not a suspended context or abort error (those are expected)
+            if (e.name !== 'NotAllowedError' && e.name !== 'AbortError') {
+              console.warn('Audio playback error:', e);
+            }
+          });
+      } else {
+        // Fallback for browsers that don't return a promise
+        const disc = card.querySelector('.vinyl-disc');
+        if (disc) {
+          disc.classList.remove('is-stopping');
+          disc.classList.add('animate-spin-vinyl');
+        }
+        vinyl.classList.remove('is-stopping');
+        vinyl.classList.add('opacity-100');
+        vinyl.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100', 'translate-y-0');
+        overlay.classList.remove('opacity-0', 'translate-y-5');
+        cover.classList.add('-translate-x-full');
+        card.classList.add('is-active');
       }
-      
-      const disc = card.querySelector('.vinyl-disc');
-      if (disc) {
-        disc.classList.remove('is-stopping');
-        disc.classList.add('animate-spin-vinyl');
-      }
-      vinyl.classList.remove('is-stopping');
-      vinyl.classList.add('opacity-100');
-      vinyl.classList.remove('opacity-0');
-      overlay.classList.add('opacity-100', 'translate-y-0');
-      overlay.classList.remove('opacity-0', 'translate-y-5');
-      cover.classList.add('-translate-x-full');
-      card.classList.add('is-active'); // To hide touch hint
     };
 
     const handleLeave = () => {
       if (currentAudio) {
-        try { currentAudio.stop(); } catch(e) {}
-        try { currentAudio.disconnect(); } catch(e) {}
-        try { currentAudio.pause(); currentAudio.currentTime = 0; } catch(e) {}
+        try { 
+          currentAudio.stop(); 
+        } catch(e) {}
+        try { 
+          currentAudio.disconnect(); 
+        } catch(e) {}
+        try {
+          // Safely abort playback without triggering AbortError warning
+          currentAudio.src = ''; // Clear source to prevent playback
+          currentAudio.load(); // Reset to initial state
+        } catch(e) {}
         currentAudio = null;
       }
       const disc = card.querySelector('.vinyl-disc');

@@ -44,15 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const emblaNode = document.querySelector('.embla');
   const dotContainer = document.querySelector('.embla__dots');
   
-  const onAutoplayStatusChange = (autoplay, emblaApi) => {
-    // Update carousel state when autoplay changes
-  };
-  
   if (emblaNode) {
-    const autoplay = Autoplay(
-      { delay: 5000, stopOnInteraction: true, stopOnMouseEnter: false },
-      onAutoplayStatusChange
-    );
+    const autoplay = Autoplay({ 
+      delay: 5000, 
+      stopOnInteraction: true, 
+      stopOnMouseEnter: false 
+    });
 
     const emblaApi = EmblaCarousel(emblaNode, { 
       align: 'start',

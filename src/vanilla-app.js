@@ -124,21 +124,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleEnter = () => {
       console.log("Entering card", id);
       
+      // Helper function to update UI for playback
+      const updateUIForPlayback = () => {
+        const disc = card.querySelector('.vinyl-disc');
+        if (disc) {
+          disc.classList.remove('is-stopping');
+          disc.classList.add('animate-spin-vinyl');
+        }
+        vinyl.classList.remove('is-stopping');
+        vinyl.classList.add('opacity-100');
+        vinyl.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100', 'translate-y-0');
+        overlay.classList.remove('opacity-0', 'translate-y-5');
+        cover.classList.add('-translate-x-full');
+        card.classList.add('is-active');
+      };
+      
       // Stop and clean up any currently playing source
       if (currentAudio) {
         try { currentAudio.stop(); } catch(e) {}
         try { currentAudio.disconnect(); } catch(e) {}
-        try { currentAudio.pause(); currentAudio.currentTime = 0; } catch(e) {}
+        try { currentAudio.src = ''; currentAudio.load(); } catch(e) {}
         currentAudio = null;
       }
       
-      // Ensure AudioContext is ready before playback (fail-safe resumption)
+      // Ensure AudioContext is ready before playback
       if (window.audioCtx) {
         if (window.audioCtx.state === 'suspended') {
           window.audioCtx.resume().catch(e => console.warn('AudioContext resume failed:', e));
         }
         
-        // Try Web Audio API first (lower latency, better control)
+        // Try Web Audio API first (lower latency)
         if (window.audioBuffers && window.audioBuffers[audioUrl]) {
           try {
             currentAudio = window.audioCtx.createBufferSource();
@@ -162,24 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             
             currentAudio.start(0);
-            
-            // Update UI for Web Audio success
-            const disc = card.querySelector('.vinyl-disc');
-            if (disc) {
-              disc.classList.remove('is-stopping');
-              disc.classList.add('animate-spin-vinyl');
-            }
-            vinyl.classList.remove('is-stopping');
-            vinyl.classList.add('opacity-100');
-            vinyl.classList.remove('opacity-0');
-            overlay.classList.add('opacity-100', 'translate-y-0');
-            overlay.classList.remove('opacity-0', 'translate-y-5');
-            cover.classList.add('-translate-x-full');
-            card.classList.add('is-active');
-            return; // Web Audio success, exit early
+            updateUIForPlayback();
+            return; // Web Audio success
           } catch (e) {
             console.warn('Web Audio playback failed, falling back to HTML Audio:', e);
-            // Fall through to HTML Audio fallback
           }
         }
       }
@@ -196,46 +198,23 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       };
+      
       const playPromise = currentAudio.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            // Only update UI if still active (not interrupted by handleLeave)
             if (currentAudio && currentAudio.src === audioUrl) {
-              const disc = card.querySelector('.vinyl-disc');
-              if (disc) {
-                disc.classList.remove('is-stopping');
-                disc.classList.add('animate-spin-vinyl');
-              }
-              vinyl.classList.remove('is-stopping');
-              vinyl.classList.add('opacity-100');
-              vinyl.classList.remove('opacity-0');
-              overlay.classList.add('opacity-100', 'translate-y-0');
-              overlay.classList.remove('opacity-0', 'translate-y-5');
-              cover.classList.add('-translate-x-full');
-              card.classList.add('is-active');
+              updateUIForPlayback();
             }
           })
           .catch(e => {
-            // Only log if it's not a suspended context or abort error (those are expected)
             if (e.name !== 'NotAllowedError' && e.name !== 'AbortError') {
               console.warn('Audio playback error:', e);
             }
           });
       } else {
-        // Fallback for browsers that don't return a promise
-        const disc = card.querySelector('.vinyl-disc');
-        if (disc) {
-          disc.classList.remove('is-stopping');
-          disc.classList.add('animate-spin-vinyl');
-        }
-        vinyl.classList.remove('is-stopping');
-        vinyl.classList.add('opacity-100');
-        vinyl.classList.remove('opacity-0');
-        overlay.classList.add('opacity-100', 'translate-y-0');
-        overlay.classList.remove('opacity-0', 'translate-y-5');
-        cover.classList.add('-translate-x-full');
-        card.classList.add('is-active');
+        // Fallback for browsers without Promise support
+        updateUIForPlayback();
       }
     };
 

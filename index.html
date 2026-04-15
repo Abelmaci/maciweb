@@ -357,7 +357,6 @@
         }
       });
 
-      window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       window.audioBuffers = window.audioBuffers || {};
 
       // Lazy-load audio: only decode on-demand when user clicks play
@@ -366,17 +365,30 @@
         updateProgress(true); // Mark as loaded immediately for splash screen
       });
 
-      const unlockAudio = () => {
-        if (window.audioCtx && window.audioCtx.state === 'suspended') {
-          window.audioCtx.resume();
-        }
-        document.removeEventListener('click', unlockAudio);
-        document.removeEventListener('scroll', unlockAudio);
-        document.removeEventListener('keydown', unlockAudio);
-      };
-      document.addEventListener('click', unlockAudio);
-      document.addEventListener('scroll', unlockAudio);
-      document.addEventListener('keydown', unlockAudio);
+      // Defer AudioContext creation until first user interaction
+      // (Browsers require user gesture for Web Audio API)
+      const initAudioContextOnce = (() => {
+        let initialized = false;
+        return () => {
+          if (!initialized && !window.audioCtx) {
+            try {
+              window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              initialized = true;
+            } catch (e) {
+              console.warn('AudioContext not available:', e);
+            }
+          }
+          if (window.audioCtx && window.audioCtx.state === 'suspended') {
+            window.audioCtx.resume().catch(e => console.warn('AudioContext resume failed:', e));
+          }
+        };
+      })();
+      
+      // Initialize on first interaction
+      const events = ['click', 'touchstart', 'keydown'];
+      events.forEach(evt => {
+        document.addEventListener(evt, initAudioContextOnce, { once: true, passive: true });
+      });
 
       setTimeout(() => {
         assetsReady = true;

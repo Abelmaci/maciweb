@@ -127,51 +127,78 @@ document.addEventListener('DOMContentLoaded', () => {
         currentAudio = null;
       }
       
-      // Wake up Web Audio Context if browser suspended it (e.g. Safari policy)
-      if (window.audioCtx && window.audioCtx.state === 'suspended') {
-        window.audioCtx.resume();
+      // Ensure AudioContext is ready before playback (fail-safe resumption)
+      if (window.audioCtx) {
+        if (window.audioCtx.state === 'suspended') {
+          window.audioCtx.resume().catch(e => console.warn('AudioContext resume failed:', e));
+        }
+        
+        // Try Web Audio API first (lower latency, better control)
+        if (window.audioBuffers && window.audioBuffers[audioUrl]) {
+          try {
+            currentAudio = window.audioCtx.createBufferSource();
+            currentAudio.buffer = window.audioBuffers[audioUrl];
+            
+            // Volume control
+            const gainNode = window.audioCtx.createGain();
+            gainNode.gain.value = 0.5;
+            
+            currentAudio.connect(gainNode);
+            gainNode.connect(window.audioCtx.destination);
+            
+            currentAudio.onended = () => {
+              const disc = card.querySelector('.vinyl-disc');
+              if (disc) {
+                disc.classList.remove('animate-spin-vinyl');
+                requestAnimationFrame(() => {
+                  disc.classList.add('is-stopping');
+                });
+              }
+            };
+            
+            currentAudio.start(0);
+            
+            // Update UI for Web Audio success
+            const disc = card.querySelector('.vinyl-disc');
+            if (disc) {
+              disc.classList.remove('is-stopping');
+              disc.classList.add('animate-spin-vinyl');
+            }
+            vinyl.classList.remove('is-stopping');
+            vinyl.classList.add('opacity-100');
+            vinyl.classList.remove('opacity-0');
+            overlay.classList.add('opacity-100', 'translate-y-0');
+            overlay.classList.remove('opacity-0', 'translate-y-5');
+            cover.classList.add('-translate-x-full');
+            card.classList.add('is-active');
+            return; // Web Audio success, exit early
+          } catch (e) {
+            console.warn('Web Audio playback failed, falling back to HTML Audio:', e);
+            // Fall through to HTML Audio fallback
+          }
+        }
       }
       
-      // Play directly from decoded memory buffer for 0ms latency
-      if (window.audioCtx && window.audioBuffers && window.audioBuffers[audioUrl]) {
-        currentAudio = window.audioCtx.createBufferSource();
-        currentAudio.buffer = window.audioBuffers[audioUrl];
-        
-        // Volume control
-        const gainNode = window.audioCtx.createGain();
-        gainNode.gain.value = 0.5;
-        
-        currentAudio.connect(gainNode);
-        gainNode.connect(window.audioCtx.destination);
-        
-        currentAudio.onended = () => {
-          const disc = card.querySelector('.vinyl-disc');
-          if (disc) {
-            disc.classList.remove('animate-spin-vinyl');
-            requestAnimationFrame(() => {
-              disc.classList.add('is-stopping');
-            });
-          }
-        };
-        
-        currentAudio.start(0);
-      } else {
-        // Bulletproof Fallback
-        currentAudio = new Audio(audioUrl);
-        currentAudio.volume = 0.5;
-        currentAudio.onended = () => {
-          const disc = card.querySelector('.vinyl-disc');
-          if (disc) {
-            disc.classList.remove('animate-spin-vinyl');
-            requestAnimationFrame(() => {
-              disc.classList.add('is-stopping');
-            });
-          }
-        };
-        const playPromise = currentAudio.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(e => console.error("Audio fallback play failed", e));
+      // Fallback to HTML5 Audio
+      currentAudio = new Audio(audioUrl);
+      currentAudio.volume = 0.5;
+      currentAudio.onended = () => {
+        const disc = card.querySelector('.vinyl-disc');
+        if (disc) {
+          disc.classList.remove('animate-spin-vinyl');
+          requestAnimationFrame(() => {
+            disc.classList.add('is-stopping');
+          });
         }
+      };
+      const playPromise = currentAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(e => {
+          // Only log if it's not a suspended context error (those are expected initially)
+          if (e.name !== 'NotAllowedError') {
+            console.warn('Audio playback error:', e);
+          }
+        });
       }
       
       const disc = card.querySelector('.vinyl-disc');

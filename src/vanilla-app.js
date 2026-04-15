@@ -164,6 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
         card.classList.add('is-active');
       };
       
+      // Start vinyl rotation immediately on hover
+      updateUIForPlayback();
+      
       // Stop and clean up any currently playing source
       if (currentAudio) {
         try { currentAudio.stop(); } catch(e) {}
@@ -202,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             
             currentAudio.start(0);
-            updateUIForPlayback();
             return; // Web Audio success
           } catch (e) {
             console.warn('Web Audio playback failed, falling back to HTML Audio:', e);
@@ -231,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playPromise
           .then(() => {
             if (currentAudio && currentAudio.src === audioUrl) {
-              updateUIForPlayback();
+              // UI already updated on hover
             }
           })
           .catch(e => {
@@ -239,9 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
               console.warn('Audio playback error:', e);
             }
           });
-      } else {
-        // Fallback for browsers without Promise support
-        updateUIForPlayback();
       }
     };
 

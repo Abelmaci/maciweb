@@ -4,115 +4,129 @@ import EmblaCarousel from 'embla-carousel';
 import Autoplay from 'embla-carousel-autoplay';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Deferred Initialization for better LCP ---
-  const initApp = () => {
-    // --- Initialize Lucide Icons ---
-    if (window.lucide) {
-      // Targeted icon creation instead of full-DOM scan to save Main Thread work
-      const containers = ['nav', '#inicio', '.embla', 'footer'];
-      containers.forEach(selector => {
-        const el = document.querySelector(selector);
-        if (el) window.lucide.createIcons({ props: {}, attrs: {}, root: el });
-      });
-    }
-
-    // --- SandCanvas Initialization ---
-    const heroCanvas = document.getElementById('hero-canvas');
-    if (heroCanvas) {
-      const HERO_IMAGE = "images/Banner-MACI-optimized.webp";
-      new SandCanvas(heroCanvas, HERO_IMAGE);
-    }
-  };
-
-  // Run initializations ONLY after the splash screen is fully faded (e.g. 800ms)
-  // this prevents the heavy particle engine from competing with the splash animation.
-  setTimeout(initApp, 800);
-
-  // --- Navigation Scroll Effect ---
-  const nav = document.querySelector('nav');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      nav.classList.add('bg-surface/95', 'backdrop-blur-md', 'py-3', 'shadow-lg');
-      nav.classList.remove('bg-transparent', 'py-6');
-    } else {
-      nav.classList.remove('bg-surface/95', 'backdrop-blur-md', 'py-3', 'shadow-lg');
-      nav.classList.add('bg-transparent', 'py-6');
-    }
-  });
-
-  // --- Embla Carousel Initialization ---
-  const emblaNode = document.querySelector('.embla');
-  const dotContainer = document.querySelector('.embla__dots');
-  
-  if (emblaNode) {
-    const autoplay = Autoplay({ 
-      delay: 5000, 
-      stopOnInteraction: true, 
-      stopOnMouseEnter: false 
-    });
-
-    const emblaApi = EmblaCarousel(emblaNode, { 
-      align: 'start',
-      containScroll: 'trimSnaps',
-      dragFree: false, // Changed to false for better snapping on mobile
-      loop: true,
-      skipSnaps: false
-    }, [autoplay]);
-
-    const updateDots = () => {
-      const selectedIndex = emblaApi.selectedScrollSnap();
-      const dots = dotContainer.querySelectorAll('.embla__dot');
-      dots.forEach((dot, index) => {
-        if (index === selectedIndex) {
-          dot.classList.add('is-active');
-        } else {
-          dot.classList.remove('is-active');
+  try {
+    // --- Deferred Initialization for better LCP ---
+    const initApp = () => {
+      try {
+        // --- Initialize Lucide Icons ---
+        if (window.lucide) {
+          // Targeted icon creation instead of full-DOM scan to save Main Thread work
+          const containers = ['nav', '#inicio', '.embla', 'footer'];
+          containers.forEach(selector => {
+            const el = document.querySelector(selector);
+            if (el) window.lucide.createIcons({ props: {}, attrs: {}, root: el });
+          });
         }
-      });
+
+        // --- SandCanvas Initialization ---
+        const heroCanvas = document.getElementById('hero-canvas');
+        if (heroCanvas) {
+          const HERO_IMAGE = "images/Banner-MACI-optimized.webp";
+          new SandCanvas(heroCanvas, HERO_IMAGE);
+        }
+      } catch (e) {
+        console.warn('InitApp error (non-critical):', e);
+      }
     };
 
-    const createDots = () => {
-      const scrollSnaps = emblaApi.scrollSnapList();
-      dotContainer.innerHTML = scrollSnaps
-        .map((_, index) => `<button class="embla__dot" aria-label="Go to snap ${index + 1}"></button>`)
-        .join('');
+    // Run initializations ONLY after the splash screen is fully faded (e.g. 800ms)
+    // this prevents the heavy particle engine from competing with the splash animation.
+    setTimeout(initApp, 800);
+
+    // --- Navigation Scroll Effect ---
+    try {
+      const nav = document.querySelector('nav');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          nav.classList.add('bg-surface/95', 'backdrop-blur-md', 'py-3', 'shadow-lg');
+          nav.classList.remove('bg-transparent', 'py-6');
+        } else {
+          nav.classList.remove('bg-surface/95', 'backdrop-blur-md', 'py-3', 'shadow-lg');
+          nav.classList.add('bg-transparent', 'py-6');
+        }
+      });
+    } catch (e) {
+      console.warn('Navigation scroll error (non-critical):', e);
+    }
+
+    // --- Embla Carousel Initialization ---
+    try {
+      const emblaNode = document.querySelector('.embla');
+      const dotContainer = document.querySelector('.embla__dots');
       
-      const dots = dotContainer.querySelectorAll('.embla__dot');
-      dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-          emblaApi.scrollTo(index);
+      if (emblaNode && dotContainer) {
+        const autoplay = Autoplay({ 
+          delay: 5000, 
+          stopOnInteraction: true, 
+          stopOnMouseEnter: false 
+        });
+
+        const emblaApi = EmblaCarousel(emblaNode, { 
+          align: 'start',
+          containScroll: 'trimSnaps',
+          dragFree: false,
+          loop: true,
+          skipSnaps: false
+        }, [autoplay]);
+
+        const updateDots = () => {
+          const selectedIndex = emblaApi.selectedScrollSnap();
+          const dots = dotContainer.querySelectorAll('.embla__dot');
+          dots.forEach((dot, index) => {
+            if (index === selectedIndex) {
+              dot.classList.add('is-active');
+            } else {
+              dot.classList.remove('is-active');
+            }
+          });
+        };
+
+        const createDots = () => {
+          const scrollSnaps = emblaApi.scrollSnapList();
+          dotContainer.innerHTML = scrollSnaps
+            .map((_, index) => `<button class="embla__dot" aria-label="Go to snap ${index + 1}"></button>`)
+            .join('');
+          
+          const dots = dotContainer.querySelectorAll('.embla__dot');
+          dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+              emblaApi.scrollTo(index);
+              updateDots();
+            });
+          });
+        };
+
+        createDots();
+        updateDots();
+        
+        // Smooth real-time tracking
+        emblaApi.on('select', updateDots);
+        emblaApi.on('scroll', updateDots);
+        emblaApi.on('reInit', () => {
+          createDots();
           updateDots();
         });
-      });
-    };
 
-    createDots();
-    updateDots();
-    
-    // Smooth real-time tracking
-    emblaApi.on('select', updateDots);
-    emblaApi.on('scroll', updateDots);
-    emblaApi.on('reInit', () => {
-      createDots();
-      updateDots();
-    });
-
-    // Add horizontal scroll control for mouse wheel
-    emblaNode.addEventListener('wheel', (event) => {
-      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
-        event.preventDefault();
-        if (event.deltaX > 0) {
-          emblaApi.scrollNext();
-        } else {
-          emblaApi.scrollPrev();
-        }
+        // Add horizontal scroll control for mouse wheel
+        emblaNode.addEventListener('wheel', (event) => {
+          if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+            event.preventDefault();
+            if (event.deltaX > 0) {
+              emblaApi.scrollNext();
+            } else {
+              emblaApi.scrollPrev();
+            }
+          }
+        });
       }
-    });
-  }
+    } catch (e) {
+      console.warn('Carousel initialization error (non-critical):', e);
+    }
 
-  // --- Audio Preview Logic ---
-  let currentAudio = null;
-  const albumCards = document.querySelectorAll('.album-card');
+    // --- Audio Preview Logic ---
+    try {
+      let currentAudio = null;
+      const albumCards = document.querySelectorAll('.album-card');
   
   albumCards.forEach(card => {
     const audioUrl = card.dataset.audio;
@@ -268,8 +282,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-
-
+    } catch (e) {
+      console.warn('Audio preview logic error (non-critical):', e);
+    }
 
   // --- Intersection Observer for Animations ---
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
@@ -370,4 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
       isScrollTicking = true;
     }
   }, { passive: true });
+  } catch (e) {
+    console.error('DOMContentLoaded handler error:', e);
+  }
 });

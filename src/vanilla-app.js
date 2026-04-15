@@ -1,6 +1,7 @@
 
 import { SandCanvas } from './vanilla-sand.js';
 import EmblaCarousel from 'embla-carousel';
+import Autoplay from 'embla-carousel-autoplay';
 
 document.addEventListener('DOMContentLoaded', () => {
   // --- Deferred Initialization for better LCP ---
@@ -43,14 +44,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const emblaNode = document.querySelector('.embla');
   const dotContainer = document.querySelector('.embla__dots');
   
+  const onAutoplayStatusChange = (autoplay, emblaApi) => {
+    // Update carousel state when autoplay changes
+  };
+  
   if (emblaNode) {
+    const autoplay = Autoplay(
+      { delay: 5000, stopOnInteraction: true, stopOnMouseEnter: false },
+      onAutoplayStatusChange
+    );
+
     const emblaApi = EmblaCarousel(emblaNode, { 
       align: 'start',
       containScroll: 'trimSnaps',
       dragFree: false, // Changed to false for better snapping on mobile
       loop: true,
       skipSnaps: false
-    });
+    }, [autoplay]);
 
     const updateDots = () => {
       const selectedIndex = emblaApi.selectedScrollSnap();
@@ -89,8 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
       createDots();
       updateDots();
     });
-
-    // Auto Scroll removed as requested
 
     // Add horizontal scroll control for mouse wheel
     emblaNode.addEventListener('wheel', (event) => {

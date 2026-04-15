@@ -149,9 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const disc = card.querySelector('.vinyl-disc');
         if (disc) {
           disc.classList.remove('is-stopping');
-          disc.style.animationPlayState = '';
           disc.classList.add('animate-spin-vinyl');
-          console.log('Vinyl spinning:', disc.classList, disc.style.animation);
+          // Force animation by setting inline style
+          disc.style.animation = 'none';
+          // Trigger reflow to restart animation
+          void disc.offsetWidth;
+          disc.style.animation = '';
         }
         vinyl.classList.remove('opacity-0', 'is-stopping');
         vinyl.classList.add('opacity-100');
@@ -214,10 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const disc = card.querySelector('.vinyl-disc');
         if (disc) {
           disc.classList.remove('animate-spin-vinyl');
-          disc.style.animationPlayState = 'paused';
+          disc.style.animation = 'none';
+          void disc.offsetWidth;
+          disc.style.animation = '';
           requestAnimationFrame(() => {
             disc.classList.add('is-stopping');
-            disc.style.animationPlayState = '';
           });
         }
       };
@@ -259,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const disc = card.querySelector('.vinyl-disc');
       if (disc) {
         disc.classList.remove('animate-spin-vinyl', 'is-stopping');
+        disc.style.animation = '';
       }
       vinyl.classList.remove('opacity-100');
       vinyl.classList.add('opacity-0');

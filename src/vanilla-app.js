@@ -22,7 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const initSandCanvas = () => {
           const heroCanvas = document.getElementById('hero-canvas');
           if (heroCanvas) {
-            const HERO_IMAGE = "images/Banner-MACI-optimized.webp";
+            // Build image URL dynamically at runtime to prevent preload scanner detection
+            // This avoids unnecessary preload attempts for lazy-loaded banner image
+            const HERO_IMAGE = ['images', 'Banner-MACI-optimized', 'webp'].join('/').replace('/webp', '.webp');
             try {
               new SandCanvas(heroCanvas, HERO_IMAGE);
             } catch (e) {

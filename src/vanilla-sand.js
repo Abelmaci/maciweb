@@ -17,7 +17,11 @@ export class SandCanvas {
   }
 
   init() {
-    this.image.crossOrigin = "anonymous";
+    // Only set crossOrigin for external images; same-origin images should not use CORS
+    // This prevents credentials mode mismatch warnings
+    if (this.imageUrl.startsWith('http')) {
+      this.image.crossOrigin = "anonymous";
+    }
     this.image.onload = () => {
       this.resize();
       this.initParticles();

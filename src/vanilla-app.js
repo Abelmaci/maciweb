@@ -18,11 +18,24 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
-        // --- SandCanvas Initialization ---
-        const heroCanvas = document.getElementById('hero-canvas');
-        if (heroCanvas) {
-          const HERO_IMAGE = "images/Banner-MACI-optimized.webp";
-          new SandCanvas(heroCanvas, HERO_IMAGE);
+        // --- SandCanvas Initialization - DEFERRED to reduce main thread blocking ---
+        const initSandCanvas = () => {
+          const heroCanvas = document.getElementById('hero-canvas');
+          if (heroCanvas) {
+            const HERO_IMAGE = "images/Banner-MACI-optimized.webp";
+            try {
+              new SandCanvas(heroCanvas, HERO_IMAGE);
+            } catch (e) {
+              console.warn('SandCanvas initialization failed:', e);
+            }
+          }
+        };
+        
+        // Defer sand canvas to after DOM interactions (2500ms)
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(initSandCanvas, { timeout: 3000 });
+        } else {
+          setTimeout(initSandCanvas, 2500);
         }
       } catch (e) {
         console.warn('InitApp error (non-critical):', e);
@@ -69,14 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
           skipSnaps: false
         }, [autoplay]);
 
+        // Cache dots array to avoid repeated querySelectorAll
+        let dotsCache = [];
+        
         const updateDots = () => {
           const selectedIndex = emblaApi.selectedScrollSnap();
-          const dots = dotContainer.querySelectorAll('.embla__dot');
-          dots.forEach((dot, index) => {
+          // Batch DOM updates - only update changed dots
+          dotsCache.forEach((dot, index) => {
             if (index === selectedIndex) {
-              dot.classList.add('is-active');
+              if (!dot.classList.contains('is-active')) {
+                dot.classList.add('is-active');
+              }
             } else {
-              dot.classList.remove('is-active');
+              if (dot.classList.contains('is-active')) {
+                dot.classList.remove('is-active');
+              }
             }
           });
         };
@@ -87,8 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
             .map((_, index) => `<button class="embla__dot" aria-label="Go to snap ${index + 1}"></button>`)
             .join('');
           
-          const dots = dotContainer.querySelectorAll('.embla__dot');
-          dots.forEach((dot, index) => {
+          // Cache dots after creation
+          dotsCache = Array.from(dotContainer.querySelectorAll('.embla__dot'));
+          
+          dotsCache.forEach((dot, index) => {
             dot.addEventListener('click', () => {
               emblaApi.scrollTo(index);
               updateDots();
@@ -99,9 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
         createDots();
         updateDots();
         
-        // Smooth real-time tracking
-        emblaApi.on('select', updateDots);
-        emblaApi.on('scroll', updateDots);
+        // Smooth real-time tracking - throttled
+        let lastDotUpdate = 0;
+        const throttledUpdateDots = () => {
+          const now = Date.now();
+          if (now - lastDotUpdate > 50) {
+            updateDots();
+            lastDotUpdate = now;
+          }
+        };
+        
+        emblaApi.on('select', throttledUpdateDots);
         emblaApi.on('reInit', () => {
           createDots();
           updateDots();
@@ -149,12 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const disc = card.querySelector('.vinyl-disc');
         if (disc) {
           disc.classList.remove('is-stopping');
+          // Simply add class - no forced reflows
           disc.classList.add('animate-spin-vinyl');
-          // Force animation by setting inline style
-          disc.style.animation = 'none';
-          // Trigger reflow to restart animation
-          void disc.offsetWidth;
-          disc.style.animation = '';
         }
         vinyl.classList.remove('opacity-0', 'is-stopping');
         vinyl.classList.add('opacity-100');
@@ -219,9 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const disc = card.querySelector('.vinyl-disc');
         if (disc) {
           disc.classList.remove('animate-spin-vinyl');
-          disc.style.animation = 'none';
-          void disc.offsetWidth;
-          disc.style.animation = '';
           requestAnimationFrame(() => {
             disc.classList.add('is-stopping');
           });
@@ -262,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const disc = card.querySelector('.vinyl-disc');
       if (disc) {
         disc.classList.remove('animate-spin-vinyl', 'is-stopping');
-        disc.style.animation = '';
+        // No inline styles - let CSS handle it
       }
       vinyl.classList.remove('opacity-100');
       vinyl.classList.add('opacity-0');
@@ -364,39 +387,36 @@ document.addEventListener('DOMContentLoaded', () => {
     if (parallaxEnabled) updateGeometricCache();
   }, { passive: true });
   
+  // OPTIMIZED: Throttle scroll to 10 FPS max (100ms), not 60 FPS
+  let lastScrollTime = 0;
+  const SCROLL_THROTTLE = 100; // ms between scroll updates
+  
   window.addEventListener('scroll', () => {
-    if (!parallaxEnabled || !isScrollTicking) {
-      window.requestAnimationFrame(() => {
-        if (!parallaxEnabled) {
-          isScrollTicking = false;
-          return;
-        }
-        
-        const scrolled = window.scrollY || window.pageYOffset;
-        
-        // Hero Parallax - Reduced effect on mobile
-        const heroContent = document.querySelector('#inicio .max-w-7xl');
-        if (heroContent) {
-          const parallaxStrength = isMobileDevice ? 0.15 : 0.3;
-          heroContent.style.transform = `translate3d(0, ${scrolled * parallaxStrength}px, 0)`;
-          heroContent.style.opacity = 1 - (scrolled / 700);
-        }
-
-        // Bio Parallax - Using Memory Cache (ZERO READS to DOM)
-        // Reduced parallax range on mobile for better performance
-        const viewportBottom = scrolled + window.innerHeight;
-        const parallaxRange = isMobileDevice ? 100 : 200;
-        bioItems.forEach(item => {
-          if (viewportBottom > item.top && scrolled < item.top + item.height) {
-            const progress = (viewportBottom - item.top) / (window.innerHeight + item.height);
-            item.element.style.transform = `translate3d(0, ${(progress - 0.5) * parallaxRange}px, 0)`;
-          }
-        });
-
-        isScrollTicking = false;
-      });
-      isScrollTicking = true;
+    const now = Date.now();
+    if (now - lastScrollTime < SCROLL_THROTTLE) return;
+    lastScrollTime = now;
+    
+    if (!parallaxEnabled) return;
+    
+    const scrolled = window.scrollY || window.pageYOffset;
+    
+    // Hero Parallax - Reduced effect on mobile, using transform3d for GPU acceleration
+    const heroContent = document.querySelector('#inicio .max-w-7xl');
+    if (heroContent) {
+      const parallaxStrength = isMobileDevice ? 0.15 : 0.3;
+      heroContent.style.transform = `translate3d(0, ${scrolled * parallaxStrength}px, 0)`;
+      heroContent.style.opacity = 1 - (scrolled / 700);
     }
+
+    // Bio Parallax - Using Memory Cache (ZERO READS to DOM), throttled
+    const viewportBottom = scrolled + window.innerHeight;
+    const parallaxRange = isMobileDevice ? 100 : 200;
+    bioItems.forEach(item => {
+      if (viewportBottom > item.top && scrolled < item.top + item.height) {
+        const progress = (viewportBottom - item.top) / (window.innerHeight + item.height);
+        item.element.style.transform = `translate3d(0, ${(progress - 0.5) * parallaxRange}px, 0)`;
+      }
+    });
   }, { passive: true });
   } catch (e) {
     console.error('DOMContentLoaded handler error:', e);

@@ -59,6 +59,10 @@
   
   border: 14px solid #000000;
   overflow: hidden;
+  will-change: transform;
+  contain: layout style paint;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Enhanced specular reflection that rotates with the vinyl */

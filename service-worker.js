@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maci-cache-v3';
+const CACHE_NAME = 'maci-cache-v4';
 const CRITICAL_ASSETS = [
   './',
   './index.html',
@@ -129,8 +129,9 @@ self.addEventListener('fetch', event => {
       fetch(event.request)
         .then(response => {
           if (response && response.status === 200) {
+            const clone = response.clone(); // clone synchronously before async caches.open
             caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, response.clone());
+              cache.put(event.request, clone);
             });
           }
           return response;

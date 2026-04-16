@@ -1,7 +1,7 @@
 
 import { SandCanvas } from './vanilla-sand.js';
-import EmblaCarousel from 'embla-carousel';
-import Autoplay from 'embla-carousel-autoplay';
+import EmblaCarousel from 'https://esm.sh/embla-carousel@8.0.0?min';
+import Autoplay from 'https://esm.sh/embla-carousel-autoplay@8.0.0?min';
 
 document.addEventListener('DOMContentLoaded', () => {
   try {

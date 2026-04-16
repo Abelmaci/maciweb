@@ -91,15 +91,6 @@
     content="MACI es un artista digital AI que crea música con inteligencia artificial, combinando composición, producción y emoción en una nueva forma de entender la música.">
   <meta property="og:image" content="https://macimusic.es/images/opengraph.jpg">
   <meta property="og:site_name" content="MACI">
-  <script type="importmap">
-    {
-      "imports": {
-        "embla-carousel": "https://esm.sh/embla-carousel@8.0.0?min",
-        "embla-carousel-autoplay": "https://esm.sh/embla-carousel-autoplay@8.0.0?min"
-      }
-    }
-  </script>
-
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://macimusic.es/">
@@ -118,7 +109,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   
   <!-- Optimized Font & CSS Loading (Non-blocking) -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap">
   <noscript>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
   </noscript>
@@ -288,134 +279,6 @@
       ASSETS...</div>
   </div>
 
-  <script>
-    // Asset Loader Logic
-    document.addEventListener('DOMContentLoaded', () => {
-      const splash = document.getElementById('splash-loader');
-      const pctText = document.getElementById('load-pct');
-      const statusText = document.getElementById('load-status');
-      const stop1 = document.getElementById('fill-stop-1');
-      const stop2 = document.getElementById('fill-stop-2');
-
-      const images = Array.from(document.images);
-      const audioSources = [...new Set([...document.querySelectorAll('.album-card')].map(card => card.dataset.audio))].filter(Boolean);
-
-      const totalAssets = images.length;
-      let loadedCount = 0;
-      let audioLoaded = 0;
-      let assetsReady = false;
-      let animationComplete = false;
-
-      const ANIMATION_DURATION = 2500;
-      const startTime = performance.now();
-      
-      function animateLoader(timestamp) {
-        const elapsed = timestamp - startTime;
-        const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
-        const percent = Math.round(progress * 100);
-        
-        pctText.innerText = `${percent}%`;
-        stop1.setAttribute('offset', `${percent}%`);
-        stop2.setAttribute('offset', `${percent}%`);
-        
-        if (progress < 1) {
-          requestAnimationFrame(animateLoader);
-        } else {
-          animationComplete = true;
-          checkDismiss();
-        }
-      }
-      requestAnimationFrame(animateLoader);
-
-      let isDismissed = false;
-      const checkDismiss = () => {
-        if (isDismissed) return;
-        if (assetsReady && animationComplete) {
-          dismissLoader();
-        }
-      };
-
-      const dismissLoader = () => {
-        if (isDismissed) return;
-        isDismissed = true;
-        splash.classList.add('fade-out');
-        document.querySelectorAll('.hero-reveal').forEach(el => {
-          el.classList.remove('opacity-0');
-          el.classList.add('animate-in');
-        });
-      };
-
-      function updateProgress(isAudio) {
-        if (isAudio) {
-          audioLoaded++;
-        } else {
-          loadedCount++;
-        }
-        
-        if (audioLoaded > 0 && audioLoaded < audioSources.length) {
-          statusText.innerText = `DECODING AUDIO ${audioLoaded}/${audioSources.length}`;
-        }
-
-        if (loadedCount >= totalAssets && audioLoaded >= audioSources.length) {
-          assetsReady = true;
-          statusText.innerText = 'SOUND SYSTEM READY';
-          checkDismiss();
-        }
-      }
-
-      if (images.length === 0 && audioSources.length === 0) {
-        assetsReady = true;
-        updateProgress(false);
-      }
-      
-      images.forEach(img => {
-        if (img.complete) updateProgress(false);
-        else {
-          img.addEventListener('load', () => updateProgress(false));
-          img.addEventListener('error', () => updateProgress(false));
-        }
-      });
-
-      window.audioBuffers = window.audioBuffers || {};
-
-      // Lazy-load audio: only decode on-demand when user clicks play
-      // This prevents 6.5MB of blocking audio preload on initial page load
-      audioSources.forEach(src => {
-        updateProgress(true); // Mark as loaded immediately for splash screen
-      });
-
-      // Defer AudioContext creation until first user interaction
-      // (Browsers require user gesture for Web Audio API)
-      const initAudioContextOnce = (() => {
-        let initialized = false;
-        return () => {
-          if (!initialized && !window.audioCtx) {
-            try {
-              window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-              initialized = true;
-            } catch (e) {
-              console.warn('AudioContext not available:', e);
-            }
-          }
-          if (window.audioCtx && window.audioCtx.state === 'suspended') {
-            window.audioCtx.resume().catch(e => console.warn('AudioContext resume failed:', e));
-          }
-        };
-      })();
-      
-      // Initialize on first interaction
-      const events = ['click', 'touchstart', 'keydown'];
-      events.forEach(evt => {
-        document.addEventListener(evt, initAudioContextOnce, { once: true, passive: true });
-      });
-
-      setTimeout(() => {
-        assetsReady = true;
-        checkDismiss();
-      }, 3000);
-    });
-  </script>
-
   <div id="main-content">
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent py-6">
@@ -527,36 +390,6 @@
                 <span id="audience-counter" class="text-[0.7rem] tracking-widest uppercase tabular-nums w-14">523</span>
               </div>
             </div>
-            <script>
-              // BPM Counter
-              let bpm = 120;
-              setInterval(() => {
-                bpm = Math.floor(118 + Math.random() * 4);
-                document.getElementById('bpm-counter').innerText = bpm;
-              }, 2000);
-
-              // Time Counter
-              let seconds = 0;
-              setInterval(() => {
-                seconds++;
-                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const secs = (seconds % 60).toString().padStart(2, '0');
-                document.getElementById('time-counter').innerText = mins + ':' + secs;
-              }, 1000);
-
-              // Audience Counter (Real Time from Cloudflare)
-              let audience = 523;
-                const updateAudience = () => {
-                  // Simulate real-time variation locally for static site
-                  audience += Math.floor(Math.random() * 5) - 2; 
-                  if (audience < 500) audience = 500;
-                  document.getElementById('audience-counter').innerText = audience;
-                };
-
-              // Initial fetch and then every 2 minutes (to avoid API spam)
-              updateAudience();
-              setInterval(updateAudience, 120000); 
-            </script>
           </div>
         </div>
       </div>
@@ -1121,38 +954,7 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          <!-- Platforms will be rendered here -->
-          <script>
-            const platforms = [
-              { name: "Spotify", slug: "spotify" },
-              { name: "Amazon Music", slug: "amazonmusic", customUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Amazon_Music_%28Logo%29.svg/1280px-Amazon_Music_%28Logo%29.svg.png", isDark: false, scale: "scale-150" },
-              { name: "Tidal", slug: "tidal", isDark: true },
-              { name: "Apple Music", slug: "apple", isDark: true },
-              { name: "Shazam", slug: "shazam" },
-              { name: "Instagram", slug: "instagram" },
-              { name: "Snapchat", slug: "snapchat" },
-              { name: "TikTok", slug: "tiktok", isDark: true },
-              { name: "Musixmatch", slug: "musixmatch", customUrl: "https://images.seeklogo.com/logo-png/52/2/musixmatch-logo-png_seeklogo-523539.png", scale: "scale-125" },
-              { name: "YouTube Music", slug: "youtubemusic" },
-              { name: "QQ Music", slug: "qqmusic", customUrl: "https://upload.wikimedia.org/wikipedia/en/thumb/9/91/QQ_Music2023.svg/1280px-QQ_Music2023.svg.png?_=20230725123656", scale: "scale-110" },
-              { name: "iTunes", slug: "itunes" },
-              { name: "CapCut", slug: "capcut", customUrl: "https://static.wikia.nocookie.net/logo_editing/images/c/cb/CapCut.png/revision/latest?cb=20260117011602", isDark: true },
-              { name: "Audiomack", slug: "audiomack" }
-            ];
-            document.write(platforms.map((p, i) => `
-              <div class="reveal flex flex-col items-center justify-center p-8 bg-surface border border-outline-variant/10 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/5 group cursor-pointer">
-                <div class="w-12 h-12 mb-4 flex items-center justify-center transition-all duration-300">
-                  <img src="${p.customUrl || `https://cdn.simpleicons.org/${p.slug}`}" 
-                       alt="${p.name}" 
-                       class="w-full h-full object-contain transition-all duration-500 ${p.scale || ''} ${p.isDark ? 'invert opacity-40 group-hover:opacity-100' : 'grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100'}" 
-                       referrerpolicy="no-referrer">
-                </div>
-                <span class="text-[0.7rem] font-bold uppercase tracking-widest text-white/70 group-hover:text-primary transition-colors">${p.name}</span>
-              </div>
-            `).join(''));
-          </script>
-        </div>
+        <div id="platform-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
       </div>
     </section>
 
@@ -1181,22 +983,6 @@
           <div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
           <div class="relative z-10 flex flex-col items-center">
             <div class="sound-wave mb-4" id="waveContainer"></div>
-            <script>
-              const container = document.getElementById('waveContainer');
-              const barCount = 45;
-              for (let i = 0; i < barCount; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                const randomDelay = Math.random() * 2;
-                const randomDuration = 0.5 + Math.random() * 1.5;
-                bar.style.animationDelay = `${randomDelay}s`;
-                bar.style.animationDuration = `${randomDuration}s`;
-                const centerDistance = Math.abs(i - barCount / 2);
-                const scale = 1 - (centerDistance / (barCount / 2));
-                bar.style.opacity = 0.2 + (scale * 0.6);
-                container.appendChild(bar);
-              }
-            </script>
             <h3 data-i18n-es="Ahora mismo… algo se está cocinando" data-i18n-en="Right now… something is cooking"
               class="reveal text-2xl font-black uppercase tracking-tight">Ahora mismo… algo se está cocinando</h3>
             <p data-i18n-es="Un nuevo proyecto está en proceso." data-i18n-en="A new project is in the works."
@@ -1307,59 +1093,8 @@
     </footer>
 
     <!-- Scripts -->
-
-
-    <script>
-      // Service Worker Registration for caching
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./service-worker.js')
-            .then(reg => console.log('Service Worker registered'))
-            .catch(err => console.log('Service Worker failed', err));
-        });
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        lucide.createIcons();
-      });
-    </script>
+    <script type="module" src="src/main.js"></script>
     <script type="module" src="src/vanilla-app.js"></script>
-    <script>
-      const menuBtn = document.getElementById('mobile-menu-btn');
-      const closeBtn = document.getElementById('close-menu-btn');
-      const menu = document.getElementById('mobile-menu');
-
-      function toggleMenu(show) {
-        if (show) {
-          menu.classList.remove('hidden');
-          // Force reflow
-          void menu.offsetWidth;
-          menu.classList.remove('opacity-0', 'translate-x-full');
-          menu.classList.add('opacity-100', 'translate-x-0');
-          menu.querySelectorAll('a').forEach(a => {
-            a.classList.add('animate-in');
-            a.classList.remove('tracking-tighter');
-            a.classList.add('tracking-[0.1em]');
-          });
-        } else {
-          menu.classList.add('opacity-0', 'translate-x-full');
-          menu.classList.remove('opacity-100', 'translate-x-0');
-          menu.querySelectorAll('a').forEach(a => {
-            a.classList.remove('animate-in');
-            a.classList.add('tracking-tighter');
-            a.classList.remove('tracking-[0.1em]');
-          });
-          setTimeout(() => menu.classList.add('hidden'), 500);
-        }
-      }
-
-      menuBtn.addEventListener('click', () => toggleMenu(true));
-      closeBtn.addEventListener('click', () => toggleMenu(false));
-
-      menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => toggleMenu(false));
-      });
-    </script>
   </div> <!-- End #main-content -->
 
   <!-- Language Switcher (Toggle Style) -->
@@ -1367,11 +1102,10 @@
     class="fixed bottom-8 right-8 z-[200] flex items-center gap-4 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-full py-2 px-5 shadow-2xl scale-90 md:scale-100 origin-right transition-all hover:border-primary/40">
     <span class="text-[0.65rem] font-bold tracking-[0.2em] transition-colors duration-300" id="label-es">ES</span>
 
-    <div onclick="toggleLanguage()"
+    <div id="language-toggle"
       role="button"
       tabindex="0"
       aria-label="Cambiar idioma entre español e inglés"
-      onkeydown="if(event.key==='Enter'||event.key===' ') toggleLanguage()"
       class="relative w-12 h-6 bg-white/10 rounded-full cursor-pointer p-1 transition-all hover:bg-white/20">
       <div id="toggle-circle"
         class="absolute left-1 w-4 h-4 bg-primary rounded-full transition-all duration-200 ease-out shadow-[0_0_10px_rgba(255,68,68,0.5)]">
@@ -1381,56 +1115,6 @@
     <span class="text-[0.65rem] font-bold tracking-[0.2em] text-white/40 transition-colors duration-300"
       id="label-en">EN</span>
   </div>
-
-  <script>
-    let currentLang = 'es';
-
-    function toggleLanguage() {
-      const nextLang = currentLang === 'es' ? 'en' : 'es';
-      changeLanguageTo(nextLang);
-    }
-
-    function typeWriter(element, text, i = 0) {
-      if (i === 0) element.innerHTML = '';
-      if (i < text.length) {
-        element.innerHTML += text.charAt(i);
-        setTimeout(() => typeWriter(element, text, i + 1), 5);
-      }
-    }
-
-    function changeLanguageTo(lang) {
-      if (lang === currentLang) return;
-
-      const circle = document.getElementById('toggle-circle');
-      const labelEs = document.getElementById('label-es');
-      const labelEn = document.getElementById('label-en');
-
-      currentLang = lang;
-
-      // Update UI Toggle (Fast)
-      if (lang === 'en') {
-        circle.style.transform = 'translateX(24px)';
-        labelEn.classList.add('text-white');
-        labelEn.classList.remove('text-white/40');
-        labelEs.classList.remove('text-white');
-        labelEs.classList.add('text-white/40');
-      } else {
-        circle.style.transform = 'translateX(0)';
-        labelEs.classList.add('text-white');
-        labelEs.classList.remove('text-white/40');
-        labelEn.classList.remove('text-white');
-        labelEn.classList.add('text-white/40');
-      }
-
-      // Translate with Typewriter effect
-      document.querySelectorAll('[data-i18n-es]').forEach(el => {
-        const targetText = lang === 'en' ? el.getAttribute('data-i18n-en') : el.getAttribute('data-i18n-es');
-        typeWriter(el, targetText);
-      });
-    }
-  </script>
-
-
 </body>
 
 </html>

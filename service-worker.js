@@ -1,8 +1,9 @@
-const CACHE_NAME = 'maci-cache-v4';
+const CACHE_NAME = 'maci-cache-v5';
 const CRITICAL_ASSETS = [
   './',
   './index.html',
   './src/compiled.css',
+  './src/main.js',
   './src/vanilla-app.js'
 ];
 

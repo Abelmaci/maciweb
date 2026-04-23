@@ -359,6 +359,56 @@ function initLucide() {
   window.lucide.createIcons();
 }
 
+function initLaunchCountdown() {
+  // Countdown target: June 11, 2026 at 23:59:59 (local time).
+  // Both the badge and the section block disappear when June 12 arrives.
+  const LAUNCH = new Date('2026-06-12T00:00:00');
+
+  const section = document.getElementById('launch-countdown');
+  const badge   = document.getElementById('countdown-badge');
+  const elDays  = document.getElementById('cd-days');
+  const elHours = document.getElementById('cd-hours');
+  const elMins  = document.getElementById('cd-minutes');
+  const elSecs  = document.getElementById('cd-seconds');
+  const elBadgeTimer = document.getElementById('countdown-badge-timer');
+
+  if (!section || !elDays || !elHours || !elMins || !elSecs) return;
+
+  const pad = (n) => String(n).padStart(2, '0');
+
+  const tick = () => {
+    const now  = new Date();
+    const diff = LAUNCH - now;
+
+    if (diff <= 0) {
+      // Launch day reached — hide countdown elements
+      section.style.display = 'none';
+      if (badge) badge.style.display = 'none';
+      return; // stop ticking
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const days    = Math.floor(totalSeconds / 86400);
+    const hours   = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    elDays.textContent  = pad(days);
+    elHours.textContent = pad(hours);
+    elMins.textContent  = pad(minutes);
+    elSecs.textContent  = pad(seconds);
+
+    // Mini badge timer: Xd HH:MM:SS
+    if (elBadgeTimer) {
+      elBadgeTimer.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    setTimeout(tick, 1000);
+  };
+
+  tick();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initSplashLoader();
   initCounters();
@@ -368,4 +418,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initLanguageToggle();
   initLucide();
   initServiceWorker();
+  initLaunchCountdown();
 });

@@ -370,7 +370,9 @@ function initLaunchCountdown() {
   const elHours = document.getElementById('cd-hours');
   const elMins  = document.getElementById('cd-minutes');
   const elSecs  = document.getElementById('cd-seconds');
-  const elBadgeTimer = document.getElementById('countdown-badge-timer');
+  const elBadgeTimer  = document.getElementById('countdown-badge-timer');
+  const elCardTimer   = document.getElementById('cd-card-timer');
+  const cardCountdown = document.getElementById('card-countdown');
 
   if (!section || !elDays || !elHours || !elMins || !elSecs) return;
 
@@ -384,6 +386,7 @@ function initLaunchCountdown() {
       // Launch day reached — hide countdown elements
       section.style.display = 'none';
       if (badge) badge.style.display = 'none';
+      if (cardCountdown) cardCountdown.style.display = 'none';
       return; // stop ticking
     }
 
@@ -401,6 +404,11 @@ function initLaunchCountdown() {
     // Mini badge timer: Xd HH:MM:SS
     if (elBadgeTimer) {
       elBadgeTimer.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    // Card overlay timer
+    if (elCardTimer) {
+      elCardTimer.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
     }
 
     setTimeout(tick, 1000);

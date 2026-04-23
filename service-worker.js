@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maci-cache-v5';
+const CACHE_NAME = 'maci-cache-v6';
 const CRITICAL_ASSETS = [
   './',
   './index.html',
@@ -23,6 +23,7 @@ const IMAGE_ASSETS = [
   './images/CD_YOUR_BODY_optimized.jpg',
   './images/CD_adela_optimized.jpg',
   './images/CD_el_idiota_optimized.jpg',
+  './images/CD_quien_fue.jpg',
   './images/Biomaci.jpeg',
   './images/adela2.jpg'
 ];
@@ -33,7 +34,8 @@ const AUDIO_ASSETS = [
   './music-preview/your-body.mp3',
   './music-preview/adela-v5.mp3',
   './music-preview/el-idiota.mp3',
-  './music-preview/caigo-a-tus-pies.mp3'
+  './music-preview/caigo-a-tus-pies.mp3',
+  './music-preview/quien-fue.mp3'
 ];
 
 // Install: Cache critical assets only (faster activation)

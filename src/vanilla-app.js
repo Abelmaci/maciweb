@@ -168,10 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
   
   albumCards.forEach(card => {
     const audioUrl = card.dataset.audio;
+    const previewDuration = Number(card.dataset.duration || 30);
     const id = card.dataset.id;
     const vinyl = card.querySelector('.vinyl-record');
     const overlay = card.querySelector('.info-overlay');
     const cover = card.querySelector('.album-cover');
+    let previewTimeout = null;
 
     const handleEnter = () => {
       console.log("Entering card", id);
@@ -201,6 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try { currentAudio.disconnect(); } catch(e) {}
         try { currentAudio.src = ''; currentAudio.load(); } catch(e) {}
         currentAudio = null;
+      }
+      if (previewTimeout) {
+        clearTimeout(previewTimeout);
+        previewTimeout = null;
       }
       
       // Ensure AudioContext is ready before playback
@@ -233,6 +239,11 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             
             currentAudio.start(0);
+            previewTimeout = setTimeout(() => {
+              if (currentAudio) {
+                try { currentAudio.stop(); } catch(e) {}
+              }
+            }, previewDuration * 1000);
             return; // Web Audio success
           } catch (e) {
             console.warn('Web Audio playback failed, falling back to HTML Audio:', e);
@@ -267,6 +278,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           });
       }
+
+      previewTimeout = setTimeout(() => {
+        if (currentAudio) {
+          try {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+          } catch (e) {}
+          const disc = card.querySelector('.vinyl-disc');
+          if (disc) {
+            disc.classList.remove('animate-spin-vinyl');
+            requestAnimationFrame(() => {
+              disc.classList.add('is-stopping');
+            });
+          }
+        }
+      }, previewDuration * 1000);
     };
 
     const handleLeave = () => {
@@ -283,6 +310,10 @@ document.addEventListener('DOMContentLoaded', () => {
           currentAudio.load(); // Reset to initial state
         } catch(e) {}
         currentAudio = null;
+      }
+      if (previewTimeout) {
+        clearTimeout(previewTimeout);
+        previewTimeout = null;
       }
       const disc = card.querySelector('.vinyl-disc');
       if (disc) {

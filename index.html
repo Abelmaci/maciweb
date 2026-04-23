@@ -418,14 +418,73 @@
 
         <div class="embla">
           <div class="embla__container">
-            <!-- Upcoming Album -->
+            <!-- Primer disco: ¿Quién fue? -->
+            <div class="embla__slide">
+              <div
+                class="album-card group relative aspect-square bg-surface cursor-pointer overflow-hidden shadow-2xl rounded-3xl"
+                data-id="6" data-audio="music-preview/quien-fue.mp3" data-duration="30">
+                <div
+                  class="absolute top-6 left-6 z-30 bg-green-600 text-white font-bold text-[0.55rem] tracking-[0.1em] px-3 py-1 uppercase shadow-xl rounded-full">
+                  EN PRODUCCIÓN
+                </div>
+
+                <div
+                  class="vinyl-record absolute inset-0 flex items-center justify-center p-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/40">
+                  <div class="vinyl-disc relative w-[94%] h-[94%] rounded-full">
+                    <div class="vinyl-label absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28%] h-[28%] rounded-full overflow-hidden border-[5px] border-[#141414] z-10">
+                      <img src="images/CD_quien_fue.jpg" alt="" loading="lazy" class="w-full h-full object-cover" referrerpolicy="no-referrer">
+                    </div>
+                    <div class="vinyl-hole absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#0a0a0a] z-20"></div>
+                  </div>
+                </div>
+
+                <div
+                  class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
+                  <img src="images/CD_quien_fue.jpg" alt="Portada del single ¿Quién fue? (próximamente)"
+                    width="1024" height="1024"
+                    loading="lazy"
+                    class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
+                    style="filter: blur(12px); transform: scale(1.06);"
+                    referrerpolicy="no-referrer">
+                </div>
+
+                <button
+                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
+                  aria-label="Escuchar adelanto de ¿Quién fue?">
+                  <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
+                </button>
+
+                <div
+                  class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
+                  <div class="flex items-center gap-3 mb-3">
+                    <span class="w-2 h-2 bg-primary rounded-full animate-ping"></span>
+                    <span data-i18n-es="PRÓXIMO LANZAMIENTO" data-i18n-en="UPCOMING RELEASE"
+                      class="text-[0.65rem] font-bold text-white tracking-widest uppercase italic">PRÓXIMO LANZAMIENTO</span>
+                  </div>
+                  <h3 class="text-3xl font-black tracking-tighter text-white drop-shadow-2xl">¿Quién fue?</h3>
+                  <p class="text-xs text-white font-bold uppercase tracking-[0.3em] mt-2">
+                    <span data-i18n-es="Próximo Single" data-i18n-en="Upcoming Single">Próximo Single</span>
+                  </p>
+                  <p data-i18n-es="La portada completa se revelará en el lanzamiento."
+                    data-i18n-en="Full artwork will be revealed at launch."
+                    class="text-[0.65rem] text-white/60 mt-2 uppercase tracking-widest">La portada completa se revelará en el lanzamiento.</p>
+                  <p class="text-[0.5rem] text-white/30 mt-2 tracking-[0.3em] uppercase font-light">misterio · memoria · emoción</p>
+                  <a href="#" data-i18n-es="Escuchar adelanto" data-i18n-en="Listen to preview"
+                    aria-label="Escuchar adelanto de ¿Quién fue?"
+                    class="inline-block bg-primary text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-red-700 transition-colors">Escuchar
+                    adelanto</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Segundo: Caigo a tus pies (Próximo single) -->
             <div class="embla__slide">
               <div
                 class="album-card group relative aspect-square bg-surface cursor-pointer overflow-hidden shadow-2xl rounded-3xl group-hover:bg-surface-container-highest transition-all duration-500"
                 data-id="0" data-audio="music-preview/caigo-a-tus-pies.mp3" data-duration="15">
                 <!-- Proximamente Badge (Refined) -->
                 <div
-                  class="absolute top-6 left-6 z-30 bg-blue-600 text-white font-bold text-[0.55rem] tracking-[0.1em] px-3 py-1 uppercase shadow-xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+                  class="absolute top-6 left-6 z-30 bg-blue-600 text-white font-bold text-[0.55rem] tracking-[0.1em] px-3 py-1 uppercase shadow-xl rounded-full">
                   PRÓXIMAMENTE
                 </div>
 
@@ -481,76 +540,17 @@
                     <span class="text-[0.5rem] font-bold tracking-[0.2em] uppercase text-primary/70 block mb-1"
                       data-i18n-es="LANZAMIENTO EN" data-i18n-en="LAUNCHING IN">LANZAMIENTO EN · 12 JUN</span>
                     <div class="flex gap-2">
-                      <div class="flex flex-col items-center"><span id="cd0-days" class="text-base font-black tabular-nums text-white">--</span><span class="text-[12px] uppercase tracking-widest text-white/40" data-i18n-es="DÍAS" data-i18n-en="DAYS">DÍAS</span></div>
+                      <div class="flex flex-col items-center"><span id="cd0-days" class="text-base font-black tabular-nums text-white">--</span><span class="uppercase tracking-widest text-white/40" style="font-size:10px">DÍAS</span></div>
                       <span class="text-base font-black text-primary/40 self-start mt-0.5">:</span>
-                      <div class="flex flex-col items-center"><span id="cd0-hours" class="text-base font-black tabular-nums text-white">--</span><span class="text-[12px] uppercase tracking-widest text-white/40">HR</span></div>
+                      <div class="flex flex-col items-center"><span id="cd0-hours" class="text-base font-black tabular-nums text-white">--</span><span class="uppercase tracking-widest text-white/40" style="font-size:10px">HR</span></div>
                       <span class="text-base font-black text-primary/40 self-start mt-0.5">:</span>
-                      <div class="flex flex-col items-center"><span id="cd0-mins" class="text-base font-black tabular-nums text-white">--</span><span class="text-[12px] uppercase tracking-widest text-white/40">MIN</span></div>
+                      <div class="flex flex-col items-center"><span id="cd0-mins" class="text-base font-black tabular-nums text-white">--</span><span class="uppercase tracking-widest text-white/40" style="font-size:10px">MIN</span></div>
                       <span class="text-base font-black text-primary/40 self-start mt-0.5">:</span>
-                      <div class="flex flex-col items-center"><span id="cd0-secs" class="text-base font-black tabular-nums text-white">--</span><span class="text-[12px] uppercase tracking-widest text-white/40">SEG</span></div>
+                      <div class="flex flex-col items-center"><span id="cd0-secs" class="text-base font-black tabular-nums text-white">--</span><span class="uppercase tracking-widest text-white/40" style="font-size:10px">SEG</span></div>
                     </div>
                   </div>
                   <a href="#" data-i18n-es="Escuchar adelanto" data-i18n-en="Listen to preview"
                     aria-label="Escuchar adelanto de la canción Caigo a tus pies"
-                    class="inline-block bg-primary text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-red-700 transition-colors">Escuchar
-                    adelanto</a>
-                </div>
-              </div>
-            </div>
-
-            <!-- Album 1: ¿Quién fue? (Upcoming with blurred cover) -->
-            <div class="embla__slide">
-              <div
-                class="album-card group relative aspect-square bg-surface cursor-pointer overflow-hidden shadow-2xl rounded-3xl"
-                data-id="6" data-audio="music-preview/quien-fue.mp3" data-duration="30">
-                <div
-                  class="absolute top-6 left-6 z-30 bg-blue-600 text-white font-bold text-[0.55rem] tracking-[0.1em] px-3 py-1 uppercase shadow-xl rounded-full">
-                  PRÓXIMAMENTE
-                </div>
-
-                <div
-                  class="vinyl-record absolute inset-0 flex items-center justify-center p-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/40">
-                  <div class="vinyl-disc relative w-[94%] h-[94%] rounded-full">
-                    <div class="vinyl-label absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28%] h-[28%] rounded-full overflow-hidden border-[5px] border-[#141414] z-10">
-                      <img src="images/CD_quien_fue.jpg" alt="" loading="lazy" class="w-full h-full object-cover" referrerpolicy="no-referrer">
-                    </div>
-                    <div class="vinyl-hole absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#0a0a0a] z-20"></div>
-                  </div>
-                </div>
-
-                <div
-                  class="album-cover absolute inset-0 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) z-10 group-hover:-translate-x-full">
-                  <img src="images/CD_quien_fue.jpg" alt="Portada del single ¿Quién fue? (próximamente)"
-                    width="1024" height="1024"
-                    loading="lazy"
-                    class="w-full h-full object-cover shadow-[15px_0_30px_rgba(0,0,0,0.6)]"
-                    style="filter: blur(12px); transform: scale(1.06);"
-                    referrerpolicy="no-referrer">
-                </div>
-
-                <button
-                  class="mobile-touch-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center lg:hidden opacity-80 shadow-2xl"
-                  aria-label="Escuchar adelanto de ¿Quién fue?">
-                  <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
-                </button>
-
-                <div
-                  class="info-overlay absolute inset-0 flex flex-col justify-end p-8 z-20 opacity-0 group-hover:opacity-100 translate-y-5 group-hover:translate-y-0 transition-all duration-500">
-                  <div class="flex items-center gap-3 mb-3">
-                    <span class="w-2 h-2 bg-primary rounded-full animate-ping"></span>
-                    <span data-i18n-es="PRÓXIMO LANZAMIENTO" data-i18n-en="UPCOMING RELEASE"
-                      class="text-[0.65rem] font-bold text-white tracking-widest uppercase italic">PRÓXIMO LANZAMIENTO</span>
-                  </div>
-                  <h3 class="text-3xl font-black tracking-tighter text-white drop-shadow-2xl">¿Quién fue?</h3>
-                  <p class="text-xs text-white font-bold uppercase tracking-[0.3em] mt-2">
-                    <span data-i18n-es="Próximo Single" data-i18n-en="Upcoming Single">Próximo Single</span>
-                  </p>
-                  <p data-i18n-es="La portada completa se revelará en el lanzamiento."
-                    data-i18n-en="Full artwork will be revealed at launch."
-                    class="text-[0.65rem] text-white/60 mt-2 uppercase tracking-widest">La portada completa se revelará en el lanzamiento.</p>
-                  <p class="text-[0.5rem] text-white/30 mt-2 tracking-[0.3em] uppercase font-light">misterio · memoria · emoción</p>
-                  <a href="#" data-i18n-es="Escuchar adelanto" data-i18n-en="Listen to preview"
-                    aria-label="Escuchar adelanto de ¿Quién fue?"
                     class="inline-block bg-primary text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-red-700 transition-colors">Escuchar
                     adelanto</a>
                 </div>

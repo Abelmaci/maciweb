@@ -192,6 +192,10 @@
         padding-left: 1rem !important;
         padding-right: 0 !important;
       }
+
+      .album-card.is-active .caigo-upcoming-badge {
+        opacity: 0;
+      }
     }
 
     .sound-wave:hover .bar {
@@ -495,7 +499,7 @@
                 data-id="0" data-audio="music-preview/caigo-a-tus-pies.mp3" data-duration="15">
                 <!-- Proximamente Badge (Refined) -->
                 <div
-                  class="absolute top-6 left-6 z-30 bg-blue-600 text-white font-bold text-[0.55rem] tracking-[0.1em] px-3 py-1 uppercase shadow-xl rounded-full">
+                  class="caigo-upcoming-badge absolute top-6 left-6 z-30 bg-blue-600 text-white font-bold text-[0.55rem] tracking-[0.1em] px-3 py-1 uppercase shadow-xl rounded-full transition-opacity duration-300">
                   PRÓXIMAMENTE
                 </div>
 
@@ -732,7 +736,7 @@
                     Speak to Me</h3>
                   <p
                     class="text-[0.6rem] md:text-xs text-white font-bold uppercase tracking-[0.05em] md:tracking-[0.3em] mt-2 break-words w-full">
-                    <span data-i18n-es="Colaboraciones" data-i18n-en="Collaborations">Colaboraciones</span> // 2026
+                    <span data-i18n-es="Single destacado" data-i18n-en="Featured Single">Single destacado</span> // 2026
                   </p>
                   <p data-i18n-es="Fusión de estilos que amplían el universo sonoro."
                     data-i18n-en="Fusion of styles expanding the sonic universe."
@@ -844,7 +848,7 @@
                   </div>
                   <h3 class="text-3xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">El Idiota</h3>
                   <p class="text-xs text-white font-bold uppercase tracking-[0.3em] mt-2">
-                    <span data-i18n-es="Single destacado" data-i18n-en="Featured Single">Single destacado</span> // 2024
+                    <span data-i18n-es="LP" data-i18n-en="LP">LP</span> // 2024
                   </p>
                   <p data-i18n-es="Donde el ritmo y la sátira se encuentran."
                     data-i18n-en="Where rhythm and satire meet."

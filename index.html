@@ -171,17 +171,27 @@
     /* Carousel optimizations */
     .embla {
       contain: layout style;
+      overflow: hidden;
+      padding-left: 1rem;
     }
 
     .embla__container {
       will-change: transform;
       backface-visibility: hidden;
-      padding-left: 1rem;
+      padding-left: 0;
     }
 
     .embla__slide {
       will-change: transform;
       contain: content;
+    }
+
+    @media (max-width: 640px) {
+      .embla__slide {
+        flex: 0 0 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
     }
 
     .sound-wave:hover .bar {

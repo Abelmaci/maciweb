@@ -360,58 +360,74 @@ function initLucide() {
 }
 
 function initLaunchCountdown() {
-  // Countdown target: June 11, 2026 at 23:59:59 (local time).
-  // Both the badge and the section block disappear when June 12 arrives.
-  const LAUNCH = new Date('2026-06-12T00:00:00');
-
-  const section = document.getElementById('launch-countdown');
-  const badge   = document.getElementById('countdown-badge');
-  const elDays  = document.getElementById('cd-days');
-  const elHours = document.getElementById('cd-hours');
-  const elMins  = document.getElementById('cd-minutes');
-  const elSecs  = document.getElementById('cd-seconds');
-  const elBadgeTimer  = document.getElementById('countdown-badge-timer');
-  const elCardTimer   = document.getElementById('cd-card-timer');
-  const cardCountdown = document.getElementById('card-countdown');
-
-  if (!section || !elDays || !elHours || !elMins || !elSecs) return;
-
   const pad = (n) => String(n).padStart(2, '0');
 
+  // Each target: { launch date, element IDs for D/H/M/S, container to hide, badge to hide }
+  const targets = [
+    {
+      launch:    new Date('2026-06-12T00:00:00'),
+      days:      'cd-days',  hours:  'cd-hours',
+      mins:      'cd-minutes', secs: 'cd-seconds',
+      card:      { days: 'cd0-days', hours: 'cd0-hours', mins: 'cd0-mins', secs: 'cd0-secs', wrap: 'card-countdown-0' },
+      section:   'launch-countdown',
+      badge:     'countdown-badge',
+    },
+    {
+      launch:    new Date('2026-06-20T00:00:00'),
+      card:      { days: 'cd1-days', hours: 'cd1-hours', mins: 'cd1-mins', secs: 'cd1-secs', wrap: 'card-countdown-1' },
+    },
+  ];
+
+  const els = (ids) => Object.fromEntries(
+    Object.entries(ids).map(([k, id]) => [k, document.getElementById(id)])
+  );
+
+  // Resolve DOM refs once
+  const resolved = targets.map((t) => ({
+    launch:  t.launch,
+    section: t.section  ? document.getElementById(t.section)  : null,
+    badge:   t.badge    ? document.getElementById(t.badge)    : null,
+    main:    t.days     ? els({ days: t.days, hours: t.hours, mins: t.mins, secs: t.secs }) : null,
+    card:    t.card     ? els(t.card) : null,
+  }));
+
   const tick = () => {
-    const now  = new Date();
-    const diff = LAUNCH - now;
+    const now = new Date();
+    let anyActive = false;
 
-    if (diff <= 0) {
-      // Launch day reached — hide countdown elements
-      section.style.display = 'none';
-      if (badge) badge.style.display = 'none';
-      if (cardCountdown) cardCountdown.style.display = 'none';
-      return; // stop ticking
-    }
+    resolved.forEach(({ launch, section, badge, main, card }) => {
+      const diff = launch - now;
 
-    const totalSeconds = Math.floor(diff / 1000);
-    const days    = Math.floor(totalSeconds / 86400);
-    const hours   = Math.floor((totalSeconds % 86400) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+      if (diff <= 0) {
+        if (section) section.style.display = 'none';
+        if (badge)   badge.style.display   = 'none';
+        if (card && card.wrap) card.wrap.style.display = 'none';
+        return;
+      }
 
-    elDays.textContent  = pad(days);
-    elHours.textContent = pad(hours);
-    elMins.textContent  = pad(minutes);
-    elSecs.textContent  = pad(seconds);
+      anyActive = true;
+      const total   = Math.floor(diff / 1000);
+      const days    = Math.floor(total / 86400);
+      const hours   = Math.floor((total % 86400) / 3600);
+      const minutes = Math.floor((total % 3600) / 60);
+      const seconds = total % 60;
 
-    // Mini badge timer: Xd HH:MM:SS
-    if (elBadgeTimer) {
-      elBadgeTimer.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-    }
+      if (main) {
+        if (main.days)  main.days.textContent  = pad(days);
+        if (main.hours) main.hours.textContent = pad(hours);
+        if (main.mins)  main.mins.textContent  = pad(minutes);
+        if (main.secs)  main.secs.textContent  = pad(seconds);
+      }
 
-    // Card overlay timer
-    if (elCardTimer) {
-      elCardTimer.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-    }
+      if (card) {
+        if (card.days)  card.days.textContent  = pad(days);
+        if (card.hours) card.hours.textContent = pad(hours);
+        if (card.mins)  card.mins.textContent  = pad(minutes);
+        if (card.secs)  card.secs.textContent  = pad(seconds);
+      }
+    });
 
-    setTimeout(tick, 1000);
+    if (anyActive) setTimeout(tick, 1000);
   };
 
   tick();

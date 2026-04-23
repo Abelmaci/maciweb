@@ -372,10 +372,7 @@ function initLaunchCountdown() {
       section:   'launch-countdown',
       badge:     'countdown-badge',
     },
-    {
-      launch:    new Date('2026-06-20T00:00:00'),
-      card:      { days: 'cd1-days', hours: 'cd1-hours', mins: 'cd1-mins', secs: 'cd1-secs', wrap: 'card-countdown-1' },
-    },
+
   ];
 
   const els = (ids) => Object.fromEntries(

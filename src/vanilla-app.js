@@ -346,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       e.preventDefault();
       e.stopPropagation();
+      console.log('🎛️ SCRATCH: Started');
     };
 
     const handleMouseMove = (e) => {
@@ -370,8 +371,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentAudio) {
         if (currentAudio.playbackRate && typeof currentAudio.playbackRate.value !== 'undefined') {
           currentAudio.playbackRate.value = scratchSpeed;
+                  console.log(`🎛️ SCRATCH: Speed ${scratchSpeed.toFixed(2)}x (velocity: ${verticalVelocity.toFixed(0)}px/s)`);
         } else if (currentAudio.playbackRate !== undefined) {
           currentAudio.playbackRate = scratchSpeed;
+                  console.log(`🎛️ SCRATCH: Speed ${scratchSpeed.toFixed(2)}x (velocity: ${verticalVelocity.toFixed(0)}px/s)`);
         }
       }
       

@@ -153,11 +153,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Audio Preview Logic with REAL Scratch (ScriptProcessorNode) ---
     try {
       let currentScratchProcessor = null;
-      let lastAngularVel = 0;
-      let lastVelTimestamp = 0;
-      
+      let currentAudioEl = null;
+      let currentDisc = null;
+      let animFrameId = null;
+
+      const updateVinylRotation = () => {
+        if (!currentScratchProcessor || !currentScratchProcessor.isPlaying || !currentDisc) {
+          animFrameId = null;
+          return;
+        }
+        const deg = currentScratchProcessor.getRotationDegrees();
+        currentDisc.style.transform = `rotate(${deg}deg)`;
+        animFrameId = requestAnimationFrame(updateVinylRotation);
+      };
+
       const albumCards = document.querySelectorAll('.album-card');
-      
+
       albumCards.forEach(card => {
         const audioUrl = card.dataset.audio;
         const previewDuration = Number(card.dataset.duration || 30);
@@ -167,30 +178,55 @@ document.addEventListener('DOMContentLoaded', () => {
         const cover = card.querySelector('.album-cover');
         const disc = card.querySelector('.vinyl-disc');
         let previewTimeout = null;
-        
-        // Variables para el scratch
+
         let lastX = 0;
         let lastY = 0;
         let lastScratchTimestamp = 0;
+        let isScratching = false;
+        const SENSITIVITY = 1.8 / (2 * Math.PI);
 
-        const handleEnter = () => {
-          console.log(`🎵 [Card ${id}] Hovering, starting playback`);
-          
-          // Limpiar reproductor anterior
-          if (currentScratchProcessor) {
-            currentScratchProcessor.stop();
-            currentScratchProcessor = null;
+        const startScratchProcessor = () => {
+          if (!window.audioBuffers || !window.audioBuffers[audioUrl]) return false;
+          try {
+            currentScratchProcessor = new ScratchProcessor(window.audioCtx, window.audioBuffers[audioUrl]);
+            currentScratchProcessor.onended = () => {
+              if (currentDisc === disc) {
+                currentDisc = null;
+                if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+                if (disc) disc.classList.add('is-stopping');
+              }
+            };
+            // La rotación la controla JS vía playhead; quitamos la animación CSS
+            if (disc) disc.classList.remove('animate-spin-vinyl');
+            currentScratchProcessor.start();
+            // Reiniciar el loop de rotación (puede haberse detenido durante la carga async)
+            if (!animFrameId) animFrameId = requestAnimationFrame(updateVinylRotation);
+            console.log(`🎵 [Card ${id}] ScratchProcessor started`);
+            previewTimeout = setTimeout(() => {
+              if (currentScratchProcessor) { currentScratchProcessor.stop(); currentScratchProcessor = null; }
+              if (currentDisc === disc) {
+                currentDisc = null;
+                if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+              }
+            }, previewDuration * 1000);
+            return true;
+          } catch (e) {
+            console.warn(`ScratchProcessor failed for card ${id}:`, e);
+            return false;
           }
-          if (previewTimeout) {
-            clearTimeout(previewTimeout);
-            previewTimeout = null;
-          }
-          
-          // UI
+        };
+
+        const handleEnter = async () => {
+          console.log(`🎵 [Card ${id}] Activating card`);
+
+          if (currentScratchProcessor) { currentScratchProcessor.stop(); currentScratchProcessor = null; }
+          if (currentAudioEl) { currentAudioEl.pause(); currentAudioEl.currentTime = 0; currentAudioEl = null; }
+          if (previewTimeout) { clearTimeout(previewTimeout); previewTimeout = null; }
+
+          currentDisc = disc;
           if (disc) {
             disc.classList.remove('is-stopping');
             disc.classList.add('animate-spin-vinyl');
-            disc.style.transform = '';
           }
           vinyl.classList.remove('opacity-0', 'is-stopping');
           vinyl.classList.add('opacity-100');
@@ -198,71 +234,60 @@ document.addEventListener('DOMContentLoaded', () => {
           overlay.classList.remove('opacity-0', 'translate-y-5');
           cover.classList.add('-translate-x-full');
           card.classList.add('is-active');
-          
-          // Inicializar AudioContext si es necesario
+
+          if (!animFrameId) animFrameId = requestAnimationFrame(updateVinylRotation);
+
           if (!window.audioCtx) {
             window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
           }
-          
           if (window.audioCtx.state === 'suspended') {
             window.audioCtx.resume().catch(e => console.warn('AudioContext resume failed:', e));
           }
-          
-          // Crear ScratchProcessor si tenemos el buffer
-          if (window.audioBuffers && window.audioBuffers[audioUrl]) {
+
+          // Decodificar buffer si aún no está en caché
+          window.audioBuffers = window.audioBuffers || {};
+          if (!window.audioBuffers[audioUrl]) {
             try {
-              currentScratchProcessor = new ScratchProcessor(window.audioCtx, window.audioBuffers[audioUrl]);
-              
-              // Callback cuando termina la canción
-              currentScratchProcessor.onended = () => {
-                if (disc) {
-                  disc.classList.remove('animate-spin-vinyl');
-                  disc.classList.add('is-stopping');
-                }
-              };
-              
-              currentScratchProcessor.start();
-              console.log(`🎵 [Card ${id}] ScratchProcessor started`);
-              
-              // Auto-stop después de duration
-              previewTimeout = setTimeout(() => {
-                if (currentScratchProcessor) {
-                  currentScratchProcessor.stop();
-                  currentScratchProcessor = null;
-                }
-              }, previewDuration * 1000);
-              
-              return;
+              const resp = await fetch(audioUrl);
+              const arrayBuf = await resp.arrayBuffer();
+              if (!card.classList.contains('is-active')) return;
+              window.audioBuffers[audioUrl] = await new Promise((res, rej) =>
+                window.audioCtx.decodeAudioData(arrayBuf, res, rej)
+              );
             } catch (e) {
-              console.warn(`ScratchProcessor failed for card ${id}:`, e);
+              console.warn(`[Card ${id}] Audio decode failed:`, e);
             }
           }
-          
-          // Fallback: HTML5 Audio si no hay Web Audio API
+
+          if (!card.classList.contains('is-active')) return;
+
+          if (startScratchProcessor()) return;
+
+          // Fallback HTML5 Audio
           console.log(`⚠️ [Card ${id}] Falling back to HTML5 Audio`);
-          const audioEl = new Audio(audioUrl);
-          audioEl.volume = 0.5;
-          audioEl.play().catch(e => console.warn('Audio play error:', e));
-          
+          currentAudioEl = new Audio(audioUrl);
+          currentAudioEl.volume = 0.5;
+          currentAudioEl.play().catch(e => console.warn('Audio play error:', e));
           previewTimeout = setTimeout(() => {
-            audioEl.pause();
-            audioEl.currentTime = 0;
+            if (currentAudioEl) { currentAudioEl.pause(); currentAudioEl.currentTime = 0; currentAudioEl = null; }
           }, previewDuration * 1000);
         };
 
         const handleLeave = () => {
-          console.log(`🎵 [Card ${id}] Left card`);
-          
-          if (currentScratchProcessor) {
-            currentScratchProcessor.stop();
-            currentScratchProcessor = null;
-          }
-          if (previewTimeout) {
-            clearTimeout(previewTimeout);
-            previewTimeout = null;
-          }
-          
-          // UI reset
+          // Si hay un scratch activo (drag fuera del card), esperar al pointerup
+          if (isScratching) return;
+
+          console.log(`🎵 [Card ${id}] Deactivating card`);
+
+          isScratching = false;
+
+          if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+          if (currentScratchProcessor) { currentScratchProcessor.stop(); currentScratchProcessor = null; }
+          if (currentAudioEl) { currentAudioEl.pause(); currentAudioEl.currentTime = 0; currentAudioEl = null; }
+          if (previewTimeout) { clearTimeout(previewTimeout); previewTimeout = null; }
+
+          currentDisc = null;
+
           if (disc) {
             disc.classList.remove('animate-spin-vinyl', 'is-stopping');
             disc.style.transform = '';
@@ -278,107 +303,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
         card.addEventListener('mouseenter', handleEnter);
         card.addEventListener('mouseleave', handleLeave);
-        
-        // --- SCRATCH EFFECT: Circular drag con atan2 ---
-        const handleMouseDown = (e) => {
+
+        // --- SCRATCH EFFECT ---
+        // Eventos en `card` (no en disc) para evitar que info-overlay (z-20) intercepte
+        const handlePointerDown = (e) => {
           if (!card.classList.contains('is-active') || !currentScratchProcessor) return;
-          
+          if (!e.isPrimary) return;
+          if (e.target.closest('a, button')) return; // permite clics en Spotify, etc.
+
+          isScratching = true;
+          currentScratchProcessor.isScratching = true;
+          currentScratchProcessor.speed = 0;
           lastX = e.clientX;
           lastY = e.clientY;
           lastScratchTimestamp = performance.now();
-          
-          if (disc) {
-            disc.classList.remove('animate-spin-vinyl');
-            disc.classList.add('will-change-transform');
-          }
-          
+
+          card.setPointerCapture(e.pointerId);
           e.preventDefault();
-          e.stopPropagation();
-          console.log('🎛️ SCRATCH: Started');
         };
 
-        const handleMouseMove = (e) => {
-          if (!currentScratchProcessor || !lastScratchTimestamp) return;
-          
+        const handlePointerMove = (e) => {
+          if (!isScratching || !currentScratchProcessor) return;
           e.preventDefault();
-          e.stopPropagation();
-          
-          const now = performance.now();
-          const timeDelta = Math.max((now - lastScratchTimestamp) / 1000, 0.001);
-          
-          // Calcular velocidad angular (atan2)
-          const discRect = disc.getBoundingClientRect();
-          const cx = discRect.left + discRect.width / 2;
-          const cy = discRect.top + discRect.height / 2;
-          
-          const dx1 = lastX - cx;
-          const dy1 = lastY - cy;
-          const dx2 = e.clientX - cx;
-          const dy2 = e.clientY - cy;
-          
-          const angle1 = Math.atan2(dy1, dx1);
-          const angle2 = Math.atan2(dy2, dx2);
-          
+
+          // El centro del disc coincide con el centro del card (disc es w-[94%] centrado)
+          const cardRect = card.getBoundingClientRect();
+          const cx = cardRect.left + cardRect.width / 2;
+          const cy = cardRect.top + cardRect.height / 2;
+
+          const angle1 = Math.atan2(lastY - cy, lastX - cx);
+          const angle2 = Math.atan2(e.clientY - cy, e.clientX - cx);
+
           let angleDelta = angle2 - angle1;
-          // Normalizar a [-π, π]
           if (angleDelta > Math.PI) angleDelta -= 2 * Math.PI;
           if (angleDelta < -Math.PI) angleDelta += 2 * Math.PI;
-          
-          const angularVelocity = angleDelta / timeDelta; // rad/s
-          
-          // Aplicar al scratch
-          currentScratchProcessor.setScratchSpeed(angularVelocity * 0.5); // Escala ajustable
-          
-          // Actualizar rotación visual del disco
-          if (disc) {
-            const rotation = currentScratchProcessor.getRotationDegrees();
-            disc.style.transform = `rotate(${rotation}deg)`;
-          }
-          
+
+          const now = performance.now();
+          const dt = Math.max((now - lastScratchTimestamp) / 1000, 0.001);
+          currentScratchProcessor.speed = (angleDelta / dt) * SENSITIVITY;
+          currentScratchProcessor.isScratching = true;
+
+          if (disc) disc.style.transform = `rotate(${currentScratchProcessor.getRotationDegrees()}deg)`;
+
           lastX = e.clientX;
           lastY = e.clientY;
           lastScratchTimestamp = now;
-          
-          console.log(`🎛️ SCRATCH: AngVel=${angularVelocity.toFixed(2)} rad/s, Rotation=${currentScratchProcessor.getRotationDegrees().toFixed(0)}°`);
         };
 
-        const handleMouseUp = (e) => {
-          if (!currentScratchProcessor) return;
-          
-          // Aplicar fricción: el audio se "congela" y desacelera
-          currentScratchProcessor.applyFriction();
-          
-          // Después de 500ms, liberar para que motor vuelva a 1.0x
-          setTimeout(() => {
-            if (currentScratchProcessor) {
-              currentScratchProcessor.release();
-              // Reanudar rotación del disco
-              if (disc && card.classList.contains('is-active')) {
-                disc.classList.add('animate-spin-vinyl');
-                disc.classList.remove('will-change-transform');
-              }
-            }
-          }, 500);
-          
-          if (e) {
-            e.preventDefault();
+        const handlePointerUp = () => {
+          if (!isScratching || !currentScratchProcessor) return;
+          isScratching = false;
+          currentScratchProcessor.isScratching = false;
+          // Si el ratón salió de la tarjeta mientras se rascaba, limpiamos ahora
+          if (!card.matches(':hover')) handleLeave();
+        };
+
+        card.addEventListener('pointerdown', handlePointerDown);
+        card.addEventListener('pointermove', handlePointerMove);
+        card.addEventListener('pointerup', handlePointerUp);
+        card.addEventListener('pointercancel', handlePointerUp);
+
+        // --- MÓVIL: botón fingerprint activa/desactiva el vinilo ---
+        const mobileBtn = card.querySelector('.mobile-touch-btn');
+        if (mobileBtn) {
+          mobileBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-          }
-          
-          lastScratchTimestamp = 0;
-          console.log('🎛️ SCRATCH: Released (friction applied)');
-        };
-
-        card.addEventListener('mousedown', handleMouseDown);
-        document.addEventListener('mousemove', handleMouseMove, true);
-        document.addEventListener('mouseup', handleMouseUp);
-        
-        // Touch support
-        card.addEventListener('touchstart', handleMouseDown);
-        document.addEventListener('touchmove', handleMouseMove, true);
-        document.addEventListener('touchend', handleMouseUp);
+            if (card.classList.contains('is-active')) {
+              handleLeave();
+            } else {
+              handleEnter();
+            }
+          });
+        }
       });
-      
+
     } catch (e) {
       console.warn('Audio preview logic error (non-critical):', e);
     }

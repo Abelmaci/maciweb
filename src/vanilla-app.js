@@ -183,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const disc = card.querySelector('.vinyl-disc');
         if (disc) {
           disc.classList.remove('is-stopping');
-          // Simply add class - no forced reflows
           disc.classList.add('animate-spin-vinyl');
         }
         vinyl.classList.remove('opacity-0', 'is-stopping');
@@ -305,9 +304,8 @@ document.addEventListener('DOMContentLoaded', () => {
           currentAudio.disconnect(); 
         } catch(e) {}
         try {
-          // Safely abort playback without triggering AbortError warning
-          currentAudio.src = ''; // Clear source to prevent playback
-          currentAudio.load(); // Reset to initial state
+          currentAudio.src = ''; 
+          currentAudio.load(); 
         } catch(e) {}
         currentAudio = null;
       }
@@ -318,7 +316,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const disc = card.querySelector('.vinyl-disc');
       if (disc) {
         disc.classList.remove('animate-spin-vinyl', 'is-stopping');
-        // No inline styles - let CSS handle it
+        disc.style.transform = '';
+        disc.style.transition = '';
       }
       vinyl.classList.remove('opacity-100');
       vinyl.classList.add('opacity-0');
@@ -331,59 +330,75 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('mouseenter', handleEnter);
     card.addEventListener('mouseleave', handleLeave);
     
-    // Scratch effect: drag to rotate vinyl with sound
+    // Scratch effect: circular drag to manipulate vinyl speed
     let isScratching = false;
-    let lastX = 0;
-    let scratchRotation = 0;
+    let lastAngle = 0;
+    let lastTimestamp = 0;
+
+    function getAngleAtPoint(e) {
+      const disc = card.querySelector('.vinyl-disc');
+      if (!disc) return 0;
+      const rect = disc.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      return Math.atan2(e.clientY - cy, e.clientX - cx);
+    }
+
+    function normalizeAngleDelta(da) {
+      if (da > Math.PI) da -= 2 * Math.PI;
+      if (da < -Math.PI) da += 2 * Math.PI;
+      return da;
+    }
 
     const handleMouseDown = (e) => {
       if (!card.classList.contains('is-active')) return;
       isScratching = true;
-      lastX = e.clientX || e.touches?.[0]?.clientX || 0;
+      lastAngle = getAngleAtPoint(e);
+      lastTimestamp = performance.now();
       const disc = card.querySelector('.vinyl-disc');
       if (disc) {
         disc.classList.remove('animate-spin-vinyl');
       }
+      e.preventDefault();
+      e.stopPropagation();
     };
 
     const handleMouseMove = (e) => {
       if (!isScratching) return;
-      const currentX = e.clientX || e.touches?.[0]?.clientX || 0;
-      const deltaX = currentX - lastX;
+      e.preventDefault();
+      e.stopPropagation();
+      const currentAngle = getAngleAtPoint(e);
+      const now = performance.now();
+      let angleDelta = currentAngle - lastAngle;
+      angleDelta = normalizeAngleDelta(angleDelta);
       
-      // Calculate rotation: horizontal movement controls rotation
-      scratchRotation += deltaX * 2;
+      const timeDelta = Math.max((now - lastTimestamp) / 1000, 0.001);
+      const angularVelocity = angleDelta / timeDelta; // rad/s
       
-      const disc = card.querySelector('.vinyl-disc');
-      if (disc) {
-        disc.style.transform = `rotate(${scratchRotation}deg)`;
-        disc.style.transition = 'none';
-      }
+      // Map angular velocity to playback rate (0.5x to 2x)
+      const scratchSpeed = Math.max(0.5, Math.min(2, 1 + angularVelocity * 0.5));
       
-      // Apply pitch effect to currently playing audio
+      // Apply to current audio
       if (currentAudio) {
-        // Map horizontal movement to playback rate (scratch effect)
-        const scratchSpeed = (deltaX / 50) * 1.5; // Control sensitivity
-        const newPlaybackRate = Math.max(0.5, Math.min(2, 1 + scratchSpeed));
-        
-        // Handle Web Audio BufferSource
         if (currentAudio.playbackRate && typeof currentAudio.playbackRate.value !== 'undefined') {
-          currentAudio.playbackRate.value = newPlaybackRate;
-        }
-        // Handle HTML5 Audio element
-        else if (currentAudio.playbackRate !== undefined) {
-          currentAudio.playbackRate = newPlaybackRate;
+          currentAudio.playbackRate.value = scratchSpeed;
+        } else if (currentAudio.playbackRate !== undefined) {
+          currentAudio.playbackRate = scratchSpeed;
         }
       }
       
-      lastX = currentX;
+      lastAngle = currentAngle;
+      lastTimestamp = now;
     };
 
-    const handleMouseUp = () => {
+    const handleMouseUp = (e) => {
       if (!isScratching) return;
       isScratching = false;
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       
-      // Restore normal playback speed
       if (currentAudio) {
         if (currentAudio.playbackRate && typeof currentAudio.playbackRate.value !== 'undefined') {
           currentAudio.playbackRate.value = 1;
@@ -394,7 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const disc = card.querySelector('.vinyl-disc');
       if (disc && card.classList.contains('is-active')) {
-        disc.style.transition = '';
         disc.classList.add('animate-spin-vinyl');
       }
     };
@@ -412,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const touchBtn = card.querySelector('.mobile-touch-btn');
     if (touchBtn) {
       touchBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent card-level events
+        e.stopPropagation();
         if (!card.classList.contains('is-active')) {
           handleEnter();
         } else {

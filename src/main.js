@@ -106,8 +106,24 @@ function initSplashLoader() {
 
   window.audioBuffers = window.audioBuffers || {};
 
-  audioSources.forEach(() => {
-    updateProgress(true);
+  const preloadedAudioContainer = document.createElement('div');
+  preloadedAudioContainer.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;';
+  document.body.appendChild(preloadedAudioContainer);
+
+  audioSources.forEach((src) => {
+    const audio = document.createElement('audio');
+    audio.preload = 'auto';
+    audio.muted = true;
+    audio.playsInline = true;
+    audio.src = src;
+    audio.style.display = 'none';
+
+    const finish = () => updateProgress(true);
+    audio.addEventListener('canplaythrough', finish, { once: true });
+    audio.addEventListener('loadedmetadata', finish, { once: true });
+    audio.addEventListener('error', finish, { once: true });
+
+    preloadedAudioContainer.appendChild(audio);
   });
 
   const initAudioContextOnce = (() => {

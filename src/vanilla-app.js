@@ -361,9 +361,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const timeDelta = Math.max((now - lastTimestamp) / 1000, 0.001);
       const verticalVelocity = yDelta / timeDelta; // pixels per second
       
-      // Map vertical movement to playback rate
-      // Base speed 1.0, up to ±50px/s changes rate by ±0.5
-      const scratchSpeed = Math.max(0.5, Math.min(2, 1 + verticalVelocity * 0.01));
+      // Map vertical movement to playback rate (more sensitive: 0.03 for dramatic effect)
+      // Moving up (negative velocity) = faster (up to 2x)
+      // Moving down (positive velocity) = slower (down to 0.5x)
+      const scratchSpeed = Math.max(0.5, Math.min(2, 1 + verticalVelocity * 0.03));
       
       // Apply to current audio
       if (currentAudio) {

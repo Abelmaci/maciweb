@@ -331,6 +331,83 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('mouseenter', handleEnter);
     card.addEventListener('mouseleave', handleLeave);
     
+    // Scratch effect: drag to rotate vinyl with sound
+    let isScratching = false;
+    let lastX = 0;
+    let scratchRotation = 0;
+
+    const handleMouseDown = (e) => {
+      if (!card.classList.contains('is-active')) return;
+      isScratching = true;
+      lastX = e.clientX || e.touches?.[0]?.clientX || 0;
+      const disc = card.querySelector('.vinyl-disc');
+      if (disc) {
+        disc.classList.remove('animate-spin-vinyl');
+      }
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isScratching) return;
+      const currentX = e.clientX || e.touches?.[0]?.clientX || 0;
+      const deltaX = currentX - lastX;
+      
+      // Calculate rotation: horizontal movement controls rotation
+      scratchRotation += deltaX * 2;
+      
+      const disc = card.querySelector('.vinyl-disc');
+      if (disc) {
+        disc.style.transform = `rotate(${scratchRotation}deg)`;
+        disc.style.transition = 'none';
+      }
+      
+      // Apply pitch effect to currently playing audio
+      if (currentAudio) {
+        // Map horizontal movement to playback rate (scratch effect)
+        const scratchSpeed = (deltaX / 50) * 1.5; // Control sensitivity
+        const newPlaybackRate = Math.max(0.5, Math.min(2, 1 + scratchSpeed));
+        
+        // Handle Web Audio BufferSource
+        if (currentAudio.playbackRate && typeof currentAudio.playbackRate.value !== 'undefined') {
+          currentAudio.playbackRate.value = newPlaybackRate;
+        }
+        // Handle HTML5 Audio element
+        else if (currentAudio.playbackRate !== undefined) {
+          currentAudio.playbackRate = newPlaybackRate;
+        }
+      }
+      
+      lastX = currentX;
+    };
+
+    const handleMouseUp = () => {
+      if (!isScratching) return;
+      isScratching = false;
+      
+      // Restore normal playback speed
+      if (currentAudio) {
+        if (currentAudio.playbackRate && typeof currentAudio.playbackRate.value !== 'undefined') {
+          currentAudio.playbackRate.value = 1;
+        } else if (currentAudio.playbackRate !== undefined) {
+          currentAudio.playbackRate = 1;
+        }
+      }
+      
+      const disc = card.querySelector('.vinyl-disc');
+      if (disc && card.classList.contains('is-active')) {
+        disc.style.transition = '';
+        disc.classList.add('animate-spin-vinyl');
+      }
+    };
+
+    card.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    
+    // Touch support
+    card.addEventListener('touchstart', handleMouseDown);
+    document.addEventListener('touchmove', handleMouseMove);
+    document.addEventListener('touchend', handleMouseUp);
+    
     // Mobile Support: Only trigger when clicking the specific touch hint button
     const touchBtn = card.querySelector('.mobile-touch-btn');
     if (touchBtn) {

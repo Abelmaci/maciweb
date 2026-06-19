@@ -1,5 +1,5 @@
-
 import { SandCanvas } from './vanilla-sand.js';
+import { ScratchProcessor } from './scratch-processor.js';
 import EmblaCarousel from 'https://esm.sh/embla-carousel@8.0.0?min';
 import Autoplay from 'https://esm.sh/embla-carousel-autoplay@8.0.0?min';
 
@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         // --- Initialize Lucide Icons ---
         if (window.lucide) {
-          // Targeted icon creation instead of full-DOM scan to save Main Thread work
           const containers = ['nav', '#inicio', '.embla', 'footer'];
           containers.forEach(selector => {
             const el = document.querySelector(selector);
@@ -18,12 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
-        // --- SandCanvas Initialization - DEFERRED to reduce main thread blocking ---
+        // --- SandCanvas Initialization - DEFERRED ---
         const initSandCanvas = () => {
           const heroCanvas = document.getElementById('hero-canvas');
           if (heroCanvas) {
-            // Build image URL dynamically at runtime to prevent preload scanner detection
-            // This avoids unnecessary preload attempts for lazy-loaded banner image
             const HERO_IMAGE = ['images', 'Banner-MACI-optimized', 'webp'].join('/').replace('/webp', '.webp');
             try {
               new SandCanvas(heroCanvas, HERO_IMAGE);
@@ -33,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         };
         
-        // Defer sand canvas to after DOM interactions (2500ms)
         if ('requestIdleCallback' in window) {
           requestIdleCallback(initSandCanvas, { timeout: 3000 });
         } else {
@@ -44,8 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    // Run initializations ONLY after the splash screen is fully faded (e.g. 800ms)
-    // this prevents the heavy particle engine from competing with the splash animation.
     setTimeout(initApp, 800);
 
     // --- Navigation Scroll Effect ---
@@ -84,12 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
           skipSnaps: false
         }, [autoplay]);
 
-        // Cache dots array to avoid repeated querySelectorAll
         let dotsCache = [];
         
         const updateDots = () => {
           const selectedIndex = emblaApi.selectedScrollSnap();
-          // Batch DOM updates - only update changed dots
           dotsCache.forEach((dot, index) => {
             if (index === selectedIndex) {
               if (!dot.classList.contains('is-active')) {
@@ -109,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .map((_, index) => `<button class="embla__dot" aria-label="Go to snap ${index + 1}"></button>`)
             .join('');
           
-          // Cache dots after creation
           dotsCache = Array.from(dotContainer.querySelectorAll('.embla__dot'));
           
           dotsCache.forEach((dot, index) => {
@@ -123,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
         createDots();
         updateDots();
         
-        // Smooth real-time tracking - throttled
         let lastDotUpdate = 0;
         const throttledUpdateDots = () => {
           const now = Date.now();
@@ -139,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
           updateDots();
         });
 
-        // Pause autoplay on hover, resume on leave
         emblaNode.addEventListener('mouseenter', () => {
           autoplay.stop();
         });
@@ -161,379 +150,297 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn('Carousel initialization error (non-critical):', e);
     }
 
-    // --- Audio Preview Logic ---
+    // --- Audio Preview Logic with REAL Scratch (ScriptProcessorNode) ---
     try {
-      let currentAudio = null;
+      let currentScratchProcessor = null;
+      let lastAngularVel = 0;
+      let lastVelTimestamp = 0;
+      
       const albumCards = document.querySelectorAll('.album-card');
-  
-  albumCards.forEach(card => {
-    const audioUrl = card.dataset.audio;
-    const previewDuration = Number(card.dataset.duration || 30);
-    const id = card.dataset.id;
-    const vinyl = card.querySelector('.vinyl-record');
-    const overlay = card.querySelector('.info-overlay');
-    const cover = card.querySelector('.album-cover');
-    let previewTimeout = null;
-
-    const handleEnter = () => {
-      console.log("Entering card", id);
       
-      // Helper function to update UI for playback
-      const updateUIForPlayback = () => {
+      albumCards.forEach(card => {
+        const audioUrl = card.dataset.audio;
+        const previewDuration = Number(card.dataset.duration || 30);
+        const id = card.dataset.id;
+        const vinyl = card.querySelector('.vinyl-record');
+        const overlay = card.querySelector('.info-overlay');
+        const cover = card.querySelector('.album-cover');
         const disc = card.querySelector('.vinyl-disc');
-        if (disc) {
-          disc.classList.remove('is-stopping');
-          disc.classList.add('animate-spin-vinyl');
-        }
-        vinyl.classList.remove('opacity-0', 'is-stopping');
-        vinyl.classList.add('opacity-100');
-        overlay.classList.add('opacity-100', 'translate-y-0');
-        overlay.classList.remove('opacity-0', 'translate-y-5');
-        cover.classList.add('-translate-x-full');
-        card.classList.add('is-active');
-      };
-      
-      // Start vinyl rotation immediately on hover
-      updateUIForPlayback();
-      
-      // Stop and clean up any currently playing source
-      if (currentAudio) {
-        try { currentAudio.stop(); } catch(e) {}
-        try { currentAudio.disconnect(); } catch(e) {}
-        try { currentAudio.src = ''; currentAudio.load(); } catch(e) {}
-        currentAudio = null;
-      }
-      if (previewTimeout) {
-        clearTimeout(previewTimeout);
-        previewTimeout = null;
-      }
-      
-      // Ensure AudioContext is ready before playback
-      if (window.audioCtx) {
-        if (window.audioCtx.state === 'suspended') {
-          window.audioCtx.resume().catch(e => console.warn('AudioContext resume failed:', e));
-        }
+        let previewTimeout = null;
         
-        // Try Web Audio API first (lower latency)
-        if (window.audioBuffers && window.audioBuffers[audioUrl]) {
-          try {
-            currentAudio = window.audioCtx.createBufferSource();
-            currentAudio.buffer = window.audioBuffers[audioUrl];
-            
-            // Volume control
-            const gainNode = window.audioCtx.createGain();
-            gainNode.gain.value = 0.5;
-            
-            currentAudio.connect(gainNode);
-            gainNode.connect(window.audioCtx.destination);
-            
-            currentAudio.onended = () => {
-              const disc = card.querySelector('.vinyl-disc');
-              if (disc) {
-                disc.classList.remove('animate-spin-vinyl');
-                requestAnimationFrame(() => {
-                  disc.classList.add('is-stopping');
-                });
-              }
-            };
-            
-            currentAudio.start(0);
-            previewTimeout = setTimeout(() => {
-              if (currentAudio) {
-                try { currentAudio.stop(); } catch(e) {}
-              }
-            }, previewDuration * 1000);
-            return; // Web Audio success
-          } catch (e) {
-            console.warn('Web Audio playback failed, falling back to HTML Audio:', e);
-          }
-        }
-      }
-      
-      // Fallback to HTML5 Audio
-      currentAudio = new Audio(audioUrl);
-      currentAudio.volume = 0.5;
-      currentAudio.onended = () => {
-        const disc = card.querySelector('.vinyl-disc');
-        if (disc) {
-          disc.classList.remove('animate-spin-vinyl');
-          requestAnimationFrame(() => {
-            disc.classList.add('is-stopping');
-          });
-        }
-      };
-      
-      const playPromise = currentAudio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            if (currentAudio && currentAudio.src === audioUrl) {
-              // UI already updated on hover
-            }
-          })
-          .catch(e => {
-            if (e.name !== 'NotAllowedError' && e.name !== 'AbortError') {
-              console.warn('Audio playback error:', e);
-            }
-          });
-      }
+        // Variables para el scratch
+        let lastX = 0;
+        let lastY = 0;
+        let lastScratchTimestamp = 0;
 
-      previewTimeout = setTimeout(() => {
-        if (currentAudio) {
-          try {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-          } catch (e) {}
-          const disc = card.querySelector('.vinyl-disc');
+        const handleEnter = () => {
+          console.log(`🎵 [Card ${id}] Hovering, starting playback`);
+          
+          // Limpiar reproductor anterior
+          if (currentScratchProcessor) {
+            currentScratchProcessor.stop();
+            currentScratchProcessor = null;
+          }
+          if (previewTimeout) {
+            clearTimeout(previewTimeout);
+            previewTimeout = null;
+          }
+          
+          // UI
+          if (disc) {
+            disc.classList.remove('is-stopping');
+            disc.classList.add('animate-spin-vinyl');
+            disc.style.transform = '';
+          }
+          vinyl.classList.remove('opacity-0', 'is-stopping');
+          vinyl.classList.add('opacity-100');
+          overlay.classList.add('opacity-100', 'translate-y-0');
+          overlay.classList.remove('opacity-0', 'translate-y-5');
+          cover.classList.add('-translate-x-full');
+          card.classList.add('is-active');
+          
+          // Inicializar AudioContext si es necesario
+          if (!window.audioCtx) {
+            window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          
+          if (window.audioCtx.state === 'suspended') {
+            window.audioCtx.resume().catch(e => console.warn('AudioContext resume failed:', e));
+          }
+          
+          // Crear ScratchProcessor si tenemos el buffer
+          if (window.audioBuffers && window.audioBuffers[audioUrl]) {
+            try {
+              currentScratchProcessor = new ScratchProcessor(window.audioCtx, window.audioBuffers[audioUrl]);
+              
+              // Callback cuando termina la canción
+              currentScratchProcessor.onended = () => {
+                if (disc) {
+                  disc.classList.remove('animate-spin-vinyl');
+                  disc.classList.add('is-stopping');
+                }
+              };
+              
+              currentScratchProcessor.start();
+              console.log(`🎵 [Card ${id}] ScratchProcessor started`);
+              
+              // Auto-stop después de duration
+              previewTimeout = setTimeout(() => {
+                if (currentScratchProcessor) {
+                  currentScratchProcessor.stop();
+                  currentScratchProcessor = null;
+                }
+              }, previewDuration * 1000);
+              
+              return;
+            } catch (e) {
+              console.warn(`ScratchProcessor failed for card ${id}:`, e);
+            }
+          }
+          
+          // Fallback: HTML5 Audio si no hay Web Audio API
+          console.log(`⚠️ [Card ${id}] Falling back to HTML5 Audio`);
+          const audioEl = new Audio(audioUrl);
+          audioEl.volume = 0.5;
+          audioEl.play().catch(e => console.warn('Audio play error:', e));
+          
+          previewTimeout = setTimeout(() => {
+            audioEl.pause();
+            audioEl.currentTime = 0;
+          }, previewDuration * 1000);
+        };
+
+        const handleLeave = () => {
+          console.log(`🎵 [Card ${id}] Left card`);
+          
+          if (currentScratchProcessor) {
+            currentScratchProcessor.stop();
+            currentScratchProcessor = null;
+          }
+          if (previewTimeout) {
+            clearTimeout(previewTimeout);
+            previewTimeout = null;
+          }
+          
+          // UI reset
+          if (disc) {
+            disc.classList.remove('animate-spin-vinyl', 'is-stopping');
+            disc.style.transform = '';
+            disc.style.transition = '';
+          }
+          vinyl.classList.remove('opacity-100');
+          vinyl.classList.add('opacity-0');
+          overlay.classList.remove('opacity-100', 'translate-y-0');
+          overlay.classList.add('opacity-0', 'translate-y-5');
+          cover.classList.remove('-translate-x-full');
+          card.classList.remove('is-active');
+        };
+
+        card.addEventListener('mouseenter', handleEnter);
+        card.addEventListener('mouseleave', handleLeave);
+        
+        // --- SCRATCH EFFECT: Circular drag con atan2 ---
+        const handleMouseDown = (e) => {
+          if (!card.classList.contains('is-active') || !currentScratchProcessor) return;
+          
+          lastX = e.clientX;
+          lastY = e.clientY;
+          lastScratchTimestamp = performance.now();
+          
           if (disc) {
             disc.classList.remove('animate-spin-vinyl');
-            requestAnimationFrame(() => {
-              disc.classList.add('is-stopping');
-            });
+            disc.classList.add('will-change-transform');
           }
-        }
-      }, previewDuration * 1000);
-    };
+          
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('🎛️ SCRATCH: Started');
+        };
 
-    const handleLeave = () => {
-      if (currentAudio) {
-        try { 
-          currentAudio.stop(); 
-        } catch(e) {}
-        try { 
-          currentAudio.disconnect(); 
-        } catch(e) {}
-        try {
-          currentAudio.src = ''; 
-          currentAudio.load(); 
-        } catch(e) {}
-        currentAudio = null;
-      }
-      if (previewTimeout) {
-        clearTimeout(previewTimeout);
-        previewTimeout = null;
-      }
-      const disc = card.querySelector('.vinyl-disc');
-      if (disc) {
-        disc.classList.remove('animate-spin-vinyl', 'is-stopping');
-        disc.style.transform = '';
-        disc.style.transition = '';
-      }
-      vinyl.classList.remove('opacity-100');
-      vinyl.classList.add('opacity-0');
-      overlay.classList.remove('opacity-100', 'translate-y-0');
-      overlay.classList.add('opacity-0', 'translate-y-5');
-      cover.classList.remove('-translate-x-full');
-      card.classList.remove('is-active');
-    };
+        const handleMouseMove = (e) => {
+          if (!currentScratchProcessor || !lastScratchTimestamp) return;
+          
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const now = performance.now();
+          const timeDelta = Math.max((now - lastScratchTimestamp) / 1000, 0.001);
+          
+          // Calcular velocidad angular (atan2)
+          const discRect = disc.getBoundingClientRect();
+          const cx = discRect.left + discRect.width / 2;
+          const cy = discRect.top + discRect.height / 2;
+          
+          const dx1 = lastX - cx;
+          const dy1 = lastY - cy;
+          const dx2 = e.clientX - cx;
+          const dy2 = e.clientY - cy;
+          
+          const angle1 = Math.atan2(dy1, dx1);
+          const angle2 = Math.atan2(dy2, dx2);
+          
+          let angleDelta = angle2 - angle1;
+          // Normalizar a [-π, π]
+          if (angleDelta > Math.PI) angleDelta -= 2 * Math.PI;
+          if (angleDelta < -Math.PI) angleDelta += 2 * Math.PI;
+          
+          const angularVelocity = angleDelta / timeDelta; // rad/s
+          
+          // Aplicar al scratch
+          currentScratchProcessor.setScratchSpeed(angularVelocity * 0.5); // Escala ajustable
+          
+          // Actualizar rotación visual del disco
+          if (disc) {
+            const rotation = currentScratchProcessor.getRotationDegrees();
+            disc.style.transform = `rotate(${rotation}deg)`;
+          }
+          
+          lastX = e.clientX;
+          lastY = e.clientY;
+          lastScratchTimestamp = now;
+          
+          console.log(`🎛️ SCRATCH: AngVel=${angularVelocity.toFixed(2)} rad/s, Rotation=${currentScratchProcessor.getRotationDegrees().toFixed(0)}°`);
+        };
 
-    card.addEventListener('mouseenter', handleEnter);
-    card.addEventListener('mouseleave', handleLeave);
-    
-    // Scratch effect: vertical drag to manipulate vinyl speed (up = fast, down = slow)
-    let isScratching = false;
-    let lastY = 0;
-    let lastTimestamp = 0;
+        const handleMouseUp = (e) => {
+          if (!currentScratchProcessor) return;
+          
+          // Aplicar fricción: el audio se "congela" y desacelera
+          currentScratchProcessor.applyFriction();
+          
+          // Después de 500ms, liberar para que motor vuelva a 1.0x
+          setTimeout(() => {
+            if (currentScratchProcessor) {
+              currentScratchProcessor.release();
+              // Reanudar rotación del disco
+              if (disc && card.classList.contains('is-active')) {
+                disc.classList.add('animate-spin-vinyl');
+                disc.classList.remove('will-change-transform');
+              }
+            }
+          }, 500);
+          
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          
+          lastScratchTimestamp = 0;
+          console.log('🎛️ SCRATCH: Released (friction applied)');
+        };
 
-    const handleMouseDown = (e) => {
-      if (!card.classList.contains('is-active')) return;
-      isScratching = true;
-      lastY = e.clientY;
-      lastTimestamp = performance.now();
-      const disc = card.querySelector('.vinyl-disc');
-      if (disc) {
-        disc.classList.remove('animate-spin-vinyl');
-      }
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('🎛️ SCRATCH: Started');
-    };
-
-    const handleMouseMove = (e) => {
-      if (!isScratching) return;
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const currentY = e.clientY;
-      const now = performance.now();
-      
-      // Calculate vertical velocity (negative = moving up, positive = moving down)
-      const yDelta = lastY - currentY;  // Invert: up is negative in screen coords
-      const timeDelta = Math.max((now - lastTimestamp) / 1000, 0.001);
-      const verticalVelocity = yDelta / timeDelta; // pixels per second
-      
-      // Map vertical movement to playback rate (more sensitive: 0.03 for dramatic effect)
-      // Moving up (negative velocity) = faster (up to 2x)
-      // Moving down (positive velocity) = slower (down to 0.5x)
-      const scratchSpeed = Math.max(0.5, Math.min(2, 1 + verticalVelocity * 0.03));
-      
-      // Apply to current audio
-      if (currentAudio) {
-        if (currentAudio.playbackRate && typeof currentAudio.playbackRate.value !== 'undefined') {
-          currentAudio.playbackRate.value = scratchSpeed;
-                  console.log(`🎛️ SCRATCH: Speed ${scratchSpeed.toFixed(2)}x (velocity: ${verticalVelocity.toFixed(0)}px/s)`);
-        } else if (currentAudio.playbackRate !== undefined) {
-          currentAudio.playbackRate = scratchSpeed;
-                  console.log(`🎛️ SCRATCH: Speed ${scratchSpeed.toFixed(2)}x (velocity: ${verticalVelocity.toFixed(0)}px/s)`);
-        }
-      }
-      
-      lastY = currentY;
-      lastTimestamp = now;
-    };
-
-    const handleMouseUp = (e) => {
-      if (!isScratching) return;
-      isScratching = false;
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      
-      if (currentAudio) {
-        if (currentAudio.playbackRate && typeof currentAudio.playbackRate.value !== 'undefined') {
-          currentAudio.playbackRate.value = 1;
-        } else if (currentAudio.playbackRate !== undefined) {
-          currentAudio.playbackRate = 1;
-        }
-      }
-      
-      const disc = card.querySelector('.vinyl-disc');
-      if (disc && card.classList.contains('is-active')) {
-        disc.classList.add('animate-spin-vinyl');
-      }
-    };
-
-    card.addEventListener('mousedown', handleMouseDown);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    
-    // Touch support
-    card.addEventListener('touchstart', handleMouseDown);
-    document.addEventListener('touchmove', handleMouseMove);
-    document.addEventListener('touchend', handleMouseUp);
-    
-    // Mobile Support: Only trigger when clicking the specific touch hint button
-    const touchBtn = card.querySelector('.mobile-touch-btn');
-    if (touchBtn) {
-      touchBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!card.classList.contains('is-active')) {
-          handleEnter();
-        } else {
-          handleLeave();
-        }
+        card.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('mousemove', handleMouseMove, true);
+        document.addEventListener('mouseup', handleMouseUp);
+        
+        // Touch support
+        card.addEventListener('touchstart', handleMouseDown);
+        document.addEventListener('touchmove', handleMouseMove, true);
+        document.addEventListener('touchend', handleMouseUp);
       });
-    }
-
-    // Also toggle off if clicking the overlay while active
-    overlay.addEventListener('click', () => {
-      if (card.classList.contains('is-active')) {
-        handleLeave();
-      }
-    });
-  });
+      
     } catch (e) {
       console.warn('Audio preview logic error (non-critical):', e);
     }
 
-  // --- Intersection Observer for Animations ---
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
+    // --- Intersection Observer for Animations ---
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
-      if (entry.isIntersecting) {
-        // Faster reveal on mobile
-        const delay = isMobile ? 0 : 20;
-        setTimeout(() => {
-          entry.target.classList.add('animate-in');
-        }, delay); 
-        observer.unobserve(entry.target);
-      }
-    });
-  }, observerOptions);
-
-  document.querySelectorAll('.reveal').forEach((el) => {
-    observer.observe(el);
-  });
-
-  // --- Optimized Scroll Handling with geometric caching and lazy parallax initialization ---
-  let isScrollTicking = false;
-  let parallaxEnabled = false; // Defer parallax until after LCP
-  const isMobileDevice = window.matchMedia('(max-width: 768px)').matches;
-  const bioItems = Array.from(document.querySelectorAll('.bio-data-text')).map(el => ({
-    element: el,
-    parent: el.parentElement,
-    top: 0,
-    height: 0
-  }));
-
-  const updateGeometricCache = () => {
-    bioItems.forEach(item => {
-      item.top = item.parent.offsetTop;
-      item.height = item.parent.offsetHeight;
-    });
-  };
-
-  // Enable parallax after LCP (1500ms safe window)
-  const enableParallax = () => {
-    if (!parallaxEnabled) {
-      parallaxEnabled = true;
-      updateGeometricCache();
-      // Only add will-change AFTER parallax is enabled and cached
-      bioItems.forEach(item => {
-        item.element.style.willChange = 'transform';
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          const delay = isMobile ? 0 : 20;
+          setTimeout(() => {
+            entry.target.classList.add('animate-in');
+          }, delay); 
+          observer.unobserve(entry.target);
+        }
       });
-    }
-  };
-  
-  // Defer parallax initialization if requestIdleCallback available
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(() => setTimeout(enableParallax, 1200), { timeout: 3000 });
-  } else {
-    setTimeout(enableParallax, 1500);
-  }
+    }, observerOptions);
 
-  window.addEventListener('resize', () => {
-    if (parallaxEnabled) updateGeometricCache();
-  }, { passive: true });
-  
-  // OPTIMIZED: Throttle scroll to 10 FPS max (100ms), not 60 FPS
-  let lastScrollTime = 0;
-  const SCROLL_THROTTLE = 100; // ms between scroll updates
-  
-  window.addEventListener('scroll', () => {
-    const now = Date.now();
-    if (now - lastScrollTime < SCROLL_THROTTLE) return;
-    lastScrollTime = now;
-    
-    if (!parallaxEnabled) return;
-    
-    const scrolled = window.scrollY || window.pageYOffset;
-    
-    // Hero Parallax - Reduced effect on mobile, using transform3d for GPU acceleration
-    const heroContent = document.querySelector('#inicio .max-w-7xl');
-    if (heroContent) {
-      const parallaxStrength = isMobileDevice ? 0.15 : 0.3;
-      heroContent.style.transform = `translate3d(0, ${scrolled * parallaxStrength}px, 0)`;
-      heroContent.style.opacity = 1 - (scrolled / 700);
-    }
-
-    // Bio Parallax - Using Memory Cache (ZERO READS to DOM), throttled
-    const viewportBottom = scrolled + window.innerHeight;
-    const parallaxRange = isMobileDevice ? 100 : 200;
-    bioItems.forEach(item => {
-      if (viewportBottom > item.top && scrolled < item.top + item.height) {
-        const progress = (viewportBottom - item.top) / (window.innerHeight + item.height);
-        item.element.style.transform = `translate3d(0, ${(progress - 0.5) * parallaxRange}px, 0)`;
-      }
+    document.querySelectorAll('.reveal').forEach((el) => {
+      observer.observe(el);
     });
-  }, { passive: true });
+
+    // --- Optimized Scroll Handling ---
+    let isScrollTicking = false;
+    let parallaxEnabled = false;
+    const isMobileDevice = window.matchMedia('(max-width: 768px)').matches;
+    const bioItems = Array.from(document.querySelectorAll('.bio-data-text')).map(el => ({
+      element: el,
+      parent: el.parentElement,
+      top: 0,
+      height: 0
+    }));
+
+    const updateGeometricCache = () => {
+      bioItems.forEach(item => {
+        item.top = item.parent.offsetTop;
+        item.height = item.parent.offsetHeight;
+      });
+    };
+
+    const enableParallax = () => {
+      if (!parallaxEnabled) {
+        parallaxEnabled = true;
+        updateGeometricCache();
+        bioItems.forEach(item => {
+          item.element.style.willChange = 'transform';
+        });
+      }
+    };
+    
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(enableParallax, 1200), { timeout: 3000 });
+    } else {
+      setTimeout(enableParallax, 1500);
+    }
+
   } catch (e) {
-    console.error('DOMContentLoaded handler error:', e);
+    console.error('Critical error in app initialization:', e);
   }
 });

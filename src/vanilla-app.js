@@ -330,30 +330,15 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('mouseenter', handleEnter);
     card.addEventListener('mouseleave', handleLeave);
     
-    // Scratch effect: circular drag to manipulate vinyl speed
+    // Scratch effect: vertical drag to manipulate vinyl speed (up = fast, down = slow)
     let isScratching = false;
-    let lastAngle = 0;
+    let lastY = 0;
     let lastTimestamp = 0;
-
-    function getAngleAtPoint(e) {
-      const disc = card.querySelector('.vinyl-disc');
-      if (!disc) return 0;
-      const rect = disc.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      return Math.atan2(e.clientY - cy, e.clientX - cx);
-    }
-
-    function normalizeAngleDelta(da) {
-      if (da > Math.PI) da -= 2 * Math.PI;
-      if (da < -Math.PI) da += 2 * Math.PI;
-      return da;
-    }
 
     const handleMouseDown = (e) => {
       if (!card.classList.contains('is-active')) return;
       isScratching = true;
-      lastAngle = getAngleAtPoint(e);
+      lastY = e.clientY;
       lastTimestamp = performance.now();
       const disc = card.querySelector('.vinyl-disc');
       if (disc) {
@@ -367,16 +352,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isScratching) return;
       e.preventDefault();
       e.stopPropagation();
-      const currentAngle = getAngleAtPoint(e);
+      
+      const currentY = e.clientY;
       const now = performance.now();
-      let angleDelta = currentAngle - lastAngle;
-      angleDelta = normalizeAngleDelta(angleDelta);
       
+      // Calculate vertical velocity (negative = moving up, positive = moving down)
+      const yDelta = lastY - currentY;  // Invert: up is negative in screen coords
       const timeDelta = Math.max((now - lastTimestamp) / 1000, 0.001);
-      const angularVelocity = angleDelta / timeDelta; // rad/s
+      const verticalVelocity = yDelta / timeDelta; // pixels per second
       
-      // Map angular velocity to playback rate (0.5x to 2x)
-      const scratchSpeed = Math.max(0.5, Math.min(2, 1 + angularVelocity * 0.5));
+      // Map vertical movement to playback rate
+      // Base speed 1.0, up to ±50px/s changes rate by ±0.5
+      const scratchSpeed = Math.max(0.5, Math.min(2, 1 + verticalVelocity * 0.01));
       
       // Apply to current audio
       if (currentAudio) {
@@ -387,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       
-      lastAngle = currentAngle;
+      lastY = currentY;
       lastTimestamp = now;
     };
 

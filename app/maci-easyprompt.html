@@ -79,6 +79,7 @@
     position:sticky;top:var(--topbar-h, 53px);z-index:40;
     background:var(--bg);
     border-bottom:1px solid var(--border);
+    box-shadow:0 -6px 0 0 var(--bg); /* cubre el hueco de subpíxel con el topbar */
   }
   .results-inner{max-width:880px;margin:0 auto;padding:14px 24px;display:flex;flex-direction:column;gap:10px}
 
@@ -106,11 +107,6 @@
 
   @media(max-width:700px){
     /* pegar al topbar sin gap de subpíxel */
-    .results{
-      top:calc(var(--topbar-h, 53px) - 1px);
-      padding-top:1px;
-    }
-
     /* pill compacto */
     .results-pill{
       display:flex;align-items:center;gap:8px;

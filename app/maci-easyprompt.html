@@ -79,46 +79,60 @@
     position:sticky;top:var(--topbar-h, 53px);z-index:40;
     background:var(--bg);
     border-bottom:1px solid var(--border);
-    transition:border-color .2s;
   }
   .results-inner{max-width:880px;margin:0 auto;padding:14px 24px;display:flex;flex-direction:column;gap:10px}
 
   /* ── MOBILE COLLAPSE ─────────────────── */
-  .results-pill{
-    display:none; /* only mobile */
-    align-items:center;gap:10px;
-    padding:11px 20px;cursor:pointer;
-    max-width:880px;margin:0 auto;width:100%;
-  }
+  .results-pill{display:none}
+
   .pill-icon{
-    width:28px;height:28px;border-radius:50%;
+    width:20px;height:20px;border-radius:50%;
     background:var(--grad);
     display:flex;align-items:center;justify-content:center;
-    font-size:12px;flex-shrink:0;
+    font-size:10px;flex-shrink:0;
   }
   .pill-label{font-size:13px;font-weight:600;color:var(--text);flex:1}
   .pill-preview{
     font-size:11px;color:var(--faint);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    max-width:120px;font-family:'SF Mono',ui-monospace,monospace;
+    max-width:130px;font-family:'SF Mono',ui-monospace,monospace;
   }
   .pill-arrow{
-    font-size:11px;color:var(--muted);flex-shrink:0;
-    transition:transform .2s;
+    flex-shrink:0;color:#fff;
+    transition:transform .22s ease;
+    display:flex;align-items:center;
   }
   .results.collapsed .pill-arrow{transform:rotate(-90deg)}
 
   @media(max-width:700px){
-    .results-pill{display:flex}
-    .results.collapsed .results-inner{
-      display:none;
+    /* pegar al topbar sin gap de subpíxel */
+    .results{
+      top:calc(var(--topbar-h, 53px) - 1px);
+      padding-top:1px;
     }
-    .results:not(.collapsed) .results-pill{
-      border-bottom:1px solid var(--border);
-      padding-bottom:10px;
+
+    /* pill compacto */
+    .results-pill{
+      display:flex;align-items:center;gap:8px;
+      width:100%;padding:6px 16px;cursor:pointer;
+      box-sizing:border-box;
     }
-    .results.collapsed{
-      border-bottom-color:var(--border);
+    .results:not(.collapsed) .results-pill{border-bottom:1px solid var(--border);}
+
+    /* grid trick solo en móvil */
+    .results-anim-wrap{
+      display:grid;
+      grid-template-rows:1fr;
+      width:100%;
+      transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+      opacity:1;
+    }
+    .results-anim-wrap > .results-inner{
+      min-height:0;overflow:hidden;width:100%;
+    }
+    .results.collapsed .results-anim-wrap{
+      grid-template-rows:0fr;
+      opacity:0;
     }
   }
   .out-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
@@ -292,9 +306,9 @@
     <div class="pill-icon">📋</div>
     <span class="pill-label" data-i18n-es="Ver tu prompt" data-i18n-en="View your prompt">Ver tu prompt</span>
     <span class="pill-preview" id="pill-preview">—</span>
-    <span class="pill-arrow">▼</span>
+    <span class="pill-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
   </div>
-  <div class="results-inner">
+  <div class="results-anim-wrap"><div class="results-inner">
     <div class="out-card">
       <div class="out-head">
         <span class="out-tag style">Prompt</span>
@@ -313,7 +327,7 @@
       </div>
       <textarea class="out-text" id="o-neg" readonly data-i18n-ph="neg_ph" placeholder="Se genera automáticamente…"></textarea>
     </div>
-  </div>
+  </div></div><!-- /results-anim-wrap -->
 </div>
 
 <!-- CONTROLS -->
@@ -483,84 +497,72 @@
 <script src="./src-easyprompt/ui.js"></script>
 <script>
 (function(){
-  var bar     = document.getElementById('results-bar');
-  var pill    = document.getElementById('results-pill');
-  var preview = document.getElementById('pill-preview');
-  var topbar  = document.querySelector('.topbar');
-  var isMobile = function(){ return window.innerWidth <= 700; };
-  var SCROLL_THRESHOLD = 80;
-  var userOverride = null;
+  var bar    = document.getElementById('results-bar');
+  var pill   = document.getElementById('results-pill');
+  var prev   = document.getElementById('pill-preview');
+  var topbar = document.querySelector('.topbar');
+  var pinned = false; // true cuando el usuario ha abierto manualmente
 
-  function syncTopbarHeight(){
-    if(topbar){
-      document.documentElement.style.setProperty('--topbar-h', topbar.offsetHeight + 'px');
+  /* ── topbar height ── */
+  function syncTop(){
+    if(topbar) document.documentElement.style.setProperty('--topbar-h', topbar.offsetHeight+'px');
+  }
+  syncTop();
+  window.addEventListener('resize', syncTop);
+
+  /* ── preview text ── */
+  function refreshPreview(){
+    var t = (document.getElementById('o-style')||{}).value||'';
+    prev.textContent = t.trim() ? t.slice(0,42)+(t.length>42?'…':'') : '—';
+  }
+
+  /* ── auto-resize textareas on mobile ── */
+  function resizeAreas(){
+    if(window.innerWidth > 700) return;
+    document.querySelectorAll('.out-text').forEach(function(ta){
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    });
+  }
+
+  /* ── collapse / expand ── */
+  function collapse(){ bar.classList.add('collapsed'); refreshPreview(); }
+  function expand(){   bar.classList.remove('collapsed'); refreshPreview(); requestAnimationFrame(resizeAreas); }
+
+  /* ── pill click: toggle ── */
+  pill.addEventListener('click', function(){
+    if(bar.classList.contains('collapsed')){
+      pinned = true;
+      expand();
+    } else {
+      pinned = false;
+      collapse();
     }
-  }
-  syncTopbarHeight();
-  window.addEventListener('resize', syncTopbarHeight);
+  });
 
-  function autoResizeTextarea(ta){
-    if(!isMobile()) return;
-    ta.style.height = 'auto';
-    ta.style.height = ta.scrollHeight + 'px';
-  }
-
-  function autoResizeAll(){
-    document.querySelectorAll('.out-text').forEach(autoResizeTextarea);
-  }
-
-  function updatePreview(){
-    var t = (document.getElementById('o-style')||{}).value || '';
-    preview.textContent = t.trim() ? t.slice(0,40) + (t.length > 40 ? '…' : '') : '—';
-    autoResizeAll();
-  }
-
-  function setCollapsed(collapsed){
-    if(collapsed){ bar.classList.add('collapsed'); }
-    else {
-      bar.classList.remove('collapsed');
-      // Re-measure after display:none → display:flex transition
-      requestAnimationFrame(autoResizeAll);
-    }
-    updatePreview();
-  }
-
-  // Scroll handler: auto-collapse on scroll down, respect manual override
+  /* ── scroll: auto-collapse after threshold ── */
   window.addEventListener('scroll', function(){
-    if(!isMobile()) return;
-    var scrolled = window.scrollY > SCROLL_THRESHOLD;
-    if(userOverride === null){
-      setCollapsed(scrolled);
-    } else if(!scrolled){
-      // Back at top: reset override so auto-mode resumes
-      userOverride = null;
-      setCollapsed(false);
+    if(window.innerWidth > 700) return;
+    if(window.scrollY > 80){
+      if(!pinned) collapse();
+    } else {
+      pinned = false;
+      expand();
     }
   }, {passive:true});
 
-  // Tap pill: toggle manually
-  pill.addEventListener('click', function(){
-    var nowCollapsed = bar.classList.contains('collapsed');
-    userOverride = nowCollapsed; // if expanding, mark as forced open
-    setCollapsed(!nowCollapsed);
-    updatePreview();
-  });
-
-  // Intercept .value setter on readonly textareas so auto-resize fires when ui.js updates them
+  /* ── intercept value writes from ui.js ── */
   ['o-style','o-neg'].forEach(function(id){
     var ta = document.getElementById(id);
     if(!ta) return;
-    var proto = Object.getPrototypeOf(ta);
-    var desc  = Object.getOwnPropertyDescriptor(proto, 'value');
+    var desc = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(ta), 'value');
     Object.defineProperty(ta, 'value', {
       get: function(){ return desc.get.call(this); },
-      set: function(v){
-        desc.set.call(this, v);
-        updatePreview();
-      }
+      set: function(v){ desc.set.call(this, v); refreshPreview(); resizeAreas(); }
     });
   });
-  updatePreview();
+
+  refreshPreview();
 })();
 </script>
 </body>

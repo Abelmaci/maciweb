@@ -139,6 +139,11 @@
     font-family:'SF Mono',ui-monospace,Menlo,monospace;min-height:24px;
     max-height:26vh;overflow-y:auto;
   }
+  @media(max-width:700px){
+    .out-text{
+      max-height:none;overflow-y:hidden;
+    }
+  }
   .out-text::-webkit-scrollbar,#lyr-input::-webkit-scrollbar,#lyr-output::-webkit-scrollbar{width:8px}
   .out-text::-webkit-scrollbar-thumb,#lyr-input::-webkit-scrollbar-thumb,#lyr-output::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px}
 
@@ -494,14 +499,29 @@
   syncTopbarHeight();
   window.addEventListener('resize', syncTopbarHeight);
 
+  function autoResizeTextarea(ta){
+    if(!isMobile()) return;
+    ta.style.height = 'auto';
+    ta.style.height = ta.scrollHeight + 'px';
+  }
+
+  function autoResizeAll(){
+    document.querySelectorAll('.out-text').forEach(autoResizeTextarea);
+  }
+
   function updatePreview(){
     var t = (document.getElementById('o-style')||{}).value || '';
     preview.textContent = t.trim() ? t.slice(0,40) + (t.length > 40 ? '…' : '') : '—';
+    autoResizeAll();
   }
 
   function setCollapsed(collapsed){
     if(collapsed){ bar.classList.add('collapsed'); }
-    else { bar.classList.remove('collapsed'); }
+    else {
+      bar.classList.remove('collapsed');
+      // Re-measure after display:none → display:flex transition
+      requestAnimationFrame(autoResizeAll);
+    }
     updatePreview();
   }
 
@@ -526,12 +546,20 @@
     updatePreview();
   });
 
-  // Keep preview in sync when prompt updates
-  var styleArea = document.getElementById('o-style');
-  if(styleArea){
-    styleArea.addEventListener('input', updatePreview);
-    new MutationObserver(updatePreview).observe(styleArea, {attributes:true, childList:true, subtree:true, characterData:true});
-  }
+  // Intercept .value setter on readonly textareas so auto-resize fires when ui.js updates them
+  ['o-style','o-neg'].forEach(function(id){
+    var ta = document.getElementById(id);
+    if(!ta) return;
+    var proto = Object.getPrototypeOf(ta);
+    var desc  = Object.getOwnPropertyDescriptor(proto, 'value');
+    Object.defineProperty(ta, 'value', {
+      get: function(){ return desc.get.call(this); },
+      set: function(v){
+        desc.set.call(this, v);
+        updatePreview();
+      }
+    });
+  });
   updatePreview();
 })();
 </script>

@@ -76,11 +76,51 @@
 
   /* ── OUTPUT (sticky result) ───────────── */
   .results{
-    position:sticky;top:53px;z-index:40;
+    position:sticky;top:var(--topbar-h, 53px);z-index:40;
     background:var(--bg);
     border-bottom:1px solid var(--border);
+    transition:border-color .2s;
   }
   .results-inner{max-width:880px;margin:0 auto;padding:14px 24px;display:flex;flex-direction:column;gap:10px}
+
+  /* ── MOBILE COLLAPSE ─────────────────── */
+  .results-pill{
+    display:none; /* only mobile */
+    align-items:center;gap:10px;
+    padding:11px 20px;cursor:pointer;
+    max-width:880px;margin:0 auto;width:100%;
+  }
+  .pill-icon{
+    width:28px;height:28px;border-radius:50%;
+    background:var(--grad);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;flex-shrink:0;
+  }
+  .pill-label{font-size:13px;font-weight:600;color:var(--text);flex:1}
+  .pill-preview{
+    font-size:11px;color:var(--faint);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    max-width:120px;font-family:'SF Mono',ui-monospace,monospace;
+  }
+  .pill-arrow{
+    font-size:11px;color:var(--muted);flex-shrink:0;
+    transition:transform .2s;
+  }
+  .results.collapsed .pill-arrow{transform:rotate(-90deg)}
+
+  @media(max-width:700px){
+    .results-pill{display:flex}
+    .results.collapsed .results-inner{
+      display:none;
+    }
+    .results:not(.collapsed) .results-pill{
+      border-bottom:1px solid var(--border);
+      padding-bottom:10px;
+    }
+    .results.collapsed{
+      border-bottom-color:var(--border);
+    }
+  }
   .out-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
   .out-head{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border)}
   .out-tag{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:20px}
@@ -241,7 +281,14 @@
 </div>
 
 <!-- RESULTS (sticky) -->
-<div class="results">
+<div class="results" id="results-bar">
+  <!-- Mobile collapse toggle -->
+  <div class="results-pill" id="results-pill">
+    <div class="pill-icon">📋</div>
+    <span class="pill-label" data-i18n-es="Ver tu prompt" data-i18n-en="View your prompt">Ver tu prompt</span>
+    <span class="pill-preview" id="pill-preview">—</span>
+    <span class="pill-arrow">▼</span>
+  </div>
   <div class="results-inner">
     <div class="out-card">
       <div class="out-head">
@@ -429,5 +476,64 @@
 
 <script src="./src-easyprompt/data.js"></script>
 <script src="./src-easyprompt/ui.js"></script>
+<script>
+(function(){
+  var bar     = document.getElementById('results-bar');
+  var pill    = document.getElementById('results-pill');
+  var preview = document.getElementById('pill-preview');
+  var topbar  = document.querySelector('.topbar');
+  var isMobile = function(){ return window.innerWidth <= 700; };
+  var SCROLL_THRESHOLD = 80;
+  var userOverride = null;
+
+  function syncTopbarHeight(){
+    if(topbar){
+      document.documentElement.style.setProperty('--topbar-h', topbar.offsetHeight + 'px');
+    }
+  }
+  syncTopbarHeight();
+  window.addEventListener('resize', syncTopbarHeight);
+
+  function updatePreview(){
+    var t = (document.getElementById('o-style')||{}).value || '';
+    preview.textContent = t.trim() ? t.slice(0,40) + (t.length > 40 ? '…' : '') : '—';
+  }
+
+  function setCollapsed(collapsed){
+    if(collapsed){ bar.classList.add('collapsed'); }
+    else { bar.classList.remove('collapsed'); }
+    updatePreview();
+  }
+
+  // Scroll handler: auto-collapse on scroll down, respect manual override
+  window.addEventListener('scroll', function(){
+    if(!isMobile()) return;
+    var scrolled = window.scrollY > SCROLL_THRESHOLD;
+    if(userOverride === null){
+      setCollapsed(scrolled);
+    } else if(!scrolled){
+      // Back at top: reset override so auto-mode resumes
+      userOverride = null;
+      setCollapsed(false);
+    }
+  }, {passive:true});
+
+  // Tap pill: toggle manually
+  pill.addEventListener('click', function(){
+    var nowCollapsed = bar.classList.contains('collapsed');
+    userOverride = nowCollapsed; // if expanding, mark as forced open
+    setCollapsed(!nowCollapsed);
+    updatePreview();
+  });
+
+  // Keep preview in sync when prompt updates
+  var styleArea = document.getElementById('o-style');
+  if(styleArea){
+    styleArea.addEventListener('input', updatePreview);
+    new MutationObserver(updatePreview).observe(styleArea, {attributes:true, childList:true, subtree:true, characterData:true});
+  }
+  updatePreview();
+})();
+</script>
 </body>
 </html>

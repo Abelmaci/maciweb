@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MACI EasyPrompt — Generador de prompts para Suno</title>
+<meta name="description" content="Genera prompts de estilo y negativos optimizados para Suno AI. Selecciona género, instrumentos, voces, mood y producción. Herramienta gratuita de MACI.">
+<meta name="theme-color" content="#0a0a0c">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://macimusic.es/app/maci-easyprompt.html">
+<meta property="og:title" content="MACI EasyPrompt — Generador de prompts para Suno">
+<meta property="og:description" content="Genera prompts de estilo y negativos optimizados para Suno AI. Herramienta gratuita de MACI.">
+<meta property="og:image" content="https://macimusic.es/images/og-image.jpg">
+<link rel="icon" href="../images/MaciLogo.svg" type="image/svg+xml">
+<link rel="canonical" href="https://macimusic.es/app/maci-easyprompt.html">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CZ95R97TWB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-CZ95R97TWB');
+</script>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0c;
+    --panel:#161619;
+    --panel-2:#1e1e22;
+    --text:#f3f3f5;
+    --muted:#b1b1ba;
+    --faint:#8b8b95;
+    --border:#27272d;
+    --border-strong:#3a3a42;
+    --sel:#f5793b;
+    --sel-text:#120a06;
+    --accent:#f5793b;
+    --accent-2:#ff4d8d;
+    --accent-soft:rgba(245,121,59,.16);
+    --grad:linear-gradient(100deg,#f5793b,#ff4d8d);
+    --blue:#5b8def;
+    --green:#3ecf8e;
+    --radius:14px;
+    --radius-sm:9px;
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Helvetica,sans-serif;
+  }
+  html,body{background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  body{padding-bottom:80px}
+
+  /* ── HEADER ───────────────────────────── */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,10,12,.82);backdrop-filter:saturate(160%) blur(14px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{max-width:880px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:10px}
+  .brand-logo{height:28px;width:auto;margin-right:auto;display:block}
+  .ghost-btn{
+    background:transparent;border:1px solid var(--border-strong);color:var(--muted);
+    border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;transition:.15s;
+    text-decoration:none;display:inline-flex;align-items:center;gap:5px;
+  }
+  .ghost-btn:hover{background:var(--panel);color:var(--text)}
+  .lang-switch{display:inline-flex;border:1px solid var(--border-strong);border-radius:8px;overflow:hidden}
+  .lang-switch button{background:transparent;border:none;color:var(--muted);padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;transition:.13s}
+  .lang-switch button:first-child{border-right:1px solid var(--border-strong)}
+  .lang-switch button.on{background:var(--sel);color:var(--sel-text)}
+  .lang-switch button:not(.on):hover{color:var(--text)}
+  .chip.has-star{display:inline-flex;align-items:center;gap:7px}
+  .lead-star{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+    font-size:12px;line-height:1;cursor:pointer;border:none;background:rgba(0,0,0,.25);color:var(--sel-text);opacity:.7;transition:.12s;flex-shrink:0}
+  .lead-star:hover{opacity:1;background:rgba(0,0,0,.4)}
+  .lead-star.on{background:var(--accent-2);color:#fff;opacity:1;box-shadow:0 0 0 2px rgba(255,77,141,.4)}
+  .chip.lead{box-shadow:0 0 0 2px var(--accent-2)}
+
+  /* ── OUTPUT (sticky result) ───────────── */
+  .results{
+    position:sticky;top:53px;z-index:40;
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+  }
+  .results-inner{max-width:880px;margin:0 auto;padding:14px 24px;display:flex;flex-direction:column;gap:10px}
+  .out-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+  .out-head{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border)}
+  .out-tag{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:20px}
+  .out-tag.style{background:var(--grad);color:#fff}
+  .out-tag.neg{background:rgba(255,77,141,.16);color:#ff7aa8}
+  .out-title{font-size:13px;font-weight:600;flex:1;color:var(--text)}
+  .count{font-size:11px;font-weight:600;color:var(--faint);font-variant-numeric:tabular-nums}
+  .count.warn{color:var(--accent)}
+  .count.err{color:#ff5a5a}
+  .copy-btn{background:var(--grad);border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+  .copy-btn:hover{opacity:.88}
+  .copy-btn.ok{background:var(--green);color:#08130d}
+  .out-text{
+    width:100%;background:transparent;border:none;color:var(--text);
+    padding:11px 13px;font-size:13px;line-height:1.6;resize:none;outline:none;
+    font-family:'SF Mono',ui-monospace,Menlo,monospace;min-height:24px;
+    max-height:26vh;overflow-y:auto;
+  }
+  .out-text::-webkit-scrollbar,#lyr-input::-webkit-scrollbar,#lyr-output::-webkit-scrollbar{width:8px}
+  .out-text::-webkit-scrollbar-thumb,#lyr-input::-webkit-scrollbar-thumb,#lyr-output::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px}
+
+  /* ── PAGE COLUMN ──────────────────────── */
+  .col{max-width:880px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:26px}
+
+  .block{display:flex;flex-direction:column;gap:11px}
+  .block-head{display:flex;align-items:baseline;gap:8px}
+  .block-title{font-size:14px;font-weight:600;letter-spacing:-.1px}
+  .block-hint{font-size:12px;color:var(--muted)}
+  .block-icon{font-size:15px}
+
+  .search{position:relative}
+  .search input{
+    width:100%;background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:9px 12px 9px 32px;font-size:13px;color:var(--text);outline:none;transition:.15s;
+  }
+  .search input:focus{border-color:var(--border-strong)}
+  .search .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:14px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{
+    background:var(--panel);border:1px solid var(--border);color:var(--text);
+    border-radius:20px;padding:6px 13px;font-size:13px;cursor:pointer;transition:.13s;
+    user-select:none;white-space:nowrap;
+  }
+  .chip:hover{border-color:var(--border-strong);background:var(--panel-2)}
+  .chip.on{background:var(--sel);border-color:var(--sel);color:var(--sel-text);font-weight:600}
+  .chip.small{padding:5px 11px;font-size:12px}
+  .chip.custom{border-style:dashed;display:inline-flex;align-items:center;gap:6px}
+  .chip-del{background:none;border:none;color:inherit;opacity:.55;font-size:14px;line-height:1;cursor:pointer;padding:0}
+  .chip-del:hover{opacity:1}
+
+  .cat-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--faint);margin:6px 0 2px}
+
+  .tray{display:flex;flex-direction:column;gap:7px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:11px}
+  .tray.empty{align-items:center;color:var(--faint);font-size:12px;font-style:italic;padding:14px}
+  .tray-row{display:flex;align-items:center;gap:10px}
+  .tray-name{font-size:13px;font-weight:600;flex:1}
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .seg button{background:var(--panel);border:none;border-right:1px solid var(--border);padding:4px 10px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:.12s}
+  .seg button:last-child{border-right:none}
+  .seg button.on{background:var(--sel);color:var(--sel-text)}
+  .seg button.on.fusion{background:var(--accent-2);color:#fff}
+  .seg button.on.influence{background:var(--blue);color:#fff}
+  .x{background:none;border:none;color:var(--faint);font-size:17px;cursor:pointer;line-height:1;padding:0 2px}
+  .x:hover{color:#ff5a5a}
+
+  .orch{display:flex;flex-direction:column;gap:6px}
+  .orch-item{display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;cursor:pointer;transition:.13s;text-align:left}
+  .orch-item:hover{border-color:var(--border-strong)}
+  .orch-item.on{border-color:var(--sel);background:var(--accent-soft)}
+  .orch-n{width:24px;height:24px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0}
+  .orch-item.on .orch-n{background:var(--sel);border-color:var(--sel);color:var(--sel-text)}
+  .orch-l{font-size:13px;font-weight:600;flex:1;color:var(--text)}
+  .orch-s{font-size:12px;color:var(--muted)}
+
+  .slider-wrap{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .slider-ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:10px}
+  input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--border-strong);border-radius:2px;outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--panel);border:2px solid var(--sel);box-shadow:0 1px 4px rgba(0,0,0,.15);cursor:pointer}
+  .slider-val{text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--text)}
+
+  .bpm-row{display:flex;align-items:center;gap:10px;margin-top:4px;font-size:13px;color:var(--muted)}
+  .bpm-row input[type=number]{width:74px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:13px;font-weight:600;text-align:center;color:var(--text);outline:none}
+  .bpm-row input[type=number]:disabled{opacity:.4}
+  .bpm-row input[type=checkbox],.toggle input{accent-color:var(--sel);cursor:pointer}
+
+  .toggle{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer}
+  .lyr-palette{display:flex;flex-direction:column;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:12px}
+  .pal-group{display:flex;flex-direction:column;gap:6px}
+  .adlib{background:var(--bg);border:1px solid var(--border-strong);border-radius:16px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text);font-family:'SF Mono',ui-monospace,monospace;transition:.12s}
+  .adlib:hover{border-color:var(--accent);color:var(--accent)}
+  .adlib.struct{color:var(--accent);border-color:var(--accent)}
+  .adlib.struct:hover{background:var(--accent-soft)}
+  .adlib.voice{border-style:dashed;color:var(--blue);border-color:var(--blue)}
+  .adlib.voice:hover{background:rgba(91,141,239,.12)}
+
+  .pal-add{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:10px}
+  .pal-add input{flex:1;min-width:150px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:13px;outline:none}
+  .pal-add input:focus{border-color:var(--border-strong)}
+  .pal-add .seg button{padding:6px 11px;font-size:12px}
+
+  .lyr-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  @media(max-width:740px){.lyr-grid{grid-template-columns:1fr}}
+  .lyr-pane{background:var(--panel);border:1px solid var(--border);border-radius:11px;overflow:hidden;display:flex;flex-direction:column}
+  .lyr-pane.cover-off{opacity:.6}
+  .lyr-pane-head{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--border);background:var(--panel-2)}
+  .lyr-pane-title{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);flex:1;display:flex;align-items:center;gap:6px}
+  .help{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--border-strong);color:var(--muted);font-size:10px;font-weight:700;cursor:help}
+  #lyr-input{width:100%;border:none;outline:none;resize:vertical;background:transparent;color:var(--text);font-family:'SF Mono',ui-monospace,monospace;font-size:13px;line-height:1.7;padding:12px;min-height:280px}
+  #lyr-input::placeholder{color:var(--faint)}
+  #lyr-output{padding:12px;font-family:'SF Mono',ui-monospace,monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--text);min-height:280px;max-height:60vh;overflow-y:auto}
+  #lyr-output.empty{color:var(--faint);font-style:italic;font-family:inherit}
+  .lyr-note{font-size:12px;color:var(--muted);line-height:1.55;background:var(--accent-soft);border-radius:9px;padding:9px 11px;border-left:2px solid var(--accent)}
+
+  .extra-input{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--text);outline:none}
+  .extra-input:focus{border-color:var(--border-strong)}
+
+  .divider{height:1px;background:var(--border);margin:2px 0}
+
+  .app-footer{text-align:center;padding:34px 0 6px}
+  .coffee-btn{display:inline-flex;align-items:center;gap:8px;background:var(--grad);color:#fff;border:none;border-radius:24px;
+    padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s;box-shadow:0 4px 18px rgba(245,121,59,.28)}
+  .coffee-btn:hover{opacity:.92;transform:translateY(-1px)}
+  .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(5px);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-ov.show{display:flex}
+  .modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;max-width:380px;width:100%;padding:26px 24px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.6)}
+  .modal .big{font-size:42px;margin-bottom:6px}
+  .modal h3{font-size:18px;font-weight:700;margin-bottom:8px}
+  .modal p{font-size:14px;color:var(--muted);margin-bottom:18px}
+  .modal .go{display:inline-block;background:var(--grad);color:#fff;text-decoration:none;border-radius:10px;padding:12px 24px;font-weight:600;font-size:14px;transition:.15s}
+  .modal .go:hover{opacity:.92}
+  .modal .secure{margin-top:16px;font-size:11.5px;color:var(--faint);line-height:1.5}
+  .modal .close{display:block;margin:14px auto 0;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer}
+  .modal .close:hover{color:var(--text)}
+
+  #tooltip{position:fixed;z-index:2000;max-width:280px;background:#000;border:1px solid var(--border-strong);
+    color:var(--text);font-size:12px;line-height:1.45;padding:8px 11px;border-radius:8px;
+    pointer-events:none;opacity:0;transform:translateY(-2px);transition:opacity .12s,transform .12s;
+    box-shadow:0 8px 28px rgba(0,0,0,.55)}
+  #tooltip.show{opacity:1;transform:translateY(0)}
+  .help{cursor:help}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <img class="brand-logo" src="./imagenes-easyprompt/MACi easyprompt.svg" alt="MACI EasyPrompt" width="1807" height="570">
+    <a href="https://macimusic.es" class="ghost-btn" aria-label="Volver a macimusic.es">
+      ← MACI
+    </a>
+    <div class="lang-switch" id="lang-switch" data-i18n-tip="lang_tip">
+      <button data-lang="es" class="on">ES</button>
+      <button data-lang="en">EN</button>
+    </div>
+    <button class="ghost-btn" id="reset" data-i18n="reset" data-i18n-tip="reset_tip">Reiniciar</button>
+  </div>
+</div>
+
+<!-- RESULTS (sticky) -->
+<div class="results">
+  <div class="results-inner">
+    <div class="out-card">
+      <div class="out-head">
+        <span class="out-tag style">Prompt</span>
+        <span class="out-title" data-i18n="style_title">Estilo</span>
+        <span class="count" id="c-style">0/1000</span>
+        <button class="copy-btn" id="cp-style" data-i18n="copy">Copiar</button>
+      </div>
+      <textarea class="out-text" id="o-style" readonly data-i18n-ph="style_ph" placeholder="Configura los parámetros abajo…"></textarea>
+    </div>
+    <div class="out-card">
+      <div class="out-head">
+        <span class="out-tag neg" data-i18n="neg_tag">Negativo</span>
+        <span class="out-title" data-i18n="avoid_title">Evitar</span>
+        <span class="count" id="c-neg">0/250</span>
+        <button class="copy-btn" id="cp-neg" data-i18n="copy">Copiar</button>
+      </div>
+      <textarea class="out-text" id="o-neg" readonly data-i18n-ph="neg_ph" placeholder="Se genera automáticamente…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="col">
+
+  <!-- GÉNERO -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">🎼</span><span class="block-title" data-i18n="genre_title">Género / ritmo</span><span class="block-hint" data-i18n="multi_hint">selección múltiple</span><span class="help" data-i18n-tip="genre_help">?</span></div>
+    <div class="search"><span class="ic">⌕</span><input id="g-search" data-i18n-ph="genre_search_ph" placeholder="Buscar género o ritmo…"></div>
+    <div class="tray empty" id="g-tray"><span data-i18n="genre_tray_empty">Toca un género para añadirlo</span></div>
+    <div class="chips" id="g-custom-row" style="gap:7px">
+      <input class="extra-input" id="g-custom" data-i18n-ph="genre_custom_ph" placeholder="¿No está en la lista? Escríbelo y pulsa Enter — se guarda para el futuro" style="flex:1">
+    </div>
+    <div id="g-list"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- INSTRUMENTOS -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">🎸</span><span class="block-title" data-i18n="inst_title">Instrumentos</span><span class="block-hint" data-i18n="multi_hint">selección múltiple</span><span class="help" data-i18n-tip="inst_help">?</span></div>
+    <input class="extra-input" id="inst-custom" data-i18n-ph="inst_custom_ph" placeholder="¿Falta un instrumento? Escríbelo y pulsa Enter — se guarda para el futuro">
+    <div class="lyr-note" data-i18n="inst_lead_hint" style="border-left-color:var(--accent-2)">Toca la estrella ★ de un instrumento ya seleccionado para marcarlo como líder (el protagonista).</div>
+    <div id="inst-list"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ORQUESTACIÓN -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">🎻</span><span class="block-title" data-i18n="orch_title">Orquestación</span><span class="help" data-i18n-tip="orch_help">?</span></div>
+    <div class="orch" id="orch"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SONIDO -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">🎛️</span><span class="block-title" data-i18n="sound_title">Carácter del sonido</span><span class="help" data-i18n-tip="sound_help">?</span></div>
+    <div class="slider-wrap">
+      <div class="slider-ends"><span data-i18n="sound_left">Acústico · orgánico</span><span data-i18n="sound_right">Electrónico · tecnológico</span></div>
+      <input type="range" id="sound" min="0" max="100" step="5" value="50" data-i18n-tip="sound_slider_tip">
+      <div class="slider-val" id="sound-lbl">Híbrido acústico-eléctrico</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TEMPO -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">🥁</span><span class="block-title" data-i18n="tempo_title">Tempo</span></div>
+    <div class="chips" id="tempo"></div>
+    <div class="bpm-row">
+      <label class="toggle" data-i18n-tip="bpm_tip"><input type="checkbox" id="bpm-on"> <span data-i18n="bpm_label">BPM exacto</span></label>
+      <input type="number" id="bpm" min="20" max="300" value="120" disabled data-i18n-tip="bpm_input_tip">
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- VOCES -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">🎤</span><span class="block-title" data-i18n="voices_title">Voces</span><span class="help" data-i18n-tip="voices_help">?</span></div>
+
+    <div class="cat-label" data-i18n="lead_voice">Voz líder</div>
+    <div class="chips" id="lead-type"></div>
+
+    <div id="lead-style-wrap">
+      <div class="cat-label" data-i18n="lead_style">Estilo de la voz líder · múltiple</div>
+      <div class="chips" id="lead-style"></div>
+    </div>
+
+    <div id="extra-voices">
+      <label class="toggle"><input type="checkbox" id="second-on"> <span data-i18n="second_add">Añadir segunda voz</span></label>
+      <div class="chips" id="second-type" style="display:none"></div>
+
+      <label class="toggle" style="margin-top:4px"><input type="checkbox" id="choir-on"> <span data-i18n="choir_add">Añadir coros</span></label>
+      <div class="chips" id="choir-type" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MOOD -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">🌙</span><span class="block-title" data-i18n="mood_title">Estado de ánimo</span><span class="block-hint" data-i18n="mood_hint">hasta 3</span></div>
+    <div class="chips" id="moods"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PRODUCCIÓN -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">🎚️</span><span class="block-title" data-i18n="prod_title">Producción</span></div>
+    <div class="chips" id="prod"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- EXTRA -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">✏️</span><span class="block-title" data-i18n="extra_title">Descriptores extra</span><span class="block-hint" data-i18n="extra_hint">en inglés, opcional</span><span class="help" data-i18n-tip="extra_help">?</span></div>
+    <input class="extra-input" id="extra" data-i18n-ph="extra_ph" placeholder="vintage, 1970s aesthetic, sun-drenched…">
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- LETRA -->
+  <div class="block">
+    <div class="block-head"><span class="block-icon">✍️</span><span class="block-title" data-i18n="lyrics_title">Letra</span><span class="block-hint" data-i18n="lyrics_hint">campo único · coloca el cursor e inserta tags o ad-libs</span></div>
+
+    <div class="lyr-palette" id="lyr-palette"></div>
+
+    <div class="pal-add">
+      <input id="pal-new" data-i18n-ph="pal_add_ph" placeholder="Nueva palabra (p.ej. skrrt, guitar solo)…">
+      <div class="seg pal-type" id="pal-type">
+        <button data-type="adlib" class="on" data-i18n="pal_type_adlib">Ad-lib ( )</button>
+        <button data-type="tag" data-i18n="pal_type_tag">Tag [ ]</button>
+      </div>
+      <button class="copy-btn" id="pal-add-btn" data-i18n="pal_add_btn">Añadir</button>
+    </div>
+
+    <label class="toggle" data-i18n-tip="cover_tip">
+      <input type="checkbox" id="cover-on"> <span data-i18n="cover_label">Generar versión Cover (cambio fonético)</span>
+    </label>
+    <div class="lyr-note" data-i18n="cover_lang_note" style="border-left-color:var(--blue)">⚠️ El cambio fonético usa reglas del español, así que solo funciona bien con letras en español.</div>
+
+    <div class="lyr-grid">
+      <div class="lyr-pane">
+        <div class="lyr-pane-head">
+          <span class="lyr-pane-title" data-i18n="lyr_left_title">Tu letra (para Suno)</span>
+          <span class="count" id="lyr-count">0</span>
+          <button class="copy-btn" id="cp-lyr" data-i18n="copy" data-i18n-tip="lyr_copy_tip">Copiar</button>
+        </div>
+        <textarea id="lyr-input" data-i18n-ph="lyr_ph" placeholder="Escribe o pega tu letra aquí.&#10;&#10;Usa la paleta de arriba para insertar [Verse 1], [Chorus] o ad-libs como (yeah) justo donde tengas el cursor.&#10;&#10;Ejemplo:&#10;[Verse 1]&#10;Caminando por la ciudad (oh)&#10;[Chorus]&#10;Esta es mi canción"></textarea>
+      </div>
+      <div class="lyr-pane cover-off" id="cover-pane">
+        <div class="lyr-pane-head">
+          <span class="lyr-pane-title"><span data-i18n="cover_pane_title">Versión Cover</span> <span class="help" id="cover-help" data-i18n-tip="cover_help_tip">?</span></span>
+          <button class="copy-btn" id="cp-cover" data-i18n="copy" data-i18n-tip="cover_copy_tip">Copiar</button>
+        </div>
+        <div id="lyr-output" class="empty" data-i18n="cover_empty">Activa "Generar versión Cover" para ver aquí la letra con cambios fonéticos y compararla.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="app-footer">
+  <button class="coffee-btn" id="donate-btn">☕ <span data-i18n="donate_btn">Invítame a un café</span></button>
+</div>
+
+<div class="modal-ov" id="donate-modal">
+  <div class="modal">
+    <div class="big">☕</div>
+    <h3 data-i18n="donate_title">¿Te sirve MACI?</h3>
+    <p data-i18n="donate_text">Si esta app te ahorra tiempo, puedes invitarme a un café. ¡Gracias por el apoyo!</p>
+    <a class="go" id="donate-go" href="#" target="_blank" rel="noopener noreferrer" data-i18n="donate_go">Apoyar con PayPal</a>
+    <div class="secure" data-i18n="donate_secure">Pago seguro vía PayPal. La app solo abre un enlace público; no recibe ni guarda ninguno de tus datos.</div>
+    <button class="close" id="donate-close" data-i18n="close">Cerrar</button>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script src="./src-easyprompt/data.js"></script>
+<script src="./src-easyprompt/ui.js"></script>
+</body>
+</html>

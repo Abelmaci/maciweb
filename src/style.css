@@ -12,6 +12,8 @@
 }
 
 .vinyl-disc {
+  touch-action: none;
+  pointer-events: auto;
   /* Ultra-realistic vinyl with dramatic grooves and highlights */
   background: 
     /* Intense specular highlight - main shine (center-left) */
@@ -303,6 +305,12 @@
   opacity: 0 !important;
   visibility: hidden;
   transition: all 0.3s ease;
+}
+
+/* Lift vinyl above overlay for scratch interaction */
+.album-card.is-active .vinyl-record {
+  z-index: 30;
+  pointer-events: none;
 }
 
 @media (max-width: 640px) {

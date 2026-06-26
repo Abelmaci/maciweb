@@ -482,6 +482,24 @@
   </p>
 </div>
 
+<!-- Reset confirm modal -->
+<div class="modal-ov" id="reset-modal">
+  <div class="modal">
+    <div class="big">🔄</div>
+    <h3 data-i18n-es="¿Reiniciar todo?" data-i18n-en="Reset everything?">¿Reiniciar todo?</h3>
+    <p data-i18n-es="Se borrarán todas las selecciones y la letra. Los géneros e instrumentos guardados no se verán afectados."
+       data-i18n-en="All selections and lyrics will be cleared. Your saved genres and instruments will not be affected.">
+      Se borrarán todas las selecciones y la letra. Los géneros e instrumentos guardados no se verán afectados.
+    </p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:4px">
+      <button class="copy-btn" id="reset-confirm" style="padding:10px 24px;font-size:13px;border-radius:10px"
+        data-i18n-es="Reiniciar" data-i18n-en="Reset">Reiniciar</button>
+      <button class="close" id="reset-cancel" style="margin:0;padding:10px 24px;border:1px solid var(--border-strong);border-radius:10px;font-size:13px"
+        data-i18n-es="Cancelar" data-i18n-en="Cancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-ov" id="donate-modal">
   <div class="modal">
     <div class="big">☕</div>
@@ -565,6 +583,25 @@
   });
 
   refreshPreview();
+
+  /* ── Reset modal ── */
+  var resetModal   = document.getElementById('reset-modal');
+  var resetConfirm = document.getElementById('reset-confirm');
+  var resetCancel  = document.getElementById('reset-cancel');
+
+  window.openResetModal = function(){
+    resetModal.classList.add('show');
+  };
+  resetConfirm.addEventListener('click', function(){
+    resetModal.classList.remove('show');
+    if(typeof resetAll === 'function') resetAll();
+  });
+  resetCancel.addEventListener('click', function(){
+    resetModal.classList.remove('show');
+  });
+  resetModal.addEventListener('click', function(e){
+    if(e.target === resetModal) resetModal.classList.remove('show');
+  });
 })();
 </script>
 </body>

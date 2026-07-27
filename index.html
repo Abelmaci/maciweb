@@ -277,6 +277,30 @@
 </head>
 
 <body class="selection:bg-primary selection:text-on-primary overflow-x-hidden bg-gradient-to-b from-[#2b2e38] to-[#1a1c23] text-white">
+  <!-- Browser recommendation notice -->
+  <div id="browser-notice"
+    style="display:none; position:fixed; top:0; left:0; right:0; z-index:9999; background:#FF4444; color:#fff; font-size:0.75rem; font-weight:700; padding:0.6rem 1rem; text-align:center; letter-spacing:0.02em;">
+    <span data-i18n-es="Para una mejor experiencia, te recomendamos usar Chrome, Firefox o Edge."
+      data-i18n-en="For a better experience, we recommend using Chrome, Firefox or Edge.">Para una mejor experiencia, te recomendamos usar Chrome, Firefox o Edge.</span>
+    <button type="button" id="browser-notice-close" aria-label="Cerrar aviso"
+      style="background:none; border:none; color:#fff; font-weight:900; margin-left:0.75rem; cursor:pointer; font-size:0.9rem; line-height:1; vertical-align:middle;">&times;</button>
+  </div>
+  <script>
+    (function () {
+      var ua = navigator.userAgent;
+      var isSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(ua);
+      if (!isSafari) return;
+      if (localStorage.getItem('browserNoticeDismissed') === '1') return;
+
+      var notice = document.getElementById('browser-notice');
+      notice.style.display = 'block';
+      document.getElementById('browser-notice-close').addEventListener('click', function () {
+        notice.style.display = 'none';
+        localStorage.setItem('browserNoticeDismissed', '1');
+      });
+    })();
+  </script>
+
   <!-- Splash Loader -->
   <div id="splash-loader">
     <svg class="logo-svg-loader" viewBox="0 0 1735 679" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -447,13 +447,21 @@ function initLaunchCountdown() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  initSplashLoader();
-  initCounters();
-  initPlatforms();
-  initWaveBars();
-  initMenu();
-  initLanguageToggle();
-  initLucide();
-  initServiceWorker();
-  initLaunchCountdown();
+  const safeRun = (fn) => {
+    try {
+      fn();
+    } catch (e) {
+      console.warn(`${fn.name} failed:`, e);
+    }
+  };
+
+  safeRun(initSplashLoader);
+  safeRun(initCounters);
+  safeRun(initPlatforms);
+  safeRun(initWaveBars);
+  safeRun(initMenu);
+  safeRun(initLanguageToggle);
+  safeRun(initLucide);
+  safeRun(initServiceWorker);
+  safeRun(initLaunchCountdown);
 });

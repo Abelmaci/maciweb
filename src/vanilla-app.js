@@ -1,7 +1,5 @@
 import { SandCanvas } from './vanilla-sand.js';
 import { ScratchProcessor } from './scratch-processor.js';
-import EmblaCarousel from 'https://esm.sh/embla-carousel@8.0.0?min';
-import Autoplay from 'https://esm.sh/embla-carousel-autoplay@8.0.0?min';
 
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -58,12 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn('Navigation scroll error (non-critical):', e);
     }
 
-    // --- Embla Carousel Initialization ---
-    try {
-      const emblaNode = document.querySelector('.embla');
-      const dotContainer = document.querySelector('.embla__dots');
-      
-      if (emblaNode && dotContainer) {
+    // --- Embla Carousel Initialization (CDN import isolated so failures can't break the rest of the script) ---
+    (async () => {
+      try {
+        const emblaNode = document.querySelector('.embla');
+        const dotContainer = document.querySelector('.embla__dots');
+
+        if (!emblaNode || !dotContainer) return;
+
+        const [{ default: EmblaCarousel }, { default: Autoplay }] = await Promise.all([
+          import('https://esm.sh/embla-carousel@8.0.0?min'),
+          import('https://esm.sh/embla-carousel-autoplay@8.0.0?min'),
+        ]);
+
         const autoplay = Autoplay({ 
           delay: 5000, 
           stopOnInteraction: true, 
@@ -145,10 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
         });
+      } catch (e) {
+        console.warn('Carousel initialization error (non-critical):', e);
       }
-    } catch (e) {
-      console.warn('Carousel initialization error (non-critical):', e);
-    }
+    })();
 
     // --- Audio Preview Logic with REAL Scratch (ScriptProcessorNode) ---
     try {

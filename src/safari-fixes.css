@@ -1,0 +1,171 @@
+html.is-safari #inicio [style*="Banner-MACI-optimized.webp"] {
+  background-image: url("../images/Banner-MACI-optimized.jpg") !important;
+}
+
+html.is-safari .reveal,
+html.is-safari .hero-reveal,
+html.is-safari .album-card,
+html.is-safari .album-cover,
+html.is-safari .info-overlay,
+html.is-safari .vinyl-record,
+html.is-safari .vinyl-disc {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+html.is-safari .animate-in {
+  -webkit-animation: safariFadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  animation: safariFadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  will-change: transform, opacity;
+}
+
+html.is-safari .animate-in h1,
+html.is-safari .animate-in h2,
+html.is-safari .animate-in h3,
+html.is-safari .animate-in a,
+html.is-safari h1.animate-in,
+html.is-safari h2.animate-in,
+html.is-safari h3.animate-in,
+html.is-safari a.animate-in {
+  -webkit-animation: safariTitleIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  animation: safariTitleIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+}
+
+html.is-safari .reveal.safari-visible,
+html.is-safari .hero-reveal.safari-visible {
+  -webkit-animation: safariFadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: safariFadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+html.is-safari .safari-force-visible .reveal,
+html.is-safari .safari-force-visible .hero-reveal {
+  opacity: 1 !important;
+  -webkit-transform: none !important;
+  transform: none !important;
+  -webkit-filter: none !important;
+  filter: none !important;
+}
+
+html.is-safari .backdrop-blur-md,
+html.is-safari .backdrop-blur-xl,
+html.is-safari .backdrop-blur-2xl {
+  -webkit-backdrop-filter: saturate(135%) blur(14px);
+  backdrop-filter: saturate(135%) blur(14px);
+}
+
+html.is-safari .album-card {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+html.is-safari .album-card.is-active .vinyl-record {
+  opacity: 1 !important;
+  z-index: 15;
+}
+
+html.is-safari .album-card.is-active .album-cover {
+  --tw-translate-x: -100%;
+  -webkit-transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) translateZ(0);
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) translateZ(0);
+}
+
+html.is-safari .album-card.is-active .info-overlay {
+  --tw-translate-y: 0px;
+  opacity: 1 !important;
+  -webkit-transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) translateZ(0);
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) translateZ(0);
+}
+
+html.is-safari .vinyl-disc,
+html.is-safari .vinyl-disc::before,
+html.is-safari .vinyl-disc::after {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+html.is-safari .vinyl-disc::before {
+  mix-blend-mode: normal;
+  opacity: 0.82;
+}
+
+html.is-safari .safari-carousel-fallback.embla {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+html.is-safari .safari-carousel-fallback.embla::-webkit-scrollbar {
+  display: none;
+}
+
+html.is-safari .safari-carousel-fallback .embla__container {
+  -webkit-transform: none !important;
+  transform: none !important;
+}
+
+html.is-safari .safari-carousel-fallback .embla__slide {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+@supports not (background: conic-gradient(red, blue)) {
+  html.is-safari .bg-\[conic-gradient\(transparent\2c transparent_35\%\2c \#FF4444_50\%\2c transparent_50\%\2c transparent_85\%\2c \#FF4444_100\%\)\] {
+    background-image: linear-gradient(90deg, transparent 0%, #ff4444 50%, transparent 100%) !important;
+  }
+}
+
+@-webkit-keyframes safariFadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 32px, 0);
+    transform: translate3d(0, 32px, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes safariFadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 32px, 0);
+    transform: translate3d(0, 32px, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@-webkit-keyframes safariTitleIn {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 18px, 0);
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes safariTitleIn {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 18px, 0);
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}

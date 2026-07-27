@@ -129,6 +129,28 @@
 
   <!-- Core Static CSS (Highly Minified, Eagerly Loaded for FCP) -->
   <link rel="stylesheet" href="src/compiled.css">
+  <script>
+    (function () {
+      var ua = navigator.userAgent || '';
+      var isSafari = /^((?!chrome|android|crios|fxios|edg|opr|opera).)*safari/i.test(ua);
+
+      window.MACI_IS_SAFARI = isSafari;
+      if (!isSafari) return;
+
+      document.documentElement.classList.add('is-safari');
+      window.MACI_HERO_IMAGE = 'images/Banner-MACI-optimized.jpg';
+
+      var safariCss = document.createElement('link');
+      safariCss.rel = 'stylesheet';
+      safariCss.href = 'src/safari-fixes.css';
+      document.head.appendChild(safariCss);
+
+      var safariJs = document.createElement('script');
+      safariJs.src = 'src/safari-fixes.js';
+      safariJs.defer = true;
+      document.head.appendChild(safariJs);
+    })();
+  </script>
   <script src="https://unpkg.com/lucide@0.418.0/dist/umd/lucide.min.js" defer></script>
   <style>
     :root {
@@ -288,15 +310,22 @@
   <script>
     (function () {
       var ua = navigator.userAgent;
-      var isSafari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(ua);
+      var isSafari = window.MACI_IS_SAFARI || /^((?!chrome|android|crios|fxios|edg|opr|opera).)*safari/i.test(ua);
       if (!isSafari) return;
-      if (localStorage.getItem('browserNoticeDismissed') === '1') return;
+
+      document.documentElement.classList.add('is-safari');
+
+      try {
+        if (localStorage.getItem('browserNoticeDismissed') === '1') return;
+      } catch (e) {}
 
       var notice = document.getElementById('browser-notice');
       notice.style.display = 'block';
       document.getElementById('browser-notice-close').addEventListener('click', function () {
         notice.style.display = 'none';
-        localStorage.setItem('browserNoticeDismissed', '1');
+        try {
+          localStorage.setItem('browserNoticeDismissed', '1');
+        } catch (e) {}
       });
     })();
   </script>

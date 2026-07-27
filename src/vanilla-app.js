@@ -3,6 +3,25 @@ import { ScratchProcessor } from './scratch-processor.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   try {
+    const isSafari = Boolean(window.MACI_IS_SAFARI);
+    const closestInteractive = (target) => (
+      target && typeof target.closest === 'function' ? target.closest('a, button') : null
+    );
+    const resumeAudioContext = () => {
+      if (window.audioCtx && window.audioCtx.state === 'suspended') {
+        const resumePromise = window.audioCtx.resume();
+        if (resumePromise && typeof resumePromise.catch === 'function') {
+          resumePromise.catch(e => console.warn('AudioContext resume failed:', e));
+        }
+      }
+    };
+    const playAudioElement = (audioEl) => {
+      const playPromise = audioEl.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(e => console.warn('Audio play error:', e));
+      }
+    };
+
     // --- Deferred Initialization for better LCP ---
     const initApp = () => {
       try {
@@ -19,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const initSandCanvas = () => {
           const heroCanvas = document.getElementById('hero-canvas');
           if (heroCanvas) {
-            const HERO_IMAGE = ['images', 'Banner-MACI-optimized', 'webp'].join('/').replace('/webp', '.webp');
+            const HERO_IMAGE = window.MACI_HERO_IMAGE || ['images', 'Banner-MACI-optimized', 'webp'].join('/').replace('/webp', '.webp');
             try {
               new SandCanvas(heroCanvas, HERO_IMAGE);
             } catch (e) {
@@ -150,6 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
         });
+
+        window.MACI_EMBLA_READY = true;
       } catch (e) {
         console.warn('Carousel initialization error (non-critical):', e);
       }
@@ -240,14 +261,16 @@ document.addEventListener('DOMContentLoaded', () => {
           cover.classList.add('-translate-x-full');
           card.classList.add('is-active');
 
+          if (isSafari && card.dataset.safariAudioGesture !== '1') {
+            return;
+          }
+
           if (!animFrameId) animFrameId = requestAnimationFrame(updateVinylRotation);
 
           if (!window.audioCtx) {
             window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
           }
-          if (window.audioCtx.state === 'suspended') {
-            window.audioCtx.resume().catch(e => console.warn('AudioContext resume failed:', e));
-          }
+          resumeAudioContext();
 
           // Decodificar buffer si aún no está en caché
           window.audioBuffers = window.audioBuffers || {};
@@ -272,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
           console.log(`⚠️ [Card ${id}] Falling back to HTML5 Audio`);
           currentAudioEl = new Audio(audioUrl);
           currentAudioEl.volume = 0.5;
-          currentAudioEl.play().catch(e => console.warn('Audio play error:', e));
+          playAudioElement(currentAudioEl);
           previewTimeout = setTimeout(() => {
             if (currentAudioEl) { currentAudioEl.pause(); currentAudioEl.currentTime = 0; currentAudioEl = null; }
           }, previewDuration * 1000);
@@ -292,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (previewTimeout) { clearTimeout(previewTimeout); previewTimeout = null; }
 
           currentDisc = null;
+          delete card.dataset.safariAudioGesture;
 
           if (disc) {
             disc.classList.remove('animate-spin-vinyl', 'is-stopping');
@@ -313,14 +337,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // usuario (clic/tap/tecla) — un simple hover (mouseenter) no cuenta,
         // así que el clic desbloquea el AudioContext y relanza la reproducción.
         card.addEventListener('click', (e) => {
-          if (e.target.closest('a, button')) return;
+          if (closestInteractive(e.target)) return;
+
+          if (isSafari) {
+            card.dataset.safariAudioGesture = '1';
+            if (currentAudioEl && currentAudioEl.paused) {
+              currentAudioEl = null;
+            }
+          }
 
           if (!window.audioCtx) {
             window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
           }
-          if (window.audioCtx.state === 'suspended') {
-            window.audioCtx.resume().catch(err => console.warn('AudioContext resume failed:', err));
-          }
+          resumeAudioContext();
 
           if (!currentScratchProcessor && !currentAudioEl) {
             handleEnter();
@@ -332,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const handlePointerDown = (e) => {
           if (!card.classList.contains('is-active') || !currentScratchProcessor) return;
           if (!e.isPrimary) return;
-          if (e.target.closest('a, button')) return; // permite clics en Spotify, etc.
+          if (closestInteractive(e.target)) return; // permite clics en Spotify, etc.
 
           isScratching = true;
           currentScratchProcessor.isScratching = true;
@@ -341,7 +370,13 @@ document.addEventListener('DOMContentLoaded', () => {
           lastY = e.clientY;
           lastScratchTimestamp = performance.now();
 
-          card.setPointerCapture(e.pointerId);
+          if (card.setPointerCapture && e.pointerId != null) {
+            try {
+              card.setPointerCapture(e.pointerId);
+            } catch (err) {
+              console.warn('Pointer capture failed:', err);
+            }
+          }
           e.preventDefault();
         };
 
@@ -391,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mobileBtn) {
           mobileBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            if (isSafari) card.dataset.safariAudioGesture = '1';
             if (card.classList.contains('is-active')) {
               handleLeave();
             } else {
@@ -400,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      window.MACI_ALBUM_INTERACTIONS_READY = true;
     } catch (e) {
       console.warn('Audio preview logic error (non-critical):', e);
     }
@@ -411,21 +448,31 @@ document.addEventListener('DOMContentLoaded', () => {
       rootMargin: '0px 0px -50px 0px'
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          const delay = isMobile ? 0 : 20;
-          setTimeout(() => {
-            entry.target.classList.add('animate-in');
-          }, delay); 
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
+    const revealItems = Array.from(document.querySelectorAll('.reveal'));
 
-    document.querySelectorAll('.reveal').forEach((el) => {
-      observer.observe(el);
-    });
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            const delay = isMobile ? 0 : 20;
+            setTimeout(() => {
+              entry.target.classList.add('animate-in');
+            }, delay); 
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      revealItems.forEach((el) => {
+        observer.observe(el);
+      });
+    } else {
+      revealItems.forEach((el) => {
+        el.classList.add('animate-in');
+      });
+    }
+
+    window.MACI_REVEAL_READY = true;
 
     // --- Optimized Scroll Handling ---
     let isScrollTicking = false;

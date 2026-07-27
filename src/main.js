@@ -464,4 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
   safeRun(initLucide);
   safeRun(initServiceWorker);
   safeRun(initLaunchCountdown);
+
+  window.MACI_CORE_READY = true;
 });

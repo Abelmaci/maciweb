@@ -65,8 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!emblaNode || !dotContainer) return;
 
         const [{ default: EmblaCarousel }, { default: Autoplay }] = await Promise.all([
-          import('https://esm.sh/embla-carousel@8.0.0?min'),
-          import('https://esm.sh/embla-carousel-autoplay@8.0.0?min'),
+          import('https://esm.sh/embla-carousel@8.0.0?bundle&min'),
+          import('https://esm.sh/embla-carousel-autoplay@8.0.0?bundle&deps=embla-carousel@8.0.0&min'),
         ]);
 
         const autoplay = Autoplay({ 

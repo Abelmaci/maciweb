@@ -309,6 +309,24 @@ document.addEventListener('DOMContentLoaded', () => {
         card.addEventListener('mouseenter', handleEnter);
         card.addEventListener('mouseleave', handleLeave);
 
+        // El navegador solo permite iniciar audio tras un gesto real del
+        // usuario (clic/tap/tecla) — un simple hover (mouseenter) no cuenta,
+        // así que el clic desbloquea el AudioContext y relanza la reproducción.
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('a, button')) return;
+
+          if (!window.audioCtx) {
+            window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (window.audioCtx.state === 'suspended') {
+            window.audioCtx.resume().catch(err => console.warn('AudioContext resume failed:', err));
+          }
+
+          if (!currentScratchProcessor && !currentAudioEl) {
+            handleEnter();
+          }
+        });
+
         // --- SCRATCH EFFECT ---
         // Eventos en `card` (no en disc) para evitar que info-overlay (z-20) intercepte
         const handlePointerDown = (e) => {

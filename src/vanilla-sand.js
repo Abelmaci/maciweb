@@ -23,14 +23,18 @@ export class SandCanvas {
       this.image.crossOrigin = "anonymous";
     }
     this.image.onload = () => {
-      this.resize();
-      this.initParticles();
-      this.animate();
-      
       window.addEventListener('resize', () => this.resize());
       window.addEventListener('mousemove', (e) => this.handleMouseMove(e));
       window.addEventListener('mouseleave', () => this.handleMouseLeave());
       window.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+
+      try {
+        this.resize();
+      } catch (e) {
+        console.warn('SandCanvas resize failed:', e);
+      }
+
+      this.animate();
     };
     
     this.image.onerror = () => {
@@ -75,8 +79,16 @@ export class SandCanvas {
   initParticles() {
     // Finer resolution on mobile for high-DPI retina screens, maintaining desktop baseline
     const isMobile = window.innerWidth < 768;
-    const skip = isMobile ? 3 : 4; 
-    const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
+    const skip = isMobile ? 3 : 4;
+    this.particles = [];
+
+    let imageData;
+    try {
+      imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
+    } catch (e) {
+      console.warn('SandCanvas getImageData failed (particles disabled):', e);
+      return;
+    }
 
     for (let y = 0; y < this.canvas.height; y += skip) {
       for (let x = 0; x < this.canvas.width; x += skip) {

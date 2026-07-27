@@ -1281,18 +1281,6 @@
     <!-- Scripts -->
     <script type="module" src="src/main.js"></script>
     <script type="module" src="src/vanilla-app.js"></script>
-    <!-- Fallback: if the module scripts above fail to run for any reason,
-         don't leave .reveal/.hero-reveal content stuck at opacity:0 forever -->
-    <script>
-      setTimeout(function () {
-        document.querySelectorAll('.reveal, .hero-reveal').forEach(function (el) {
-          if (!el.classList.contains('animate-in')) {
-            el.classList.add('animate-in');
-            el.classList.remove('opacity-0');
-          }
-        });
-      }, 4000);
-    </script>
   </div> <!-- End #main-content -->
 
   <!-- Language Switcher (Toggle Style) -->

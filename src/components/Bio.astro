@@ -1,0 +1,78 @@
+---
+// Biografía de MACI.
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import bioImage from '../assets/images/Biomaci.jpeg';
+---
+<section id="biografía" class="py-40 px-8 overflow-hidden">
+  <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-24 items-center">
+    <div class="w-full lg:w-1/2 relative">
+      <div
+        class="bio-data-text absolute -top-16 sm:-top-32 left-0 w-full text-center text-[28vw] sm:text-[12rem] font-black text-white/[0.07] select-none leading-none z-0 whitespace-nowrap">
+        MACI
+      </div>
+      <div
+        class="reveal relative bg-surface-container-highest p-1 rounded-3xl overflow-hidden shadow-2xl max-w-md mx-auto">
+        <Picture src={bioImage} alt="Retrato de MACI, artista digital AI de estética brutalista"
+          formats={['avif', 'webp']} width={896} widths={[448, 896]} sizes="(min-width: 480px) 448px, 100vw"
+          loading="lazy" decoding="async"
+          class="w-full aspect-[4/5] object-cover hover:brightness-110 transition-all duration-700 rounded-2xl"
+          referrerpolicy="no-referrer" />
+        <!-- Gradient overlay for text readability -->
+        <div
+          class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent rounded-b-2xl pointer-events-none">
+        </div>
+        <div data-i18n-es="&quot;No todos tenemos la virtud de cantar, pero sí el deseo de ser escuchados.&quot;"
+          data-i18n-en="&quot;Not all of us have the virtue of singing, but we all have the desire to be heard.&quot;"
+          class="absolute bottom-8 right-8 max-w-[200px] text-right text-[0.8rem] font-light italic text-white shadow-2xl leading-relaxed z-10">
+          "No todos tenemos la virtud de cantar, pero sí el deseo de ser escuchados."
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full lg:w-1/2 space-y-10">
+      <div class="reveal flex items-center gap-6 text-primary">
+        <Icon name="mic-2" class="w-8 h-8" />
+        <h2 data-i18n-es="BIOGRAFÍA" data-i18n-en="BIOGRAPHY"
+          class="reveal text-5xl font-black uppercase tracking-tighter">BIOGRAFÍA</h2>
+      </div>
+
+      <div
+        class="reveal space-y-6 text-on-surface-variant text-lg leading-relaxed border-l-2 border-primary pl-10 py-2">
+        <p data-i18n-es="MACI es un artista digital que crea música utilizando inteligencia artificial y producción musical contemporánea."
+          data-i18n-en="MACI is a digital artist who creates music using artificial intelligence and contemporary music production.">
+          MACI es un artista digital que crea música utilizando inteligencia artificial y producción musical
+          contemporánea.
+        </p>
+        <p data-i18n-es="Este proyecto explora los límites entre la creatividad humana y la inteligencia artificial aplicada a la música."
+          data-i18n-en="This project explores the boundaries between human creativity and artificial intelligence applied to music.">
+          Este proyecto explora los límites entre la creatividad humana y la inteligencia artificial aplicada a la
+          música.
+        </p>
+        <p data-i18n-es="Su sonido está influenciado por ritmos latinos y americanos, donde conviven la tradición y la experimentación, desde lo orgánico hasta lo digital. Su sonido recoge influencias de ritmos latinos y americanos, desde el son, la trova o el guaguancó, hasta el R&B, el rock o el folk, reinterpretados desde un enfoque digital."
+          data-i18n-en="His sound is influenced by Latin and American rhythms, where tradition and experimentation coexist, from organic to digital. It draws influences from son, trova, or guaguancó, to R&B, rock, or folk, reinterpreted through a digital lens.">
+          Su sonido está influenciado por ritmos latinos y americanos, donde conviven la tradición y la
+          experimentación, desde lo orgánico hasta lo digital. Su sonido recoge influencias de ritmos latinos y
+          americanos, desde el son, la trova o el guaguancó, hasta el R&B, el rock o el folk, reinterpretados desde
+          un enfoque digital.
+        </p>
+        <p data-i18n-es="Cada pieza nace de un proceso donde el algoritmo y la emoción se combinan para generar una identidad sonora única."
+          data-i18n-en="Each piece is born from a process where algorithms and emotion combine to generate a unique sonic identity.">
+          Cada pieza nace de un proceso donde el algoritmo y la emoción se combinan para generar una identidad
+          sonora única.
+        </p>
+        <p data-i18n-es="Detrás del proyecto está Abel Maciñeiras, compositor, productor y arreglista, encargado de dirigir y dar forma a cada creación."
+          data-i18n-en="Behind the project is Abel Maciñeiras, composer, producer and arranger, responsible for directing and shaping each creation."
+          class="font-bold text-white">
+          Detrás del proyecto está Abel Maciñeiras, compositor, productor y arreglista, encargado de dirigir y dar
+          forma a cada creación.
+        </p>
+        <p data-i18n-es="No se trata solo de tecnología, sino de cómo nuevas herramientas transforman la forma de componer, producir y sentir."
+          data-i18n-en="It's not just about technology, but how new tools transform the way we compose, produce and feel.">
+          No se trata solo de tecnología, sino de cómo nuevas herramientas transforman la forma de componer,
+          producir y sentir.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

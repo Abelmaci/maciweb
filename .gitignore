@@ -1,11 +1,15 @@
-node_modules/
-build/
-Music/
+# build
 dist/
-coverage/
-.DS_Store
+.astro/
+
+# dependencias
+node_modules/
+
+# logs / sistema
 *.log
-.env*
+.DS_Store
+
+# entorno
+.env
+.env.*
 !.env.example
-Maci/
-Sin título/

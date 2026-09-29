@@ -1,0 +1,32 @@
+---
+// Aviso para Safari (se muestra desde un script inline del layout).
+---
+<div id="browser-notice"
+  style="display:none; position:fixed; top:0; left:0; right:0; z-index:9999; background:#FF4444; color:#fff; font-size:0.75rem; font-weight:700; padding:0.6rem 1rem; text-align:center; letter-spacing:0.02em;">
+  <span data-i18n-es="Para una mejor experiencia, te recomendamos usar Chrome, Firefox o Edge."
+    data-i18n-en="For a better experience, we recommend using Chrome, Firefox or Edge.">Para una mejor experiencia, te recomendamos usar Chrome, Firefox o Edge.</span>
+  <button type="button" id="browser-notice-close" aria-label="Cerrar aviso"
+    style="background:none; border:none; color:#fff; font-weight:900; margin-left:0.75rem; cursor:pointer; font-size:0.9rem; line-height:1; vertical-align:middle;">&times;</button>
+</div>
+<script is:inline>
+  (function () {
+    var ua = navigator.userAgent;
+    var isSafari = window.MACI_IS_SAFARI || /^((?!chrome|android|crios|fxios|edg|opr|opera).)*safari/i.test(ua);
+    if (!isSafari) return;
+
+    document.documentElement.classList.add('is-safari');
+
+    try {
+      if (localStorage.getItem('browserNoticeDismissed') === '1') return;
+    } catch (e) {}
+
+    var notice = document.getElementById('browser-notice');
+    notice.style.display = 'block';
+    document.getElementById('browser-notice-close').addEventListener('click', function () {
+      notice.style.display = 'none';
+      try {
+        localStorage.setItem('browserNoticeDismissed', '1');
+      } catch (e) {}
+    });
+  })();
+</script>

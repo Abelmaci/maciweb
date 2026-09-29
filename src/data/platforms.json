@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Spotify",
+    "logo": "/images/platforms/spotify.svg"
+  },
+  {
+    "name": "Amazon Music",
+    "logo": "/images/platforms/amazonmusic.png",
+    "isDark": false,
+    "scale": "scale-150"
+  },
+  {
+    "name": "Tidal",
+    "logo": "/images/platforms/tidal.svg",
+    "isDark": true
+  },
+  {
+    "name": "Apple Music",
+    "logo": "/images/platforms/apple.svg",
+    "isDark": true
+  },
+  {
+    "name": "Shazam",
+    "logo": "/images/platforms/shazam.svg"
+  },
+  {
+    "name": "Instagram",
+    "logo": "/images/platforms/instagram.svg"
+  },
+  {
+    "name": "Snapchat",
+    "logo": "/images/platforms/snapchat.svg"
+  },
+  {
+    "name": "TikTok",
+    "logo": "/images/platforms/tiktok.svg",
+    "isDark": true
+  },
+  {
+    "name": "Musixmatch",
+    "logo": "/images/platforms/musixmatch.png",
+    "scale": "scale-125"
+  },
+  {
+    "name": "YouTube Music",
+    "logo": "/images/platforms/youtubemusic.svg"
+  },
+  {
+    "name": "QQ Music",
+    "logo": "/images/platforms/qqmusic.png",
+    "scale": "scale-110"
+  },
+  {
+    "name": "iTunes",
+    "logo": "/images/platforms/itunes.svg"
+  },
+  {
+    "name": "CapCut",
+    "logo": "/images/platforms/capcut.svg",
+    "isDark": true
+  },
+  {
+    "name": "Audiomack",
+    "logo": "/images/platforms/audiomack.svg"
+  }
+]

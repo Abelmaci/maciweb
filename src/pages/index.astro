@@ -1,0 +1,40 @@
+---
+// Página principal de macimusic.es.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BrowserNotice from '../components/BrowserNotice.astro';
+import SplashLoader from '../components/SplashLoader.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Discography from '../components/Discography.astro';
+import Bio from '../components/Bio.astro';
+import Adela from '../components/Adela.astro';
+import Platforms from '../components/Platforms.astro';
+import Releases from '../components/Releases.astro';
+import Apps from '../components/Apps.astro';
+import Collaborations from '../components/Collaborations.astro';
+import Footer from '../components/Footer.astro';
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+---
+<BaseLayout>
+  <BrowserNotice />
+  <SplashLoader />
+
+  <div id="main-content">
+    <Nav />
+    <Hero />
+    <Discography />
+    <Bio />
+    <Adela />
+    <Platforms />
+    <Releases />
+    <Apps />
+    <Collaborations />
+    <Footer />
+  </div>
+
+  <LanguageSwitcher />
+
+  <script>
+    import '../scripts/main.js';
+  </script>
+</BaseLayout>

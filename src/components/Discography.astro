@@ -1,0 +1,34 @@
+---
+// Discografía: carrusel Embla con una tarjeta por disco (src/data/albums.json).
+import AlbumCard, { type Album } from './AlbumCard.astro';
+import albumsData from '../data/albums.json';
+
+const albums = albumsData as Album[];
+---
+<section id="discografía" class="py-32 px-8 bg-surface-container-low relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col mb-10 border-b border-outline-variant/15 pb-6 section-header">
+      <h2 data-i18n-es="explora los fragmentos" data-i18n-en="explore the fragments"
+        class="reveal text-4xl font-black uppercase tracking-tighter mb-6 text-white">
+        explora los fragmentos
+      </h2>
+      <p data-i18n-es="piezas creadas entre inteligencia artificial y composición humana"
+        data-i18n-en="pieces created between artificial intelligence and human composition"
+        class="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+        piezas creadas entre inteligencia artificial y composición humana
+      </p>
+    </div>
+
+    <div class="embla">
+      <div class="embla__container">
+        {albums.map((album) => <AlbumCard album={album} />)}
+      </div>
+    </div>
+
+    <!-- Slider Controls -->
+    <div class="embla__dots flex justify-center gap-3 mt-16"></div>
+    <div class="text-center mt-12">
+      <p class="text-primary font-bold uppercase tracking-[0.4em] text-xs italic">seguir explorando.</p>
+    </div>
+  </div>
+</section>

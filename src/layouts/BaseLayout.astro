@@ -1,0 +1,89 @@
+---
+// Layout base: <head> (SEO, Open Graph, analytics, datos estructurados) y la
+// capa de rescate para Safari, que carga CSS/JS extra solo en ese navegador.
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/inter/900.css';
+import '../styles/global.css';
+import { SITE, JSON_LD } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = SITE.title, description = SITE.description } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="theme-color" content={SITE.themeColor}>
+  <meta name="google-site-verification" content={SITE.googleSiteVerification} />
+  <link rel="canonical" href={SITE.url}>
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+  <link rel="icon" href="/images/MaciLogo.svg" type="image/svg+xml">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`}></script>
+  <script is:inline define:vars={{ gaId: SITE.gaId }}>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', gaId);
+  </script>
+
+  {JSON_LD.map((data) => (
+    <script type="application/ld+json" set:html={JSON.stringify(data)} />
+  ))}
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={SITE.url}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={SITE.ogImage}>
+  <meta property="og:site_name" content={SITE.name}>
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content={SITE.url}>
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={SITE.ogImage}>
+
+  <!-- Safari: marca el documento y carga la capa de rescate (public/safari/) -->
+  <script is:inline>
+    (function () {
+      var ua = navigator.userAgent || '';
+      var isSafari = /^((?!chrome|android|crios|fxios|edg|opr|opera).)*safari/i.test(ua);
+
+      window.MACI_IS_SAFARI = isSafari;
+      if (!isSafari) return;
+
+      document.documentElement.classList.add('is-safari');
+      window.MACI_HERO_IMAGE = '/images/Banner-MACI-optimized.jpg';
+
+      var safariCss = document.createElement('link');
+      safariCss.rel = 'stylesheet';
+      safariCss.href = '/safari/safari-fixes.css';
+      document.head.appendChild(safariCss);
+
+      var safariJs = document.createElement('script');
+      safariJs.src = '/safari/safari-fixes.js';
+      safariJs.defer = true;
+      document.head.appendChild(safariJs);
+    })();
+  </script>
+</head>
+
+<body class="selection:bg-primary selection:text-on-primary overflow-x-hidden bg-gradient-to-b from-[#2b2e38] to-[#1a1c23] text-white">
+  <slot />
+</body>
+
+</html>

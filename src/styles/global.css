@@ -1,0 +1,431 @@
+/*
+ * Estilos globales de MACI.
+ *
+ * El orden importa y replica la cascada de la web original:
+ *   1. Tailwind (base, components, utilities)
+ *   2. Estilos propios (antes en src/compiled.css, tras las utilidades)
+ *   3. CSS crítico que antes vivía en un <style> del <head>
+ * Las variantes de Tailwind (hover:, md:, selection:…) se emiten al final.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Botones
+   ============================================================ */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #f44, #c00);
+  transition: all 0.3s ease;
+}
+
+.btn-primary-gradient:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 20px #f446;
+}
+
+/* ============================================================
+   Vinilo / tarjetas de disco
+   ============================================================ */
+.vinyl-disc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #0f0f0f;
+  background-image:
+    radial-gradient(circle, transparent 40%, #000 40.2%, #000 40.8%, transparent 41%, transparent 55%, #000 55.2%, #000 55.8%, transparent 56%, transparent 75%, #000 75.2%, #000 75.8%, transparent 76%),
+    repeating-radial-gradient(circle, transparent, transparent 1px, #1a1a1a 2px, #1a1a1a 3px);
+  border: 8px solid #000;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 0, 0, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.vinyl-disc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 25deg, transparent 0deg, transparent 70deg, rgba(255, 255, 255, 0.08) 85deg, rgba(255, 255, 255, 0.35) 100deg, rgba(255, 255, 255, 0.08) 115deg, transparent 130deg, transparent 250deg, rgba(255, 255, 255, 0.08) 265deg, rgba(255, 255, 255, 0.35) 280deg, rgba(255, 255, 255, 0.08) 295deg, transparent 310deg, transparent 360deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 18%, black 19%);
+  mask-image: radial-gradient(circle, transparent 18%, black 19%);
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: screen;
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.vinyl-disc::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.album-card {
+  width: 100%;
+  aspect-ratio: 1/1;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.vinyl-record-bg {
+  background: #1a1c23;
+  background-image: radial-gradient(circle at center, #2b2e38 0%, #1a1c23 100%);
+}
+
+.info-overlay {
+  background: linear-gradient(0deg, #000000e6 0, #0006 50%, #0000);
+}
+
+/* ============================================================
+   Carrusel (Embla)
+   ============================================================ */
+.embla {
+  overflow: hidden;
+}
+
+.embla__container {
+  display: flex;
+  margin-left: -1rem;
+}
+
+.embla__slide {
+  flex: 0 0 92%;
+  min-width: 0;
+  padding-left: 1rem;
+}
+
+@media (min-width: 640px) {
+  .embla__slide {
+    flex: 0 0 50%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .embla__slide {
+    flex: 0 0 33.333%;
+  }
+}
+
+@media (max-width: 640px) {
+  #discografía {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .section-header {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .embla__container {
+    margin-left: 0;
+  }
+
+  .embla__slide {
+    flex: 0 0 90%;
+    padding-left: 1.25rem;
+    padding-right: 0.25rem;
+  }
+}
+
+/* ============================================================
+   Botón táctil (móvil)
+   ============================================================ */
+.mobile-touch-btn {
+  animation: touchPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 20px #ffffff1a;
+}
+
+@keyframes touchPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+    box-shadow: 0 0 30px #fff3;
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+}
+
+.album-card.is-active .mobile-touch-btn,
+.album-card:active .mobile-touch-btn,
+.album-card:focus .mobile-touch-btn {
+  opacity: 0 !important;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .info-overlay {
+    padding: 1.5rem !important;
+  }
+
+  .info-overlay h3 {
+    font-size: 1.5rem !important;
+    line-height: 1;
+  }
+}
+
+/* ============================================================
+   Animaciones de aparición
+   ============================================================ */
+.animate-in {
+  animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-in a,
+.animate-in h1,
+.animate-in h2,
+.animate-in h3,
+a.animate-in,
+h1.animate-in,
+h2.animate-in,
+h3.animate-in {
+  animation: titleTracking 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes titleTracking {
+  0% {
+    letter-spacing: -0.6em;
+    filter: blur(12px);
+    opacity: 0;
+  }
+
+  to {
+    letter-spacing: -0.05em;
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 60px, 0) scale(0.95);
+    filter: blur(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  will-change: opacity, transform;
+}
+
+/* ============================================================
+   Puntos del carrusel
+   ============================================================ */
+.embla__dot {
+  background-color: #fff6;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.embla__dot.is-active {
+  background-color: #f44;
+  width: 32px;
+  box-shadow: 0 0 15px #ff444480;
+}
+
+.embla__dot:hover {
+  background-color: #fff6;
+}
+
+.glow-text {
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+/* Parada lenta del vinilo */
+.vinyl-disc.is-stopping {
+  animation: spin 4s cubic-bezier(0.1, 0.4, 0.2, 1) forwards !important;
+}
+
+@keyframes pulse {
+  0%,
+  to {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* ============================================================
+   CSS crítico (antes inline en el <head> del index.html)
+   ============================================================ */
+:root {
+  --wave-color: #FF4444;
+  --wave-max-height: 40px;
+}
+
+body {
+  background-color: #0E0E0F;
+  color: #E6E6E6;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0E0E0F; }
+::-webkit-scrollbar-thumb { background: #222327; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #2B2C31; }
+
+/* Onda sonora de "Lo que viene" */
+.sound-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 140px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.sound-wave:hover {
+  --wave-max-height: 110px;
+  gap: 6px;
+}
+
+.bar {
+  width: 3px;
+  height: 60px;
+  background: linear-gradient(to bottom, #FF4444, #CC0000);
+  border-radius: 4px;
+  animation: wave-animation 1s ease-in-out infinite;
+  opacity: 0.4;
+  transform-origin: bottom;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Optimizaciones del carrusel */
+.embla {
+  contain: layout style;
+  overflow: hidden;
+  padding-left: 1rem;
+}
+
+.embla__container {
+  will-change: transform;
+  backface-visibility: hidden;
+  padding-left: 0;
+}
+
+.embla__slide {
+  will-change: transform;
+  contain: content;
+}
+
+@media (max-width: 640px) {
+  .embla__slide {
+    flex: 0 0 88% !important;
+    padding-left: 1rem !important;
+    padding-right: 0 !important;
+  }
+
+  .album-card.is-active .caigo-upcoming-badge {
+    opacity: 0;
+  }
+}
+
+.sound-wave:hover .bar {
+  opacity: 1;
+  filter: brightness(1.2);
+}
+
+/* Variaciones de velocidad para realismo */
+.bar:nth-child(even) {
+  animation-duration: 0.8s;
+}
+
+.bar:nth-child(odd) {
+  animation-duration: 1.2s;
+}
+
+.bar:nth-child(3n) {
+  animation-duration: 1.5s;
+}
+
+@keyframes wave-animation {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: scaleY(1);
+    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+  }
+}
+
+/* Splash loader */
+#splash-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  background-color: #000;
+  z-index: 9999;
+  transition: opacity 1s ease, visibility 1s;
+}
+
+#splash-loader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-percentage {
+  margin-top: 2rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 0.5em;
+  color: #fff;
+  opacity: 0.5;
+}
+
+.logo-svg-loader {
+  width: 200px;
+  height: auto;
+  transition: transform 0.5s ease;
+}

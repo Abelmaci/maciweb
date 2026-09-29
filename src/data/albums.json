@@ -1,0 +1,196 @@
+[
+  {
+    "id": "6",
+    "title": "¿Quién fue?",
+    "uppercaseTitle": false,
+    "cover": "CD_quien_fue.jpg",
+    "coverAlt": "Portada del EP ¿Quién fue?",
+    "labelAlt": "Portada de ¿Quién fue?",
+    "audio": "/music-preview/quien-fue.mp3",
+    "duration": 30,
+    "badge": null,
+    "kicker": {
+      "es": "EP · 3 canciones",
+      "en": "EP · 3 tracks"
+    },
+    "year": null,
+    "description": null,
+    "tags": "misterio · memoria · emoción",
+    "countdown": null,
+    "spotify": "https://open.spotify.com/album/2RuwVtKwjWHcGUGasYDWmD?si=1xjtYLO9QDKOMwU_aKWzBA",
+    "spotifyLabel": "Escuchar álbum ¿Quién fue? en Spotify"
+  },
+  {
+    "id": "7",
+    "title": "Guajira Gallega",
+    "uppercaseTitle": false,
+    "cover": "CD_guajira_gallega.jpeg",
+    "coverAlt": "Portada del disco Guajira Gallega",
+    "labelAlt": "Portada de Guajira Gallega",
+    "audio": "/music-preview/guajira-gallega.mp3",
+    "duration": 30,
+    "badge": "new",
+    "kicker": {
+      "es": "EP · 3 canciones",
+      "en": "EP · 3 tracks"
+    },
+    "year": null,
+    "description": {
+      "es": "Una historia que revive raíces y ritmo con un pulso eufórico.",
+      "en": "A story that revives roots and rhythm with an euphoric pulse."
+    },
+    "tags": "folclore · viaje · producción",
+    "countdown": null,
+    "spotify": "https://open.spotify.com/album/3EwwoYkcjiGC5CG5KsJzTs?si=RY4RozCUT76gklqawpe28Q",
+    "spotifyLabel": "Escuchar álbum Guajira Gallega en Spotify"
+  },
+  {
+    "id": "0",
+    "title": "Caigo a tus pies",
+    "uppercaseTitle": true,
+    "highlightOnHover": true,
+    "cover": "CD_caigo_a_tus_pies.jpg",
+    "coverAlt": "Portada del single Caigo a tus pies",
+    "labelAlt": "",
+    "audio": "/music-preview/caigo-a-tus-pies.mp3",
+    "duration": 15,
+    "badge": "new",
+    "kicker": {
+      "es": "Próximo Single",
+      "en": "Upcoming Single"
+    },
+    "year": "2026",
+    "description": {
+      "es": "Un viaje sensorial que te atrapará desde el primer segundo.",
+      "en": "A sensory journey that will captivate you from the first second."
+    },
+    "tags": "composición humana · inteligencia artificial",
+    "countdown": {
+      "date": "2026-06-12T00:00:00",
+      "label": "LANZAMIENTO EN · 12 JUN"
+    },
+    "spotify": "https://open.spotify.com/intl-es/album/3s2wyk5dw8SiBD2KVmrE7O?si=s-Kyan7eSiumng3mWrnX9w",
+    "spotifyLabel": "Escuchar Caigo a tus pies en Spotify"
+  },
+  {
+    "id": "1",
+    "title": "Peón en el Amor",
+    "uppercaseTitle": true,
+    "cover": "CD_PEON_EN_EL_AMOR_optimized.jpg",
+    "coverAlt": "Portada del álbum Peón en el Amor",
+    "labelAlt": "",
+    "audio": "/music-preview/peon-en-el-amor.mp3",
+    "duration": 30,
+    "badge": "playing",
+    "kicker": {
+      "es": "Single destacado",
+      "en": "Featured Single"
+    },
+    "year": "2026",
+    "description": {
+      "es": "Una historia intensa que marca el inicio de una etapa.",
+      "en": "An intense story marking the beginning of a chapter."
+    },
+    "tags": "producción musical · algoritmo y emoción",
+    "countdown": null,
+    "spotify": "https://open.spotify.com/intl-es/album/2hIg1cw13PAnnYrjdDQL39?si=ZnvN6U-tTsGMs9KR68fhMg",
+    "spotifyLabel": "Escuchar álbum Peón en el Amor en Spotify"
+  },
+  {
+    "id": "2",
+    "title": "Tu cuerpo me habla",
+    "uppercaseTitle": true,
+    "cover": "CD_TU_CUERPO_ME_HABLA.jpg",
+    "coverAlt": "Portada del single Tu cuerpo me habla",
+    "labelAlt": "",
+    "audio": "/music-preview/tu-cuerpo-me-habla.mp3",
+    "duration": 30,
+    "badge": "playing",
+    "kicker": {
+      "es": "Tracks del álbum",
+      "en": "Album Tracks"
+    },
+    "year": "2026",
+    "description": {
+      "es": "Una mezcla de ritmos urbanos, matices melancólicos y energía bailable.",
+      "en": "A mix of urban rhythms, melancholic nuances and danceable energy."
+    },
+    "tags": "inteligencia artificial · ritmo humano",
+    "countdown": null,
+    "spotify": "https://open.spotify.com/intl-es/album/6nNrSIhqqB5kNyF2rgRRHw?si=MtbspESSTryaL2VsUg2Uhg",
+    "spotifyLabel": "Escuchar álbum Tu cuerpo me habla en Spotify"
+  },
+  {
+    "id": "3",
+    "title": "Your Body Wants to Speak to Me",
+    "uppercaseTitle": true,
+    "compactKicker": true,
+    "cover": "CD_YOUR_BODY_optimized.jpg",
+    "coverAlt": "Portada del single Your Body",
+    "labelAlt": "",
+    "audio": "/music-preview/your-body.mp3",
+    "duration": 30,
+    "badge": "playing",
+    "kicker": {
+      "es": "Single destacado",
+      "en": "Featured Single"
+    },
+    "year": "2026",
+    "description": {
+      "es": "Fusión de estilos que amplían el universo sonoro.",
+      "en": "Fusion of styles expanding the sonic universe."
+    },
+    "tags": "AI music · creación sin fronteras",
+    "countdown": null,
+    "spotify": "https://open.spotify.com/intl-es/album/2H6d5kkstQSDKDP8L5rqvn?si=-0AjHbAGTYGTaqAoCUIOyg",
+    "spotifyLabel": "Escuchar álbum Your Body Wants to Speak to Me en Spotify"
+  },
+  {
+    "id": "4",
+    "title": "Adela",
+    "uppercaseTitle": true,
+    "cover": "CD_adela_optimized.jpg",
+    "coverAlt": "Portada del single Adela",
+    "labelAlt": "",
+    "audio": "/music-preview/adela-v5.mp3",
+    "duration": 30,
+    "badge": "playing",
+    "kicker": {
+      "es": "Single destacado",
+      "en": "Featured Single"
+    },
+    "year": "2025",
+    "description": {
+      "es": "Nuevas sonoridades cubanas.",
+      "en": "New Cuban sounds."
+    },
+    "tags": null,
+    "countdown": null,
+    "spotify": "https://open.spotify.com/intl-es/album/6RjaoKxCjvtrLyof22SJG4?si=W9TgBclLTI-MRmuZgX0vPg",
+    "spotifyLabel": "Escuchar álbum Adela en Spotify"
+  },
+  {
+    "id": "5",
+    "title": "El Idiota",
+    "uppercaseTitle": true,
+    "cover": "CD_el_idiota_optimized.jpg",
+    "coverAlt": "Portada del álbum El Idiota",
+    "labelAlt": "",
+    "audio": "/music-preview/el-idiota.mp3",
+    "duration": 30,
+    "badge": "playing",
+    "kicker": {
+      "es": "LP",
+      "en": "LP"
+    },
+    "year": "2025",
+    "description": {
+      "es": "Un viaje sonoro emocionalmente cargado.",
+      "en": "Where rhythm and satire meet."
+    },
+    "tags": "interpretación emocional · artista digital AI",
+    "countdown": null,
+    "spotify": "https://open.spotify.com/intl-es/album/6AK6rSclmMrRnTy3gepDol?si=N8NZCcJATxKl0YAbpTBKqA",
+    "spotifyLabel": "Escuchar álbum El Idiota en Spotify"
+  }
+]

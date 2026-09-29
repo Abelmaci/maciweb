@@ -1,0 +1,35 @@
+---
+// Iconos Lucide incrustados en build (antes se descargaba lucide desde unpkg
+// y se sustituían los <i data-lucide> en el navegador). Versión fijada a
+// 0.418.0: es la que usaba la web y aún incluye los iconos de marca.
+import activity from 'lucide-static/icons/activity.svg?raw';
+import clock from 'lucide-static/icons/clock.svg?raw';
+import fingerprint from 'lucide-static/icons/fingerprint.svg?raw';
+import instagram from 'lucide-static/icons/instagram.svg?raw';
+import micVocal from 'lucide-static/icons/mic-vocal.svg?raw';
+import users from 'lucide-static/icons/users.svg?raw';
+import youtube from 'lucide-static/icons/youtube.svg?raw';
+
+const ICONS = {
+  activity,
+  clock,
+  fingerprint,
+  instagram,
+  'mic-2': micVocal,
+  users,
+  youtube,
+};
+
+interface Props {
+  name: keyof typeof ICONS;
+  class?: string;
+}
+
+const { name, class: className = '' } = Astro.props;
+
+const svg = ICONS[name]
+  .replace(/<!--[\s\S]*?-->\s*/, '')
+  .replace(/class="([^"]*)"/, `class="$1 ${className}" data-lucide="${name}" aria-hidden="true"`)
+  .trim();
+---
+<Fragment set:html={svg} />

@@ -1,0 +1,76 @@
+---
+// Portada: fondo con el banner + lienzo de partículas de arena (SandCanvas),
+// título, claim y contadores en vivo.
+import Icon from './Icon.astro';
+import { SITE } from '../data/site';
+---
+<header id="inicio" class="relative min-h-screen flex items-end pt-20 overflow-hidden px-8">
+  <div class="absolute inset-0 z-0 overflow-hidden bg-[#02040a]">
+    <div class="absolute inset-0"
+      style="background-image:url('/images/Banner-MACI-optimized.webp');background-size:cover;background-position:center;opacity:0.45"></div>
+    <canvas id="hero-canvas" class="absolute inset-0 w-full h-full"></canvas>
+  </div>
+
+  <div class="max-w-7xl mx-auto w-full relative z-10 pb-24 md:pb-32">
+    <div
+      class="hero-reveal opacity-0 inline-block px-3 py-1 bg-primary text-black font-bold text-[0.65rem] tracking-[0.2em] uppercase mb-8">
+      23°08'09.6"N 82°21'47.8"W
+    </div>
+
+    <h1
+      class="hero-reveal opacity-0 font-black text-[5rem] md:text-[10rem] leading-[0.85] tracking-tighter uppercase mb-4 text-white drop-shadow-2xl">
+      MACI
+    </h1>
+    <h2 class="hero-reveal opacity-0 text-white/60 text-[0.8rem] md:text-[1rem] font-bold tracking-[0.4em] uppercase mb-10"
+      aria-label="artista digital AI">
+      artista digital AI
+    </h2>
+
+    <div class="flex flex-col md:flex-row md:items-end gap-12">
+      <div class="flex flex-col">
+        <h3 data-i18n-es="música con inteligencia artificial y producción musical contemporánea"
+          data-i18n-en="music with artificial intelligence and contemporary music production"
+          class="reveal text-primary text-xl md:text-3xl font-light tracking-[0.05em] lowercase mb-6 drop-shadow-md leading-tight max-w-2xl">
+          música con inteligencia artificial y producción musical contemporánea
+        </h3>
+        <div data-i18n-es="Sonido, piel y verdad." data-i18n-en="Sound, skin and truth."
+          class="text-white/60 text-xs font-bold tracking-[0.4em] uppercase mb-4">Sonido, piel y verdad.</div>
+        <p data-i18n-es="Un universo musical donde lo íntimo y lo bailable conviven. Historias que se sienten… antes de entenderse."
+          data-i18n-en="A musical universe where the intimate and the danceable coexist. Stories that are felt… before they are understood."
+          class="text-white max-w-md text-sm md:text-base leading-relaxed">
+          Un universo musical donde lo íntimo y lo bailable conviven. Historias que se sienten… antes de entenderse.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-6 w-full md:w-fit">
+        <a href={SITE.spotifyArtist}
+          target="_blank" rel="noopener noreferrer"
+          aria-label="Explorar música de MACI en Spotify"
+          class="btn-primary-gradient px-10 py-5 text-on-primary font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-3 active:scale-95 transition-transform shadow-lg shadow-primary/20 cursor-pointer rounded-full w-full">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21"/></svg>
+          <span data-i18n-es="Explorar" data-i18n-en="Explore">Explorar</span>
+        </a>
+        <div class="flex gap-6 items-center text-white/70 border-l border-outline-variant/30 pl-6">
+          <div class="flex items-center gap-2">
+            <Icon name="clock" class="w-4 h-4" />
+            <span id="time-counter" class="text-[0.7rem] tracking-widest uppercase tabular-nums w-12">00:00</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <Icon name="activity" class="w-4 h-4" />
+            <span id="bpm-counter" class="text-[0.7rem] tracking-widest uppercase tabular-nums w-10">120</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <Icon name="users" class="w-4 h-4" />
+            <span id="audience-counter" class="text-[0.7rem] tracking-widest uppercase tabular-nums w-14">523</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute right-0 bottom-0 p-12 hidden lg:block">
+    <div class="rotate-90 origin-bottom-right text-[0.65rem] text-white/60 uppercase tracking-[0.5em] font-bold">
+      Power design by Abel Maciñeiras 2026 v1
+    </div>
+  </div>
+</header>

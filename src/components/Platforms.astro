@@ -1,0 +1,46 @@
+---
+// Plataformas de streaming (src/data/platforms.json). Antes se generaban en
+// el navegador; ahora se renderizan en build y los logos se sirven en local.
+import platformsData from '../data/platforms.json';
+
+interface Platform {
+  name: string;
+  logo: string;
+  isDark?: boolean;
+  scale?: string;
+}
+
+const platforms = platformsData as Platform[];
+
+const imageClass = (p: Platform) =>
+  `w-full h-full object-contain transition-all duration-500 ${p.scale || ''} ${p.isDark ? 'invert opacity-40 group-hover:opacity-100' : 'grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100'}`;
+---
+<section id="plataformas" class="py-32 px-8 bg-background relative overflow-hidden">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col items-center text-center mb-20">
+      <div data-i18n-es="DISPONIBLE EN STREAMING" data-i18n-en="AVAILABLE ON STREAMING"
+        class="reveal text-[0.7rem] text-primary font-bold uppercase tracking-[0.5em] mb-4">DISPONIBLE EN STREAMING
+      </div>
+      <h2 data-i18n-es="PLATAFORMAS" data-i18n-en="PLATFORMS"
+        class="reveal text-5xl md:text-6xl font-black uppercase tracking-tighter mb-6">PLATAFORMAS</h2>
+      <p data-i18n-es="Escucha a MACI en todas las plataformas digitales. Siempre contigo. Donde quieras. Cuando quieras. Sin filtros."
+        data-i18n-en="Listen to MACI on all digital platforms. Always with you. Anywhere. Anytime. No filters."
+        class="reveal text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+        Escucha a MACI en todas las plataformas digitales. Siempre contigo. Donde quieras. Cuando quieras. Sin
+        filtros.
+      </p>
+    </div>
+
+    <div id="platform-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+      {platforms.map((p) => (
+        <div class="reveal flex flex-col items-center justify-center p-8 bg-surface border border-outline-variant/10 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/5 group cursor-pointer">
+          <div class="w-12 h-12 mb-4 flex items-center justify-center transition-all duration-300">
+            <img src={p.logo} alt={p.name} width="48" height="48" loading="lazy" decoding="async"
+              class={imageClass(p)} referrerpolicy="no-referrer">
+          </div>
+          <span class="text-[0.7rem] font-bold uppercase tracking-widest text-white/70 group-hover:text-primary transition-colors">{p.name}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

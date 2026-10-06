@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_textos_enlaces_menu",
+  "info": { "displayName": "Enlace del menú", "icon": "link", "description": "Texto ES/EN y sección a la que lleva" },
+  "options": {},
+  "attributes": {
+    "es": { "type": "string", "required": true },
+    "en": { "type": "string", "required": true },
+    "destino": {
+      "type": "enumeration",
+      "enum": ["inicio", "discografía", "biografía", "adela", "plataformas", "lanzamientos", "easyprompt", "colaboraciones"],
+      "required": true
+    }
+  }
+}

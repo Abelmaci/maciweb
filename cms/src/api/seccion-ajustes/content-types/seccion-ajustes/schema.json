@@ -34,6 +34,17 @@
     "enlaceTiktok": {
       "type": "string",
       "required": true
+    },
+    "menu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "textos.enlace-menu"
+    },
+    "avisoNavegador": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
     }
   }
 }

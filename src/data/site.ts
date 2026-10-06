@@ -1,4 +1,4 @@
-// Datos técnicos del sitio: dominio, analytics, navegación y datos estructurados.
+// Datos técnicos del sitio: dominio, analytics y datos estructurados.
 // Los textos editables (SEO, redes, secciones) están en textos.json (Strapi).
 
 export const SITE = {
@@ -9,16 +9,6 @@ export const SITE = {
   googleSiteVerification: 'v6knNyaAd6sDMSaU9LULXPnhZWhRyFbVg_W0OxBZRu8',
   gaId: 'G-CZ95R97TWB',
 };
-
-export const NAV = [
-  { href: '#inicio', es: 'INICIO', en: 'HOME' },
-  { href: '#discografía', es: 'DISCOGRAFÍA', en: 'DISCOGRAPHY' },
-  { href: '#biografía', es: 'BIOGRAFÍA', en: 'BIOGRAPHY' },
-  { href: '#adela', es: 'ADELA', en: 'ADELA' },
-  { href: '#plataformas', es: 'PLATAFORMAS', en: 'PLATFORMS' },
-  { href: '#lanzamientos', es: 'LANZAMIENTOS', en: 'RELEASES' },
-  { href: '#easyprompt', es: 'APPS', en: 'APPS' },
-];
 
 export const JSON_LD = [
   {

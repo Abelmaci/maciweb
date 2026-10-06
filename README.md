@@ -55,8 +55,11 @@ Notas:
 - El primer arranque pide crear un usuario administrador (solo existe en tu Mac).
 - En los textos largos los saltos de línea se respetan; una línea en blanco
   separa párrafos.
-- Lo que sigue en el código: el banner del hero (lo usa la animación de
-  partículas), la navegación y los datos estructurados (`src/data/site.ts`).
+- El banner de la portada se cambia en «1 · Portada»: al subir una imagen se
+  generan solas las versiones `public/images/Banner-MACI-optimized.webp/.jpg`
+  que usan la animación de partículas y Safari.
+- Lo único que sigue en el código son los datos técnicos (`src/data/site.ts`:
+  analytics, verificación de Google y datos estructurados).
 
 ## Estructura
 

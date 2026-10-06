@@ -50,6 +50,14 @@
     "firma": {
       "type": "string",
       "required": true
+    },
+    "banner": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }

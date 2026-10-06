@@ -1,10 +1,13 @@
 ---
 // Aviso para Safari (se muestra desde un script inline del layout).
+// Texto editable en Strapi («0 · Ajustes generales» → Aviso para Safari).
+import { TEXTOS, i18n } from '../data/textos';
+
+const aviso = TEXTOS.ajustes.avisoNavegador;
 ---
 <div id="browser-notice"
   style="display:none; position:fixed; top:0; left:0; right:0; z-index:9999; background:#FF4444; color:#fff; font-size:0.75rem; font-weight:700; padding:0.6rem 1rem; text-align:center; letter-spacing:0.02em;">
-  <span data-i18n-es="Para una mejor experiencia, te recomendamos usar Chrome, Firefox o Edge."
-    data-i18n-en="For a better experience, we recommend using Chrome, Firefox or Edge.">Para una mejor experiencia, te recomendamos usar Chrome, Firefox o Edge.</span>
+  <span {...i18n(aviso)}>{aviso.es}</span>
   <button type="button" id="browser-notice-close" aria-label="Cerrar aviso"
     style="background:none; border:none; color:#fff; font-weight:900; margin-left:0.75rem; cursor:pointer; font-size:0.9rem; line-height:1; vertical-align:middle;">&times;</button>
 </div>

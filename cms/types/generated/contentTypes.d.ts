@@ -600,6 +600,8 @@ export interface ApiSeccionAjustesSeccionAjustes
     draftAndPublish: false;
   };
   attributes: {
+    avisoNavegador: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -613,6 +615,7 @@ export interface ApiSeccionAjustesSeccionAjustes
       'api::seccion-ajustes.seccion-ajustes'
     > &
       Schema.Attribute.Private;
+    menu: Schema.Attribute.Component<'textos.enlace-menu', true>;
     publishedAt: Schema.Attribute.DateTime;
     seoDescripcion: Schema.Attribute.Text & Schema.Attribute.Required;
     seoTitulo: Schema.Attribute.String & Schema.Attribute.Required;
@@ -756,10 +759,21 @@ export interface ApiSeccionDiscografiaSeccionDiscografia
     draftAndPublish: false;
   };
   attributes: {
+    botonSpotify: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
     cierre: Schema.Attribute.String & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    cuentaAtrasEtiqueta: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    etiquetaNuevo: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    etiquetaReproduciendo: Schema.Attribute.Component<
+      'textos.bilingue',
+      false
+    > &
+      Schema.Attribute.Required;
     intro: Schema.Attribute.Component<'textos.bilingue-largo', false> &
       Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -895,6 +909,7 @@ export interface ApiSeccionPortadaSeccionPortada
     draftAndPublish: false;
   };
   attributes: {
+    banner: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     boton: Schema.Attribute.Component<'textos.bilingue', false> &
       Schema.Attribute.Required;
     claim: Schema.Attribute.Component<'textos.bilingue', false> &

@@ -83,18 +83,26 @@ const CAMPOS_SECCION = {
   descripcion: ['Descripción', ''],
   copyright: ['Copyright', ''],
   siguemeTexto: ['Texto «Sígueme en»', ''],
+  menu: ['Menú de navegación', 'Enlaces del menú superior y del menú móvil. Arrastra para reordenar.'],
+  avisoNavegador: ['Aviso para Safari', 'Barra roja que se muestra a quien visita la web con Safari.'],
+  banner: ['Banner de fondo', 'Imagen horizontal del fondo (y de la animación de partículas). Mínimo 1600 px de ancho.'],
+  etiquetaNuevo: ['Etiqueta «Nuevo lanzamiento»', 'Se muestra en los discos con esa etiqueta.'],
+  etiquetaReproduciendo: ['Etiqueta «Reproduciendo»', 'Se muestra en los discos con esa etiqueta.'],
+  botonSpotify: ['Botón de Spotify', 'Texto del botón verde de cada disco.'],
+  cuentaAtrasEtiqueta: ['Texto de la cuenta atrás (al cambiar de idioma)', 'El texto inicial de cada disco se edita en el propio disco.'],
 };
 
 const CAMPOS_COMPONENTE = {
   es: ['Español', ''],
   en: ['Inglés', ''],
   destacado: ['Destacado', 'En negrita y blanco.'],
+  destino: ['Lleva a la sección', ''],
 };
 
-const aplicarEtiquetas = (conf, campos) => {
+const aplicarEtiquetas = (conf, campos, yaEtiquetados = []) => {
   for (const [campo, [label, description]] of Object.entries(campos)) {
     const meta = conf.metadatas[campo];
-    if (!meta) continue;
+    if (!meta || yaEtiquetados.includes(campo)) continue;
     meta.edit = { ...meta.edit, label, description };
     meta.list = { ...meta.list, label };
   }
@@ -125,22 +133,27 @@ async function configurarVistas(strapi) {
     hecho[uid] = true;
   }
 
-  for (const uid of Object.keys(strapi.contentTypes).filter((u) => u.startsWith('api::seccion-'))) {
-    if (hecho[uid]) continue;
-    const tipo = tipos.findContentType(uid);
-    const conf = await tipos.findConfiguration(tipo);
-    aplicarEtiquetas(conf, CAMPOS_SECCION);
-    await guardar(tipos, tipo, conf);
-    hecho[uid] = true;
-  }
+  // Secciones y componentes: se etiquetan los campos que aún no lo estén
+  // (así los campos nuevos reciben etiqueta sin pisar las ya personalizadas).
+  const etiquetar = async (servicio, modelo, uid, campos) => {
+    // `true` = configurado por la primera versión, que no tenía estos campos.
+    const CAMPOS_V2 = ['menu', 'avisoNavegador', 'banner', 'etiquetaNuevo', 'etiquetaReproduciendo', 'botonSpotify', 'cuentaAtrasEtiqueta', 'destino'];
+    const previos = Array.isArray(hecho[uid])
+      ? hecho[uid]
+      : (hecho[uid] ? Object.keys(campos).filter((c) => !CAMPOS_V2.includes(c)) : []);
+    const presentes = Object.keys(modelo.attributes).filter((c) => c in campos);
+    if (presentes.every((c) => previos.includes(c))) return;
+    const conf = await servicio.findConfiguration(modelo);
+    aplicarEtiquetas(conf, campos, previos);
+    await guardar(servicio, modelo, conf);
+    hecho[uid] = presentes;
+  };
 
+  for (const uid of Object.keys(strapi.contentTypes).filter((u) => u.startsWith('api::seccion-'))) {
+    await etiquetar(tipos, tipos.findContentType(uid), uid, CAMPOS_SECCION);
+  }
   for (const uid of Object.keys(strapi.components).filter((u) => u.startsWith('textos.'))) {
-    if (hecho[uid]) continue;
-    const comp = componentes.findComponent(uid);
-    const conf = await componentes.findConfiguration(comp);
-    aplicarEtiquetas(conf, CAMPOS_COMPONENTE);
-    await guardar(componentes, comp, conf);
-    hecho[uid] = true;
+    await etiquetar(componentes, componentes.findComponent(uid), uid, CAMPOS_COMPONENTE);
   }
 
   await store.set({ key: 'vistas', value: hecho });

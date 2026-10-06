@@ -26,6 +26,30 @@
     "cierre": {
       "type": "string",
       "required": true
+    },
+    "etiquetaNuevo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "etiquetaReproduciendo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "botonSpotify": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "cuentaAtrasEtiqueta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
     }
   }
 }

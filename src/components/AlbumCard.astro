@@ -5,6 +5,7 @@
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Icon from './Icon.astro';
+import { TEXTOS, i18n } from '../data/textos';
 
 export interface Album {
   id: string;
@@ -49,6 +50,8 @@ const kickerClass = album.compactKicker
   : 'text-xs text-white font-bold uppercase tracking-[0.3em] mt-2';
 
 const cid = `cd${album.id}`;
+// Textos fijos de las tarjetas (Strapi: «2 · Discografía (textos)»).
+const t = TEXTOS.discografia;
 ---
 <div class="embla__slide">
   <div class={cardClass} data-id={album.id} data-audio={album.audio} data-duration={album.duration}>
@@ -84,15 +87,15 @@ const cid = `cd${album.id}`;
       {album.badge === 'new' && (
         <div class="flex items-center gap-3 mb-3">
           <span class="w-2 h-2 bg-primary rounded-full animate-ping"></span>
-          <span data-i18n-es="NUEVO LANZAMIENTO" data-i18n-en="NEW RELEASE"
-            class="text-[0.65rem] font-bold text-white tracking-widest uppercase italic">NUEVO LANZAMIENTO</span>
+          <span {...i18n(t.etiquetaNuevo)}
+            class="text-[0.65rem] font-bold text-white tracking-widest uppercase italic">{t.etiquetaNuevo.es}</span>
         </div>
       )}
       {album.badge === 'playing' && (
         <div class="flex items-center gap-3 mb-3">
           <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-          <span data-i18n-es="REPRODUCIENDO" data-i18n-en="NOW PLAYING"
-            class="text-[0.65rem] font-bold text-white tracking-widest uppercase">REPRODUCIENDO</span>
+          <span {...i18n(t.etiquetaReproduciendo)}
+            class="text-[0.65rem] font-bold text-white tracking-widest uppercase">{t.etiquetaReproduciendo.es}</span>
         </div>
       )}
       <h3 class={`text-3xl font-black ${album.uppercaseTitle ? 'uppercase ' : ''}tracking-tighter text-white drop-shadow-2xl`}>{album.title}</h3>
@@ -109,7 +112,7 @@ const cid = `cd${album.id}`;
       {album.countdown && (
         <div id={`card-countdown-${album.id}`} class="mt-3" data-countdown={album.countdown.date}>
           <span class="text-[0.5rem] font-bold tracking-[0.2em] uppercase text-primary/70 block mb-1"
-            data-i18n-es="LANZAMIENTO EN" data-i18n-en="LAUNCHING IN">{album.countdown.label}</span>
+            {...i18n(t.cuentaAtrasEtiqueta)}>{album.countdown.label}</span>
           <div class="flex gap-2">
             <div class="flex flex-col items-center"><span id={`${cid}-days`} data-countdown-part="days" class="text-base font-black tabular-nums text-white">--</span><span class="uppercase tracking-widest text-white/40" style="font-size:10px">DÍAS</span></div>
             <span class="text-base font-black text-primary/40 self-start mt-0.5">:</span>
@@ -122,9 +125,9 @@ const cid = `cd${album.id}`;
         </div>
       )}
       <a href={album.spotify}
-        target="_blank" rel="noopener noreferrer" data-i18n-es="Escuchar en Spotify" data-i18n-en="Listen on Spotify"
+        target="_blank" rel="noopener noreferrer" {...i18n(t.botonSpotify)}
         aria-label={album.spotifyLabel}
-        class="inline-block bg-[#1DB954] text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-[#1ed760] transition-colors">Escuchar en Spotify</a>
+        class="inline-block bg-[#1DB954] text-white rounded-full px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest mt-4 hover:bg-[#1ed760] transition-colors">{t.botonSpotify.es}</a>
     </div>
   </div>
 </div>

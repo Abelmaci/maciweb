@@ -36,6 +36,7 @@ function rutas(strapi) {
     albums: path.join(web, 'src/data/albums.json'),
     platforms: path.join(web, 'src/data/platforms.json'),
     textos: path.join(web, 'src/data/textos.json'),
+    banner: path.join(web, 'public/images/Banner-MACI-optimized'),
     imagenes: path.join(web, 'src/assets/images'),
     audios: path.join(web, 'public/music-preview'),
     logos: path.join(web, 'public/images/platforms'),
@@ -125,6 +126,14 @@ async function aStrapi(strapi, schema, valor, subirImagen) {
   return out;
 }
 
+// Genera las dos versiones del banner que usa la web (máx. 1600 px de ancho).
+async function generarBanner(origen, destinoSinExtension) {
+  const sharp = require('sharp');
+  const base = sharp(origen).rotate().resize({ width: 1600, withoutEnlargement: true });
+  await base.clone().webp({ quality: 80 }).toFile(`${destinoSinExtension}.webp`);
+  await base.clone().jpeg({ quality: 82, mozjpeg: true }).toFile(`${destinoSinExtension}.jpg`);
+}
+
 // ---------------------------------------------------------------- exportar
 
 async function exportar(strapi) {
@@ -212,10 +221,20 @@ async function exportar(strapi) {
       return nombre;
     },
   };
+  const bannerAnterior = textos.portada?.banner;
   for (const [clave, uid] of Object.entries(SECCIONES)) {
     const entrada = await strapi.documents(uid).findFirst({ populate: '*' });
     if (!entrada) continue;
     textos[clave] = await aWeb(strapi, strapi.contentTypes[uid], entrada, archivos);
+  }
+
+  // Banner de la portada: la animación de partículas y Safari usan rutas fijas
+  // (/images/Banner-MACI-optimized.webp y .jpg), que se regeneran solo cuando
+  // se sube una imagen nueva.
+  const banner = textos.portada?.banner;
+  if (banner && (banner !== bannerAnterior || cambios.includes(`foto ${banner}`))) {
+    await generarBanner(path.join(r.imagenes, banner), r.banner);
+    cambios.push('banner de la portada (webp + jpg)');
   }
   if (await escribirSiCambia(r.textos, `${JSON.stringify(textos, null, 2)}\n`)) cambios.push('textos.json');
 
@@ -315,14 +334,39 @@ async function importarTextos(strapi) {
     if (!subidas.has(nombre)) subidas.set(nombre, await subirArchivo(strapi, path.join(r.imagenes, nombre)));
     return subidas.get(nombre);
   };
+  // Campos ya importados alguna vez: no se vuelven a rellenar aunque se
+  // vacíen en el panel (se respeta lo que edites).
+  const store = strapi.store({ type: 'plugin', name: 'maci-sync' });
+  const importados = (await store.get({ key: 'campos-importados' })) || {};
+  const vacio = (v) => v == null || v === '' || (Array.isArray(v) && v.length === 0);
+
   const creadas = [];
+  const completadas = [];
   for (const [clave, uid] of Object.entries(SECCIONES)) {
-    if (!textos[clave] || await strapi.documents(uid).findFirst()) continue;
-    const data = await aStrapi(strapi, strapi.contentTypes[uid], textos[clave], subirImagen);
-    await strapi.documents(uid).create({ data });
-    creadas.push(clave);
+    if (!textos[clave]) continue;
+    const schema = strapi.contentTypes[uid];
+    const campos = Object.keys(schema.attributes).filter((c) => c in textos[clave]);
+    const existente = await strapi.documents(uid).findFirst({ populate: '*' });
+
+    if (!existente) {
+      const data = await aStrapi(strapi, schema, textos[clave], subirImagen);
+      await strapi.documents(uid).create({ data });
+      creadas.push(clave);
+    } else {
+      const ya = new Set(importados[uid] || []);
+      const nuevos = campos.filter((c) => !ya.has(c) && vacio(existente[c]));
+      if (nuevos.length) {
+        const parcial = Object.fromEntries(nuevos.map((c) => [c, textos[clave][c]]));
+        const data = await aStrapi(strapi, schema, parcial, subirImagen);
+        await strapi.documents(uid).update({ documentId: existente.documentId, data });
+        completadas.push(`${clave} (${nuevos.join(', ')})`);
+      }
+    }
+    importados[uid] = campos;
   }
+  await store.set({ key: 'campos-importados', value: importados });
   if (creadas.length) strapi.log.info(`[maci-sync] Textos importados: ${creadas.join(', ')}`);
+  if (completadas.length) strapi.log.info(`[maci-sync] Campos nuevos rellenados: ${completadas.join('; ')}`);
 }
 
 // ------------------------------------------------- exportación automática

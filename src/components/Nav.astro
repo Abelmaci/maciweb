@@ -1,7 +1,10 @@
 ---
 // Barra de navegación fija + menú móvil a pantalla completa.
 // El efecto de scroll y la apertura del menú están en src/scripts/.
-import { NAV } from '../data/site';
+import { TEXTOS } from '../data/textos';
+
+// Menú editable en Strapi («0 · Ajustes generales» → Menú).
+const NAV = TEXTOS.ajustes.menu.map((item) => ({ ...item, href: `#${item.destino}` }));
 ---
 <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent py-6">
   <div class="max-w-[1440px] mx-auto px-6 flex justify-between items-center">

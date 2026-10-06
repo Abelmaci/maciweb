@@ -26,6 +26,32 @@ export interface TextosBilingueLargo extends Struct.ComponentSchema {
   };
 }
 
+export interface TextosEnlaceMenu extends Struct.ComponentSchema {
+  collectionName: 'components_textos_enlaces_menu';
+  info: {
+    description: 'Texto ES/EN y secci\u00F3n a la que lleva';
+    displayName: 'Enlace del men\u00FA';
+    icon: 'link';
+  };
+  attributes: {
+    destino: Schema.Attribute.Enumeration<
+      [
+        'inicio',
+        'discograf\u00EDa',
+        'biograf\u00EDa',
+        'adela',
+        'plataformas',
+        'lanzamientos',
+        'easyprompt',
+        'colaboraciones',
+      ]
+    > &
+      Schema.Attribute.Required;
+    en: Schema.Attribute.String & Schema.Attribute.Required;
+    es: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface TextosParrafo extends Struct.ComponentSchema {
   collectionName: 'components_textos_parrafos';
   info: {
@@ -45,6 +71,7 @@ declare module '@strapi/strapi' {
     export interface ComponentSchemas {
       'textos.bilingue': TextosBilingue;
       'textos.bilingue-largo': TextosBilingueLargo;
+      'textos.enlace-menu': TextosEnlaceMenu;
       'textos.parrafo': TextosParrafo;
     }
   }

@@ -5,7 +5,48 @@
     "enlaceSpotifyArtista": "https://open.spotify.com/intl-es/artist/08npv9JFamVUX30C0XT695?si=__gUyqpOQde4pFvW6nBfnA",
     "enlaceInstagram": "https://www.instagram.com/maci_ai_music",
     "enlaceYoutube": "https://www.youtube.com/@Maciaimusic",
-    "enlaceTiktok": "https://www.tiktok.com/@maciaimusic"
+    "enlaceTiktok": "https://www.tiktok.com/@maciaimusic",
+    "menu": [
+      {
+        "es": "INICIO",
+        "en": "HOME",
+        "destino": "inicio"
+      },
+      {
+        "es": "DISCOGRAFÍA",
+        "en": "DISCOGRAPHY",
+        "destino": "discografía"
+      },
+      {
+        "es": "BIOGRAFÍA",
+        "en": "BIOGRAPHY",
+        "destino": "biografía"
+      },
+      {
+        "es": "ADELA",
+        "en": "ADELA",
+        "destino": "adela"
+      },
+      {
+        "es": "PLATAFORMAS",
+        "en": "PLATFORMS",
+        "destino": "plataformas"
+      },
+      {
+        "es": "LANZAMIENTOS",
+        "en": "RELEASES",
+        "destino": "lanzamientos"
+      },
+      {
+        "es": "APPS",
+        "en": "APPS",
+        "destino": "easyprompt"
+      }
+    ],
+    "avisoNavegador": {
+      "es": "Para una mejor experiencia, te recomendamos usar Chrome, Firefox o Edge.",
+      "en": "For a better experience, we recommend using Chrome, Firefox or Edge."
+    }
   },
   "portada": {
     "coordenadas": "23°08'09.6\"N 82°21'47.8\"W",
@@ -27,7 +68,8 @@
       "es": "Explorar",
       "en": "Explore"
     },
-    "firma": "Power design by Abel Maciñeiras 2026 v1"
+    "firma": "Power design by Abel Maciñeiras 2026 v1",
+    "banner": "banner-portada.jpg"
   },
   "discografia": {
     "titulo": {
@@ -38,7 +80,23 @@
       "es": "piezas creadas entre inteligencia artificial y composición humana",
       "en": "pieces created between artificial intelligence and human composition"
     },
-    "cierre": "seguir explorando."
+    "cierre": "seguir explorando.",
+    "etiquetaNuevo": {
+      "es": "NUEVO LANZAMIENTO",
+      "en": "NEW RELEASE"
+    },
+    "etiquetaReproduciendo": {
+      "es": "REPRODUCIENDO",
+      "en": "NOW PLAYING"
+    },
+    "botonSpotify": {
+      "es": "Escuchar en Spotify",
+      "en": "Listen on Spotify"
+    },
+    "cuentaAtrasEtiqueta": {
+      "es": "LANZAMIENTO EN",
+      "en": "LAUNCHING IN"
+    }
   },
   "biografia": {
     "marcaAgua": "MACI",

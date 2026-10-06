@@ -6,7 +6,6 @@
   {
     "name": "Amazon Music",
     "logo": "/images/platforms/amazonmusic.png",
-    "isDark": false,
     "scale": "scale-150"
   },
   {

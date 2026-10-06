@@ -11,8 +11,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "admin": "node admin/admin-server.mjs",
-    "astro": "astro"
+    "astro": "astro",
+    "cms": "npm --prefix cms run develop",
+    "cms:instalar": "npm --prefix cms install",
+    "cms:exportar": "npm --prefix cms run exportar",
+    "publicar": "node scripts/publicar.mjs"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",

@@ -1,6 +1,6 @@
 [
   {
-    "id": "6",
+    "id": "quien-fue",
     "title": "¿Quién fue?",
     "uppercaseTitle": false,
     "cover": "CD_quien_fue.jpg",
@@ -21,7 +21,7 @@
     "spotifyLabel": "Escuchar álbum ¿Quién fue? en Spotify"
   },
   {
-    "id": "7",
+    "id": "guajira-gallega",
     "title": "Guajira Gallega",
     "uppercaseTitle": false,
     "cover": "CD_guajira_gallega.jpeg",
@@ -45,7 +45,7 @@
     "spotifyLabel": "Escuchar álbum Guajira Gallega en Spotify"
   },
   {
-    "id": "0",
+    "id": "caigo-a-tus-pies",
     "title": "Caigo a tus pies",
     "uppercaseTitle": true,
     "highlightOnHover": true,
@@ -66,14 +66,14 @@
     },
     "tags": "composición humana · inteligencia artificial",
     "countdown": {
-      "date": "2026-06-12T00:00:00",
+      "date": "2026-06-11T22:00:00.000Z",
       "label": "LANZAMIENTO EN · 12 JUN"
     },
     "spotify": "https://open.spotify.com/intl-es/album/3s2wyk5dw8SiBD2KVmrE7O?si=s-Kyan7eSiumng3mWrnX9w",
     "spotifyLabel": "Escuchar Caigo a tus pies en Spotify"
   },
   {
-    "id": "1",
+    "id": "peon-en-el-amor",
     "title": "Peón en el Amor",
     "uppercaseTitle": true,
     "cover": "CD_PEON_EN_EL_AMOR_optimized.jpg",
@@ -97,7 +97,7 @@
     "spotifyLabel": "Escuchar álbum Peón en el Amor en Spotify"
   },
   {
-    "id": "2",
+    "id": "tu-cuerpo-me-habla",
     "title": "Tu cuerpo me habla",
     "uppercaseTitle": true,
     "cover": "CD_TU_CUERPO_ME_HABLA.jpg",
@@ -121,7 +121,7 @@
     "spotifyLabel": "Escuchar álbum Tu cuerpo me habla en Spotify"
   },
   {
-    "id": "3",
+    "id": "your-body-wants-to-speak-to-me",
     "title": "Your Body Wants to Speak to Me",
     "uppercaseTitle": true,
     "compactKicker": true,
@@ -146,7 +146,7 @@
     "spotifyLabel": "Escuchar álbum Your Body Wants to Speak to Me en Spotify"
   },
   {
-    "id": "4",
+    "id": "adela",
     "title": "Adela",
     "uppercaseTitle": true,
     "cover": "CD_adela_optimized.jpg",
@@ -170,7 +170,7 @@
     "spotifyLabel": "Escuchar álbum Adela en Spotify"
   },
   {
-    "id": "5",
+    "id": "el-idiota",
     "title": "El Idiota",
     "uppercaseTitle": true,
     "cover": "CD_el_idiota_optimized.jpg",

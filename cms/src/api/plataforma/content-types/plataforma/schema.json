@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "plataformas",
+  "info": {
+    "singularName": "plataforma",
+    "pluralName": "plataformas",
+    "displayName": "Plataforma",
+    "description": "Plataformas de streaming de la sección Plataformas"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "nombre": { "type": "string", "required": true },
+    "orden": { "type": "integer", "required": true, "default": 10 },
+    "logo": { "type": "media", "multiple": false, "required": true, "allowedTypes": ["images"] },
+    "invertirColor": { "type": "boolean", "default": false },
+    "tamano": {
+      "type": "enumeration",
+      "enum": ["normal", "grande_110", "grande_125", "grande_150"],
+      "default": "normal",
+      "required": true
+    }
+  }
+}

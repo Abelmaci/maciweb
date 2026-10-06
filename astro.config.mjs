@@ -15,4 +15,11 @@ export default defineConfig({
     // elimina la petición bloqueante de render.
     inlineStylesheets: 'always',
   },
+
+  // El CMS (Strapi, en cms/) es un proyecto aparte: Astro no debe vigilarlo.
+  vite: {
+    server: {
+      watch: { ignored: ['**/cms/**'] },
+    },
+  },
 });

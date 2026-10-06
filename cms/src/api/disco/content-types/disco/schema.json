@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "discos",
+  "info": {
+    "singularName": "disco",
+    "pluralName": "discos",
+    "displayName": "Disco",
+    "description": "Discos del carrusel de la web (orden = posición en el carrusel)"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "titulo": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "titulo", "required": true },
+    "orden": { "type": "integer", "required": true, "default": 10 },
+    "portada": { "type": "media", "multiple": false, "required": true, "allowedTypes": ["images"] },
+    "audio": { "type": "media", "multiple": false, "required": true, "allowedTypes": ["audios", "files"] },
+    "duracionPreview": { "type": "integer", "required": true, "default": 30, "min": 1, "max": 120 },
+    "etiqueta": {
+      "type": "enumeration",
+      "enum": ["ninguna", "nuevo_lanzamiento", "reproduciendo"],
+      "default": "reproduciendo",
+      "required": true
+    },
+    "subtituloEs": { "type": "string", "required": true },
+    "subtituloEn": { "type": "string", "required": true },
+    "anio": { "type": "string", "maxLength": 4 },
+    "descripcionEs": { "type": "text" },
+    "descripcionEn": { "type": "text" },
+    "palabrasClave": { "type": "string" },
+    "enlaceSpotify": { "type": "string", "required": true },
+    "textoAccesibleSpotify": { "type": "string" },
+    "textoAlternativoPortada": { "type": "string" },
+    "textoAlternativoVinilo": { "type": "string" },
+    "cuentaAtrasFecha": { "type": "datetime" },
+    "cuentaAtrasTexto": { "type": "string" },
+    "tituloEnMayusculas": { "type": "boolean", "default": true },
+    "subtituloCompacto": { "type": "boolean", "default": false },
+    "resaltarAlPasar": { "type": "boolean", "default": false }
+  }
+}

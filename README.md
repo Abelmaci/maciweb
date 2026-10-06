@@ -9,13 +9,47 @@ separados del marcado.
 
 ```bash
 npm install
-npm run dev       # desarrollo → http://localhost:4321
+npm run dev       # web en desarrollo → http://localhost:4321
 npm run build     # genera dist/
 npm run preview   # sirve dist/ para revisarlo
-npm run admin     # panel de contenidos → http://localhost:3001
+
+npm run cms:instalar   # solo la primera vez: instala Strapi
+npm run cms            # CMS → http://localhost:1337/admin
+npm run publicar       # sube los cambios de contenido a macimusic.es
 ```
 
 Requiere Node 22.12 o superior.
+
+## Editar contenido con Strapi
+
+La web está en GitHub Pages, que solo sirve archivos estáticos, así que Strapi
+funciona **en local** y la web no depende de él:
+
+```
+Strapi (local)  ──guardar──▶  src/data/*.json + portadas/audios/logos  ──npm run publicar──▶  GitHub  ──Actions──▶  macimusic.es
+```
+
+1. Abre dos terminales en esta carpeta: `npm run cms` y `npm run dev`.
+2. Edita en http://localhost:1337/admin → *Gestor de contenidos* → **Disco** o
+   **Plataforma**. Al guardar o publicar, los cambios se copian solos a la web
+   y se ven al momento en http://localhost:4321.
+3. Cuando esté a tu gusto: `npm run publicar`. Comprueba que la web compila,
+   sube solo el contenido y en ~2 minutos está en macimusic.es.
+
+Notas:
+
+- Los discos tienen **borrador / publicado**: solo los publicados salen en la
+  web, así que puedes preparar un lanzamiento sin que aparezca.
+- El **orden** del carrusel y de las plataformas lo marca el campo *Orden*
+  (de menor a mayor; usa 10, 20, 30… para poder intercalar).
+- Las portadas se suben en calidad original: Astro genera las versiones
+  optimizadas al construir la web.
+- La base de datos de Strapi (`cms/.tmp/`) y sus subidas (`cms/public/uploads/`)
+  no se suben al repositorio (es público). Si se pierden o cambias de
+  ordenador, Strapi se rellena solo desde los JSON de la web al arrancar.
+- El primer arranque pide crear un usuario administrador (solo existe en tu Mac).
+- Los textos de las secciones (biografía, Adela, etc.) siguen en los
+  componentes de `src/components/`.
 
 ## Estructura
 
@@ -48,19 +82,21 @@ public/                       Se publica tal cual
 ├── safari/                   Capa de rescate para Safari (solo se carga en Safari)
 ├── service-worker.js, CNAME, robots.txt, sitemap.xml, verificación de Google
 
-admin/                        Panel local (no se publica)
+cms/                          Strapi (CMS local, no se publica)
+├── src/api/disco, plataforma Tipos de contenido
+└── src/maci-sync/            Sincronización Strapi ⇄ src/data (importar/exportar)
+scripts/publicar.mjs          Exporta, comprueba, hace commit del contenido y push
 recursos/                     Archivo: imágenes fuente y documentos antiguos (no se publica)
 ```
 
 ## Tareas habituales
 
-**Añadir un disco:** `npm run admin` → "Añadir disco", subir portada y MP3,
-rellenar los datos y guardar. También se puede editar `src/data/albums.json` a
-mano (la portada va en `src/assets/images/` y el audio en `public/music-preview/`).
+**Añadir un disco:** en Strapi, *Disco* → *Crear nueva entrada*: título,
+orden, portada, audio MP3, subtítulos ES/EN, enlace de Spotify → *Publicar*.
 
-**Cuenta atrás de un lanzamiento:** en el disco, `"countdown": { "date":
-"2026-12-01T00:00:00", "label": "LANZAMIENTO EN · 1 DIC" }`. Se oculta sola
-cuando pasa la fecha.
+**Cuenta atrás de un lanzamiento:** en el disco, rellena *Cuenta atrás: fecha*
+y *Cuenta atrás: texto* (ej. "LANZAMIENTO EN · 1 DIC"). Se oculta sola cuando
+pasa la fecha.
 
 **Textos de las secciones:** están en cada componente de `src/components/`.
 Cada texto lleva sus versiones `data-i18n-es` / `data-i18n-en` para el
@@ -85,5 +121,4 @@ Settings → Pages → Source: **GitHub Actions**. El dominio sale de
   no dependen de esm.sh, unpkg ni Google Fonts en cada visita.
 - Logos de plataformas servidos en local (Musixmatch y CapCut salían rotos).
 - El CSS va inline en el HTML (una petición bloqueante menos).
-- El panel de administración edita los JSON en vez de reescribir el HTML, y el
-  token de Cloudflare se lee de `.env` (ver `.env.example`).
+- El contenido se edita con Strapi en local en lugar de reescribir el HTML.

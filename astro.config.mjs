@@ -16,6 +16,9 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
 
+  // Puerto fijo propio: el 4321 (por defecto) lo usa el proyecto TokenCity.
+  server: { port: 4322 },
+
   // El CMS (Strapi, en cms/) es un proyecto aparte: Astro no debe vigilarlo.
   vite: {
     server: {

@@ -9,7 +9,7 @@ separados del marcado.
 
 ```bash
 npm install
-npm run dev       # web en desarrollo → http://localhost:4321
+npm run dev       # web en desarrollo → http://localhost:4322
 npm run build     # genera dist/
 npm run preview   # sirve dist/ para revisarlo
 
@@ -37,7 +37,7 @@ Strapi (local)  ──guardar──▶  src/data/*.json + portadas/audios/logos 
      el SEO y los enlaces a redes. Están numerados en el orden de la página.
 
    Al guardar o publicar, los cambios se copian solos a la web y se ven al
-   momento en http://localhost:4321.
+   momento en http://localhost:4322.
 3. Cuando esté a tu gusto: `npm run publicar`. Comprueba que la web compila,
    sube solo el contenido y en ~2 minutos está en macimusic.es.
 

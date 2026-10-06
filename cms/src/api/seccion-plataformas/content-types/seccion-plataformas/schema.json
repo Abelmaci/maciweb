@@ -1,0 +1,33 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_plataformas",
+  "info": {
+    "singularName": "seccion-plataformas",
+    "pluralName": "secciones-plataformas",
+    "displayName": "5 · Plataformas (textos)",
+    "description": "Cabecera de la sección (los logos se editan en «Plataforma»)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "etiqueta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "titulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "intro": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "collectionName": "components_textos_bilingues_largos",
+  "info": { "displayName": "Texto largo ES/EN", "icon": "feather", "description": "Texto en español e inglés; los saltos de línea se respetan en la web" },
+  "options": {},
+  "attributes": {
+    "es": { "type": "text", "required": true },
+    "en": { "type": "text", "required": true }
+  }
+}

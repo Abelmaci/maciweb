@@ -5,8 +5,8 @@
 // La web (Astro) no habla con Strapi: se construye desde src/data/*.json y los
 // archivos del repo. Este módulo hace de puente:
 //
-//   - importar(): si Strapi está vacío, lo rellena desde los JSON y archivos
-//     de la web (primer arranque o base de datos perdida).
+//   - importar() / importarTextos(): si Strapi está vacío, lo rellena desde
+//     los JSON y archivos de la web (primer arranque o base de datos perdida).
 //   - exportar(): vuelca lo publicado en Strapi a los JSON de la web y copia
 //     portadas, audios y logos a su sitio. Se ejecuta solo tras cada cambio.
 
@@ -35,6 +35,7 @@ function rutas(strapi) {
     web,
     albums: path.join(web, 'src/data/albums.json'),
     platforms: path.join(web, 'src/data/platforms.json'),
+    textos: path.join(web, 'src/data/textos.json'),
     imagenes: path.join(web, 'src/assets/images'),
     audios: path.join(web, 'public/music-preview'),
     logos: path.join(web, 'public/images/platforms'),
@@ -63,6 +64,65 @@ async function copiarSiCambia(origen, destino) {
   await fs.mkdir(path.dirname(destino), { recursive: true });
   await fs.copyFile(origen, destino);
   return true;
+}
+
+// ------------------------------------------------- textos de las secciones
+
+// Clave en src/data/textos.json → tipo individual de Strapi.
+const SECCIONES = {
+  ajustes: 'api::seccion-ajustes.seccion-ajustes',
+  portada: 'api::seccion-portada.seccion-portada',
+  discografia: 'api::seccion-discografia.seccion-discografia',
+  biografia: 'api::seccion-biografia.seccion-biografia',
+  adela: 'api::seccion-adela.seccion-adela',
+  plataformas: 'api::seccion-plataformas.seccion-plataformas',
+  loQueViene: 'api::seccion-lo-que-viene.seccion-lo-que-viene',
+  apps: 'api::seccion-apps.seccion-apps',
+  colaboraciones: 'api::seccion-colaboraciones.seccion-colaboraciones',
+  pie: 'api::seccion-pie.seccion-pie',
+};
+
+// Convierte una entrada de Strapi al formato de textos.json, siguiendo el
+// orden de campos del esquema. Las fotos se copian a src/assets/images.
+async function aWeb(strapi, schema, valor, archivos) {
+  const out = {};
+  for (const [campo, attr] of Object.entries(schema.attributes)) {
+    if (!('type' in attr) || attr.private || ['id', 'documentId', 'createdAt', 'updatedAt', 'publishedAt', 'createdBy', 'updatedBy', 'locale', 'localizations'].includes(campo)) continue;
+    const v = valor?.[campo];
+    if (attr.type === 'component') {
+      const comp = strapi.components[attr.component];
+      out[campo] = attr.repeatable
+        ? await Promise.all((v || []).map((item) => aWeb(strapi, comp, item, archivos)))
+        : await aWeb(strapi, comp, v || {}, archivos);
+    } else if (attr.type === 'media') {
+      out[campo] = v ? await archivos.imagen(v) : '';
+    } else if (attr.type === 'boolean') {
+      out[campo] = Boolean(v);
+    } else {
+      out[campo] = v ?? '';
+    }
+  }
+  return out;
+}
+
+// Al revés: de textos.json a datos de Strapi (subiendo las fotos).
+async function aStrapi(strapi, schema, valor, subirImagen) {
+  const out = {};
+  for (const [campo, attr] of Object.entries(schema.attributes)) {
+    if (!(campo in (valor || {}))) continue;
+    const v = valor[campo];
+    if (attr.type === 'component') {
+      const comp = strapi.components[attr.component];
+      out[campo] = attr.repeatable
+        ? await Promise.all(v.map((item) => aStrapi(strapi, comp, item, subirImagen)))
+        : await aStrapi(strapi, comp, v, subirImagen);
+    } else if (attr.type === 'media') {
+      out[campo] = v ? (await subirImagen(v)).id : null;
+    } else {
+      out[campo] = v;
+    }
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------- exportar
@@ -141,6 +201,23 @@ async function exportar(strapi) {
   // Nunca dejar la web vacía por un error: si no hay nada publicado, no se toca.
   if (albums.length && await escribirSiCambia(r.albums, `${JSON.stringify(albums, null, 2)}\n`)) cambios.push('albums.json');
   if (platforms.length && await escribirSiCambia(r.platforms, `${JSON.stringify(platforms, null, 2)}\n`)) cambios.push('platforms.json');
+
+  // Textos de las secciones. Si falta alguna sección en Strapi se conserva la
+  // que ya tenga la web.
+  const textos = JSON.parse(await fs.readFile(r.textos, 'utf8').catch(() => '{}'));
+  const archivos = {
+    imagen: async (media) => {
+      const nombre = nombreDe(media);
+      if (await copiarSiCambia(archivoDe(media), path.join(r.imagenes, nombre))) cambios.push(`foto ${nombre}`);
+      return nombre;
+    },
+  };
+  for (const [clave, uid] of Object.entries(SECCIONES)) {
+    const entrada = await strapi.documents(uid).findFirst({ populate: '*' });
+    if (!entrada) continue;
+    textos[clave] = await aWeb(strapi, strapi.contentTypes[uid], entrada, archivos);
+  }
+  if (await escribirSiCambia(r.textos, `${JSON.stringify(textos, null, 2)}\n`)) cambios.push('textos.json');
 
   strapi.log.info(cambios.length
     ? `[maci-sync] Web actualizada: ${cambios.join(', ')}`
@@ -229,6 +306,25 @@ async function importar(strapi) {
   return true;
 }
 
+// Rellena las secciones que no existan todavía en Strapi desde textos.json.
+async function importarTextos(strapi) {
+  const r = rutas(strapi);
+  const textos = JSON.parse(await fs.readFile(r.textos, 'utf8'));
+  const subidas = new Map();
+  const subirImagen = async (nombre) => {
+    if (!subidas.has(nombre)) subidas.set(nombre, await subirArchivo(strapi, path.join(r.imagenes, nombre)));
+    return subidas.get(nombre);
+  };
+  const creadas = [];
+  for (const [clave, uid] of Object.entries(SECCIONES)) {
+    if (!textos[clave] || await strapi.documents(uid).findFirst()) continue;
+    const data = await aStrapi(strapi, strapi.contentTypes[uid], textos[clave], subirImagen);
+    await strapi.documents(uid).create({ data });
+    creadas.push(clave);
+  }
+  if (creadas.length) strapi.log.info(`[maci-sync] Textos importados: ${creadas.join(', ')}`);
+}
+
 // ------------------------------------------------- exportación automática
 
 let activo = false;
@@ -245,9 +341,10 @@ function programarExportacion(strapi) {
 // Se registra en register(): reacciona a cualquier cambio en discos o plataformas.
 function registrarMiddleware(strapi) {
   const ACCIONES = new Set(['create', 'update', 'delete', 'publish', 'unpublish', 'discardDraft']);
+  const UIDS = new Set([DISCO, PLATAFORMA, ...Object.values(SECCIONES)]);
   strapi.documents.use(async (ctx, next) => {
     const resultado = await next();
-    if ((ctx.uid === DISCO || ctx.uid === PLATAFORMA) && ACCIONES.has(ctx.action)) {
+    if (UIDS.has(ctx.uid) && ACCIONES.has(ctx.action)) {
       programarExportacion(strapi);
     }
     return resultado;
@@ -258,4 +355,4 @@ function activarExportacionAutomatica() {
   activo = true;
 }
 
-module.exports = { exportar, importar, registrarMiddleware, activarExportacionAutomatica };
+module.exports = { exportar, importar, importarTextos, registrarMiddleware, activarExportacionAutomatica };

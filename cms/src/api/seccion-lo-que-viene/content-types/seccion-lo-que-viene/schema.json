@@ -1,0 +1,39 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_lo_que_viene",
+  "info": {
+    "singularName": "seccion-lo-que-viene",
+    "pluralName": "secciones-lo-que-viene",
+    "displayName": "6 · Lo que viene",
+    "description": "Texto de próximos lanzamientos y tarjeta con la onda sonora"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "titulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "texto": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "tarjetaTitulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "tarjetaTexto": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    }
+  }
+}

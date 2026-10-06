@@ -1,6 +1,10 @@
 ---
 // Pie de página con logo, créditos y redes.
 import Icon from './Icon.astro';
+import { TEXTOS, i18n } from '../data/textos';
+
+const t = TEXTOS.pie;
+const redes = TEXTOS.ajustes;
 ---
 <footer class="w-full border-t border-outline-variant/10 bg-black">
   <div class="max-w-[1440px] mx-auto px-8 py-20">
@@ -11,32 +15,30 @@ import Icon from './Icon.astro';
           class="h-8 w-auto brightness-0 invert opacity-90 transition-all hover:opacity-100"
           referrerpolicy="no-referrer">
         <div class="flex flex-col items-center md:items-start text-center md:text-left gap-1 mt-2">
-          <p class="text-[0.75rem] tracking-[0.15em] uppercase text-white/80 font-bold">MACI / Abel Maciñeiras</p>
-          <p class="text-[0.6rem] tracking-[0.2em] uppercase text-white/30 font-light">artista digital AI ·
-            compositor · productor musical</p>
+          <p class="text-[0.75rem] tracking-[0.15em] uppercase text-white/80 font-bold">{t.nombre}</p>
+          <p class="text-[0.6rem] tracking-[0.2em] uppercase text-white/30 font-light">{t.descripcion}</p>
         </div>
         <div class="text-[0.75rem] tracking-[0.2em] uppercase text-white/40 font-bold">
-          © Copyright MACI, 2026
+          {t.copyright}
         </div>
       </div>
 
       <div class="flex flex-col items-center md:items-end gap-3">
-        <span class="text-[0.65rem] tracking-[0.2em] text-white/40 uppercase font-bold" data-i18n-es="SÍGUEME EN:"
-          data-i18n-en="FOLLOW ME ON:">SÍGUEME EN:</span>
+        <span class="text-[0.65rem] tracking-[0.2em] text-white/40 uppercase font-bold" {...i18n(t.siguemeTexto)}>{t.siguemeTexto.es}</span>
         <div class="flex gap-6">
-          <a href="https://www.youtube.com/@Maciaimusic" target="_blank" rel="noopener noreferrer"
+          <a href={redes.enlaceYoutube} target="_blank" rel="noopener noreferrer"
             aria-label="Seguir a MACI en YouTube"
             class="text-primary/70 hover:text-primary transition-all hover:scale-110 cursor-pointer">
             <Icon name="youtube" class="w-8 h-8" />
           </a>
-          <a href="https://www.tiktok.com/@maciaimusic" target="_blank" rel="noopener noreferrer"
+          <a href={redes.enlaceTiktok} target="_blank" rel="noopener noreferrer"
             aria-label="Seguir a MACI en TikTok"
             class="text-primary/70 hover:text-primary transition-all hover:scale-110 cursor-pointer flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
               <path d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"/>
             </svg>
           </a>
-          <a href="https://www.instagram.com/maci_ai_music" target="_blank" rel="noopener noreferrer"
+          <a href={redes.enlaceInstagram} target="_blank" rel="noopener noreferrer"
             aria-label="Seguir a MACI en Instagram"
             class="text-primary/70 hover:text-primary transition-all hover:scale-110 cursor-pointer"><Icon name="instagram" class="w-8 h-8" /></a>
         </div>

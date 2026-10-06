@@ -1,0 +1,9 @@
+{
+  "collectionName": "components_textos_bilingues",
+  "info": { "displayName": "Texto ES/EN", "icon": "globe", "description": "Texto corto en español e inglés" },
+  "options": {},
+  "attributes": {
+    "es": { "type": "string", "required": true },
+    "en": { "type": "string", "required": true }
+  }
+}

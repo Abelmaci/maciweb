@@ -1,0 +1,54 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_colaboraciones",
+  "info": {
+    "singularName": "seccion-colaboraciones",
+    "pluralName": "secciones-colaboraciones",
+    "displayName": "8 · Colaboraciones",
+    "description": "Texto y botón de contacto"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "etiqueta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "titulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "intro": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "parrafos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "textos.parrafo"
+    },
+    "tarjetaTitulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "boton": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "botonEnlace": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

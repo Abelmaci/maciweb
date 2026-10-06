@@ -1,0 +1,70 @@
+---
+// Sección de foto + texto (Biografía y Adela). Textos en src/data/textos.json.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { i18n, type Bilingue, type Parrafo } from '../data/textos';
+
+interface Props {
+  id: string;
+  sectionClass: string;
+  marcaAguaClass: string;
+  contenido: {
+    marcaAgua: string;
+    titulo: Bilingue;
+    foto: string;
+    fotoAlt: string;
+    cita: Bilingue;
+    parrafos: Parrafo[];
+  };
+}
+
+const { id, sectionClass, marcaAguaClass, contenido: c } = Astro.props;
+
+const images = import.meta.glob<{ default: ImageMetadata }>('../assets/images/*.{jpg,jpeg,png,webp}', { eager: true });
+const foto = images[`../assets/images/${c.foto}`]?.default;
+if (!foto) {
+  throw new Error(`[textos.json] No existe la foto "${c.foto}" en src/assets/images/ (sección ${id}).`);
+}
+const anchoMax = Math.min(896, foto.width);
+const citar = (t: string) => `"${t}"`;
+---
+<section id={id} class={sectionClass}>
+  <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-24 items-center">
+    <div class="w-full lg:w-1/2 relative">
+      <div
+        class={`bio-data-text absolute -top-16 sm:-top-32 left-0 w-full text-center ${marcaAguaClass} sm:text-[12rem] font-black text-white/[0.07] select-none leading-none z-0 whitespace-nowrap`}>
+        {c.marcaAgua}
+      </div>
+      <div
+        class="reveal relative bg-surface-container-highest p-1 rounded-3xl overflow-hidden shadow-2xl max-w-md mx-auto">
+        <Picture src={foto} alt={c.fotoAlt}
+          formats={['avif', 'webp']} width={anchoMax} widths={[448, anchoMax]} sizes="(min-width: 480px) 448px, 100vw"
+          loading="lazy" decoding="async"
+          class="w-full aspect-[4/5] object-cover hover:brightness-110 transition-all duration-700 rounded-2xl"
+          referrerpolicy="no-referrer" />
+        <div
+          class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent rounded-b-2xl pointer-events-none">
+        </div>
+        <div data-i18n-es={citar(c.cita.es)} data-i18n-en={citar(c.cita.en)}
+          class="absolute bottom-8 right-8 max-w-[200px] text-right text-[0.8rem] font-light italic text-white shadow-2xl leading-relaxed z-10">
+          {citar(c.cita.es)}
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full lg:w-1/2 space-y-10">
+      <div class="reveal flex items-center gap-6 text-primary">
+        <slot name="icono" />
+        <h2 {...i18n(c.titulo)}
+          class="reveal text-5xl font-black uppercase tracking-tighter">{c.titulo.es}</h2>
+      </div>
+
+      <div
+        class="reveal space-y-6 text-on-surface-variant text-lg leading-relaxed border-l-2 border-primary pl-10 py-2">
+        {c.parrafos.map((p) => (
+          <p {...i18n(p)} class={p.destacado ? 'font-bold text-white' : undefined}>{p.es}</p>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

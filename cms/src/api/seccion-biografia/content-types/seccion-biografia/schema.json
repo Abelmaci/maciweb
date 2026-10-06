@@ -1,0 +1,48 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_biografia",
+  "info": {
+    "singularName": "seccion-biografia",
+    "pluralName": "secciones-biografia",
+    "displayName": "3 · Biografía",
+    "description": "Foto, cita y texto de la biografía"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "marcaAgua": {
+      "type": "string",
+      "required": true
+    },
+    "titulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "foto": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "fotoAlt": {
+      "type": "string",
+      "required": true
+    },
+    "cita": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "parrafos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "textos.parrafo"
+    }
+  }
+}

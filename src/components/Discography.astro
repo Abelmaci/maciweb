@@ -2,20 +2,21 @@
 // Discografía: carrusel Embla con una tarjeta por disco (src/data/albums.json).
 import AlbumCard, { type Album } from './AlbumCard.astro';
 import albumsData from '../data/albums.json';
+import { TEXTOS, i18n } from '../data/textos';
 
 const albums = albumsData as Album[];
+const t = TEXTOS.discografia;
 ---
 <section id="discografía" class="py-32 px-8 bg-surface-container-low relative">
   <div class="max-w-7xl mx-auto">
     <div class="flex flex-col mb-10 border-b border-outline-variant/15 pb-6 section-header">
-      <h2 data-i18n-es="explora los fragmentos" data-i18n-en="explore the fragments"
+      <h2 {...i18n(t.titulo)}
         class="reveal text-4xl font-black uppercase tracking-tighter mb-6 text-white">
-        explora los fragmentos
+        {t.titulo.es}
       </h2>
-      <p data-i18n-es="piezas creadas entre inteligencia artificial y composición humana"
-        data-i18n-en="pieces created between artificial intelligence and human composition"
+      <p {...i18n(t.intro)}
         class="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
-        piezas creadas entre inteligencia artificial y composición humana
+        {t.intro.es}
       </p>
     </div>
 
@@ -28,7 +29,7 @@ const albums = albumsData as Album[];
     <!-- Slider Controls -->
     <div class="embla__dots flex justify-center gap-3 mt-16"></div>
     <div class="text-center mt-12">
-      <p class="text-primary font-bold uppercase tracking-[0.4em] text-xs italic">seguir explorando.</p>
+      <p class="text-primary font-bold uppercase tracking-[0.4em] text-xs italic">{t.cierre}</p>
     </div>
   </div>
 </section>

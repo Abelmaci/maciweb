@@ -30,9 +30,14 @@ Strapi (local)  ──guardar──▶  src/data/*.json + portadas/audios/logos 
 ```
 
 1. Abre dos terminales en esta carpeta: `npm run cms` y `npm run dev`.
-2. Edita en http://localhost:1337/admin → *Gestor de contenidos* → **Disco** o
-   **Plataforma**. Al guardar o publicar, los cambios se copian solos a la web
-   y se ven al momento en http://localhost:4321.
+2. Edita en http://localhost:1337/admin → *Gestor de contenidos*:
+   - **Disco** y **Plataforma** (colecciones): discos del carrusel y logos.
+   - **0 · Ajustes generales … 9 · Pie de página** (tipos individuales): todos
+     los textos de la web en español e inglés, las fotos de Biografía y Adela,
+     el SEO y los enlaces a redes. Están numerados en el orden de la página.
+
+   Al guardar o publicar, los cambios se copian solos a la web y se ven al
+   momento en http://localhost:4321.
 3. Cuando esté a tu gusto: `npm run publicar`. Comprueba que la web compila,
    sube solo el contenido y en ~2 minutos está en macimusic.es.
 
@@ -48,8 +53,10 @@ Notas:
   no se suben al repositorio (es público). Si se pierden o cambias de
   ordenador, Strapi se rellena solo desde los JSON de la web al arrancar.
 - El primer arranque pide crear un usuario administrador (solo existe en tu Mac).
-- Los textos de las secciones (biografía, Adela, etc.) siguen en los
-  componentes de `src/components/`.
+- En los textos largos los saltos de línea se respetan; una línea en blanco
+  separa párrafos.
+- Lo que sigue en el código: el banner del hero (lo usa la animación de
+  partículas), la navegación y los datos estructurados (`src/data/site.ts`).
 
 ## Estructura
 
@@ -64,6 +71,7 @@ src/
 ├── data/
 │   ├── albums.json           Discos del carrusel (orden = orden en pantalla)
 │   ├── platforms.json        Plataformas de streaming
+│   ├── textos.json           Textos de las secciones, SEO y redes (ES/EN)
 │   └── site.ts               Metadatos, navegación, redes, datos estructurados
 ├── scripts/                  JavaScript del navegador
 │   ├── main.js               Punto de entrada
@@ -98,9 +106,9 @@ orden, portada, audio MP3, subtítulos ES/EN, enlace de Spotify → *Publicar*.
 y *Cuenta atrás: texto* (ej. "LANZAMIENTO EN · 1 DIC"). Se oculta sola cuando
 pasa la fecha.
 
-**Textos de las secciones:** están en cada componente de `src/components/`.
-Cada texto lleva sus versiones `data-i18n-es` / `data-i18n-en` para el
-selector de idioma.
+**Textos de las secciones:** en Strapi, en la sección correspondiente
+(«3 · Biografía», «6 · Lo que viene»…). Cada texto tiene versión en español e
+inglés para el selector de idioma.
 
 **Cambiar algo del service worker:** sube `CACHE_NAME` en
 `public/service-worker.js` para que los visitantes descarten la caché vieja.

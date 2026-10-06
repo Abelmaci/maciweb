@@ -242,13 +242,15 @@ function initMenu() {
   });
 }
 
+// Escribe el texto letra a letra. Se usa texto plano (no HTML) para que los
+// saltos de línea de los textos largos se mantengan con whitespace-pre-line.
 function typeWriter(element, text, index = 0) {
   if (index === 0) {
-    element.innerHTML = '';
+    element.textContent = '';
   }
 
   if (index < text.length) {
-    element.innerHTML += text.charAt(index);
+    element.textContent += text.charAt(index);
     setTimeout(() => typeWriter(element, text, index + 1), 5);
   }
 }

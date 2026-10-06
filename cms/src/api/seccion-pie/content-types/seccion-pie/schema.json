@@ -1,0 +1,33 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_pie",
+  "info": {
+    "singularName": "seccion-pie",
+    "pluralName": "secciones-pie",
+    "displayName": "9 · Pie de página",
+    "description": "Créditos y texto de redes del pie"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "descripcion": {
+      "type": "string",
+      "required": true
+    },
+    "copyright": {
+      "type": "string",
+      "required": true
+    },
+    "siguemeTexto": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    }
+  }
+}

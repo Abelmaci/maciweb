@@ -7,13 +7,14 @@ import '@fontsource/inter/700.css';
 import '@fontsource/inter/900.css';
 import '../styles/global.css';
 import { SITE, JSON_LD } from '../data/site';
+import { TEXTOS } from '../data/textos';
 
 interface Props {
   title?: string;
   description?: string;
 }
 
-const { title = SITE.title, description = SITE.description } = Astro.props;
+const { title = TEXTOS.ajustes.seoTitulo, description = TEXTOS.ajustes.seoDescripcion } = Astro.props;
 ---
 <!DOCTYPE html>
 <html lang="es">

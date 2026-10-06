@@ -1,0 +1,63 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_apps",
+  "info": {
+    "singularName": "seccion-apps",
+    "pluralName": "secciones-apps",
+    "displayName": "7 · Apps",
+    "description": "Sección de herramientas y tarjeta de EasyPrompt"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "etiqueta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "titulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "intro": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "appEtiqueta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "appNombre": {
+      "type": "string",
+      "required": true
+    },
+    "appDescripcion": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "appCaracteristicas": {
+      "type": "text",
+      "required": true
+    },
+    "appBoton": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "appEnlace": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

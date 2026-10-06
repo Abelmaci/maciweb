@@ -1,18 +1,13 @@
-// Datos globales del sitio: SEO, navegación, redes y datos estructurados.
+// Datos técnicos del sitio: dominio, analytics, navegación y datos estructurados.
+// Los textos editables (SEO, redes, secciones) están en textos.json (Strapi).
 
 export const SITE = {
   url: 'https://macimusic.es/',
   name: 'MACI',
-  title: 'MACI – Artista Digital AI | Música con Inteligencia Artificial',
-  description:
-    'MACI es un artista digital AI que crea música con inteligencia artificial, combinando composición, producción y emoción en una nueva forma de entender la música.',
   ogImage: 'https://macimusic.es/images/opengraph.jpg',
   themeColor: '#0e0e0f',
   googleSiteVerification: 'v6knNyaAd6sDMSaU9LULXPnhZWhRyFbVg_W0OxBZRu8',
   gaId: 'G-CZ95R97TWB',
-  spotifyArtist:
-    'https://open.spotify.com/intl-es/artist/08npv9JFamVUX30C0XT695?si=__gUyqpOQde4pFvW6nBfnA',
-  instagram: 'https://www.instagram.com/maci_ai_music/',
 };
 
 export const NAV = [

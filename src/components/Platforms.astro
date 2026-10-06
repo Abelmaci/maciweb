@@ -2,6 +2,7 @@
 // Plataformas de streaming (src/data/platforms.json). Antes se generaban en
 // el navegador; ahora se renderizan en build y los logos se sirven en local.
 import platformsData from '../data/platforms.json';
+import { TEXTOS, i18n } from '../data/textos';
 
 interface Platform {
   name: string;
@@ -11,6 +12,7 @@ interface Platform {
 }
 
 const platforms = platformsData as Platform[];
+const t = TEXTOS.plataformas;
 
 const imageClass = (p: Platform) =>
   `w-full h-full object-contain transition-all duration-500 ${p.scale || ''} ${p.isDark ? 'invert opacity-40 group-hover:opacity-100' : 'grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100'}`;
@@ -18,16 +20,14 @@ const imageClass = (p: Platform) =>
 <section id="plataformas" class="py-32 px-8 bg-background relative overflow-hidden">
   <div class="max-w-7xl mx-auto">
     <div class="flex flex-col items-center text-center mb-20">
-      <div data-i18n-es="DISPONIBLE EN STREAMING" data-i18n-en="AVAILABLE ON STREAMING"
-        class="reveal text-[0.7rem] text-primary font-bold uppercase tracking-[0.5em] mb-4">DISPONIBLE EN STREAMING
+      <div {...i18n(t.etiqueta)}
+        class="reveal text-[0.7rem] text-primary font-bold uppercase tracking-[0.5em] mb-4">{t.etiqueta.es}
       </div>
-      <h2 data-i18n-es="PLATAFORMAS" data-i18n-en="PLATFORMS"
-        class="reveal text-5xl md:text-6xl font-black uppercase tracking-tighter mb-6">PLATAFORMAS</h2>
-      <p data-i18n-es="Escucha a MACI en todas las plataformas digitales. Siempre contigo. Donde quieras. Cuando quieras. Sin filtros."
-        data-i18n-en="Listen to MACI on all digital platforms. Always with you. Anywhere. Anytime. No filters."
+      <h2 {...i18n(t.titulo)}
+        class="reveal text-5xl md:text-6xl font-black uppercase tracking-tighter mb-6">{t.titulo.es}</h2>
+      <p {...i18n(t.intro)}
         class="reveal text-on-surface-variant max-w-2xl text-lg leading-relaxed">
-        Escucha a MACI en todas las plataformas digitales. Siempre contigo. Donde quieras. Cuando quieras. Sin
-        filtros.
+        {t.intro.es}
       </p>
     </div>
 

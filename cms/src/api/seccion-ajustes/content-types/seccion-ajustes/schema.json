@@ -1,0 +1,39 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_ajustes",
+  "info": {
+    "singularName": "seccion-ajustes",
+    "pluralName": "secciones-ajustes",
+    "displayName": "0 · Ajustes generales",
+    "description": "SEO de la página y enlaces a redes sociales"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "seoTitulo": {
+      "type": "string",
+      "required": true
+    },
+    "seoDescripcion": {
+      "type": "text",
+      "required": true
+    },
+    "enlaceSpotifyArtista": {
+      "type": "string",
+      "required": true
+    },
+    "enlaceInstagram": {
+      "type": "string",
+      "required": true
+    },
+    "enlaceYoutube": {
+      "type": "string",
+      "required": true
+    },
+    "enlaceTiktok": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

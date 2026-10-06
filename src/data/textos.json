@@ -1,0 +1,243 @@
+{
+  "ajustes": {
+    "seoTitulo": "MACI – Artista Digital AI | Música con Inteligencia Artificial",
+    "seoDescripcion": "MACI es un artista digital AI que crea música con inteligencia artificial, combinando composición, producción y emoción en una nueva forma de entender la música.",
+    "enlaceSpotifyArtista": "https://open.spotify.com/intl-es/artist/08npv9JFamVUX30C0XT695?si=__gUyqpOQde4pFvW6nBfnA",
+    "enlaceInstagram": "https://www.instagram.com/maci_ai_music",
+    "enlaceYoutube": "https://www.youtube.com/@Maciaimusic",
+    "enlaceTiktok": "https://www.tiktok.com/@maciaimusic"
+  },
+  "portada": {
+    "coordenadas": "23°08'09.6\"N 82°21'47.8\"W",
+    "titulo": "MACI",
+    "subtitulo": "artista digital AI",
+    "claim": {
+      "es": "música con inteligencia artificial y producción musical contemporánea",
+      "en": "music with artificial intelligence and contemporary music production"
+    },
+    "lema": {
+      "es": "Sonido, piel y verdad.",
+      "en": "Sound, skin and truth."
+    },
+    "intro": {
+      "es": "Un universo musical donde lo íntimo y lo bailable conviven. Historias que se sienten… antes de entenderse.",
+      "en": "A musical universe where the intimate and the danceable coexist. Stories that are felt… before they are understood."
+    },
+    "boton": {
+      "es": "Explorar",
+      "en": "Explore"
+    },
+    "firma": "Power design by Abel Maciñeiras 2026 v1"
+  },
+  "discografia": {
+    "titulo": {
+      "es": "explora los fragmentos",
+      "en": "explore the fragments"
+    },
+    "intro": {
+      "es": "piezas creadas entre inteligencia artificial y composición humana",
+      "en": "pieces created between artificial intelligence and human composition"
+    },
+    "cierre": "seguir explorando."
+  },
+  "biografia": {
+    "marcaAgua": "MACI",
+    "titulo": {
+      "es": "BIOGRAFÍA",
+      "en": "BIOGRAPHY"
+    },
+    "foto": "Biomaci.jpeg",
+    "fotoAlt": "Retrato de MACI, artista digital AI de estética brutalista",
+    "cita": {
+      "es": "No todos tenemos la virtud de cantar, pero sí el deseo de ser escuchados.",
+      "en": "Not all of us have the virtue of singing, but we all have the desire to be heard."
+    },
+    "parrafos": [
+      {
+        "es": "MACI es un artista digital que crea música utilizando inteligencia artificial y producción musical contemporánea.",
+        "en": "MACI is a digital artist who creates music using artificial intelligence and contemporary music production.",
+        "destacado": false
+      },
+      {
+        "es": "Este proyecto explora los límites entre la creatividad humana y la inteligencia artificial aplicada a la música.",
+        "en": "This project explores the boundaries between human creativity and artificial intelligence applied to music.",
+        "destacado": false
+      },
+      {
+        "es": "Su sonido está influenciado por ritmos latinos y americanos, donde conviven la tradición y la experimentación, desde lo orgánico hasta lo digital. Su sonido recoge influencias de ritmos latinos y americanos, desde el son, la trova o el guaguancó, hasta el R&B, el rock o el folk, reinterpretados desde un enfoque digital.",
+        "en": "His sound is influenced by Latin and American rhythms, where tradition and experimentation coexist, from organic to digital. It draws influences from son, trova, or guaguancó, to R&B, rock, or folk, reinterpreted through a digital lens.",
+        "destacado": false
+      },
+      {
+        "es": "Cada pieza nace de un proceso donde el algoritmo y la emoción se combinan para generar una identidad sonora única.",
+        "en": "Each piece is born from a process where algorithms and emotion combine to generate a unique sonic identity.",
+        "destacado": false
+      },
+      {
+        "es": "Detrás del proyecto está Abel Maciñeiras, compositor, productor y arreglista, encargado de dirigir y dar forma a cada creación.",
+        "en": "Behind the project is Abel Maciñeiras, composer, producer and arranger, responsible for directing and shaping each creation.",
+        "destacado": true
+      },
+      {
+        "es": "No se trata solo de tecnología, sino de cómo nuevas herramientas transforman la forma de componer, producir y sentir.",
+        "en": "It's not just about technology, but how new tools transform the way we compose, produce and feel.",
+        "destacado": false
+      }
+    ]
+  },
+  "adela": {
+    "marcaAgua": "ADELA",
+    "titulo": {
+      "es": "ADELA",
+      "en": "ADELA"
+    },
+    "foto": "adela2.jpg",
+    "fotoAlt": "Retrato artístico de Adela, inspiración principal de la canción",
+    "cita": {
+      "es": "Adelantas mi camino, tu amor eterno me hace mejor. Y aunque no estés hoy conmigo, solo hasta luego me dice tu voz.",
+      "en": "You advance my path, your eternal love makes me better. And although you are not with me today, 'see you later' your voice tells me."
+    },
+    "parrafos": [
+      {
+        "es": "\"Adela\" no es solo una canción dedicada a una abuela. Es un homenaje a esa figura silenciosa y esencial que muchos tenemos en la vida: esa segunda madre que, sin hacer ruido, sostiene, protege y guía.",
+        "en": "\"Adela\" is not just a song dedicated to a grandmother. It's a tribute to that silent and essential figure that many of us have in our lives: that second mother who, without making noise, sustains, protects and guides.",
+        "destacado": false
+      },
+      {
+        "es": "Es la historia de quienes crecieron entre brazos que no eran los de su madre directa, pero que dieron el mismo —o incluso mayor— amor. De esas mujeres que luchan sin descanso, que cuidan sin medida y que entregan su vida sin pedir nada a cambio.",
+        "en": "It's the story of those who grew up in arms that weren't their direct mother's, but that gave the same —or even greater— love. Of those women who fight tirelessly, who care endlessly and who give their lives without asking for anything in return.",
+        "destacado": false
+      },
+      {
+        "es": "\"Adela\" habla de raíces, de sacrificio y de amor incondicional. De recuerdos que no se borran y de enseñanzas que permanecen para siempre. Pero también es una canción sobre la distancia, el tiempo y las dificultades que separan… y sobre la fuerza invisible que mantiene esos lazos intactos.",
+        "en": "\"Adela\" speaks of roots, sacrifice and unconditional love. Of memories that don't erase and lessons that remain forever. But it's also a song about distance, time and difficulties that separate... and about the invisible force that keeps those bonds intact.",
+        "destacado": false
+      },
+      {
+        "es": "No es solo una historia personal. Es un reflejo de muchas historias.",
+        "en": "It's not just a personal story. It's a reflection of many stories.",
+        "destacado": true
+      },
+      {
+        "es": "Porque todos, de una forma u otra, hemos tenido —o hemos necesitado— a alguien así.",
+        "en": "Because all of us, in one way or another, have had —or needed— someone like that.",
+        "destacado": false
+      },
+      {
+        "es": "Y cuando ya no está, su voz sigue viviendo en nosotros.",
+        "en": "And when it's gone, their voice continues living within us.",
+        "destacado": false
+      }
+    ]
+  },
+  "plataformas": {
+    "etiqueta": {
+      "es": "DISPONIBLE EN STREAMING",
+      "en": "AVAILABLE ON STREAMING"
+    },
+    "titulo": {
+      "es": "PLATAFORMAS",
+      "en": "PLATFORMS"
+    },
+    "intro": {
+      "es": "Escucha a MACI en todas las plataformas digitales. Siempre contigo. Donde quieras. Cuando quieras. Sin filtros.",
+      "en": "Listen to MACI on all digital platforms. Always with you. Anywhere. Anytime. No filters."
+    }
+  },
+  "loQueViene": {
+    "titulo": {
+      "es": "LO QUE VIENE",
+      "en": "WHAT'S COMING"
+    },
+    "texto": {
+      "es": "La música no siempre se anuncia… a veces aparece cuando tiene que aparecer.\n\nMACI trabaja en nuevas canciones de forma constante, dejando que cada historia encuentre su momento. No hay prisa, no hay fórmulas: solo emoción, intención y verdad.\n\nAlgunos temas nacen para quedarse en lo íntimo.\nOtros encuentran su camino hasta convertirse en canción.\n\nSi algo define lo que viene, es esto:\nmás profundidad, más contraste… y la misma esencia.",
+      "en": "Music is not always announced… sometimes it appears exactly when it should.\n\nMACI is constantly working on new songs, letting each story find its moment. No rush, no formulas: just emotion, intention and truth.\n\nSome songs are born to stay intimate.\nOthers find their way to becoming a song.\n\nIf anything defines what's coming, it's this:\nmore depth, more contrast… and the same essence."
+    },
+    "tarjetaTitulo": {
+      "es": "Ahora mismo… algo se está cocinando",
+      "en": "Right now… something is cooking"
+    },
+    "tarjetaTexto": {
+      "es": "Un nuevo proyecto está en proceso.\nIdeas que empiezan a tomar forma, sonidos que buscan su identidad…\ny una historia que todavía no se ha contado.",
+      "en": "A new project is in the works.\nIdeas starting to take shape, sounds searching for their identity…\nand a story that hasn't been told yet."
+    }
+  },
+  "apps": {
+    "etiqueta": {
+      "es": "HERRAMIENTAS AI",
+      "en": "AI TOOLS"
+    },
+    "titulo": {
+      "es": "APPS MACI",
+      "en": "MACI APPS"
+    },
+    "intro": {
+      "es": "Herramientas que uso para crear música con inteligencia artificial.",
+      "en": "Tools I use to create music with artificial intelligence."
+    },
+    "appEtiqueta": {
+      "es": "Generador de prompts · Gratuito",
+      "en": "Prompt generator · Free"
+    },
+    "appNombre": "MACI EasyPrompt",
+    "appDescripcion": {
+      "es": "Construye el prompt de estilo y el negativo optimizados para Suno en segundos. Elige género, instrumentos, voces, mood y producción — la app genera el texto listo para pegar.",
+      "en": "Build optimized style and negative prompts for Suno in seconds. Choose genre, instruments, voices, mood and production — the app generates the text ready to paste."
+    },
+    "appCaracteristicas": "Prompt de estilo\nPrompt negativo\nEditor de letra\nVersión cover",
+    "appBoton": {
+      "es": "PROBAR AHORA",
+      "en": "TRY NOW"
+    },
+    "appEnlace": "/app/maci-easyprompt.html"
+  },
+  "colaboraciones": {
+    "etiqueta": {
+      "es": "UNIR FUERZAS",
+      "en": "JOIN FORCES"
+    },
+    "titulo": {
+      "es": "COLABORACIONES",
+      "en": "COLLABORATIONS"
+    },
+    "intro": {
+      "es": "La música está hecha para compartirse.",
+      "en": "Music is made to be shared."
+    },
+    "parrafos": [
+      {
+        "es": "Si conectas con el universo de MACI y sientes que una canción también podría ser tuya, este espacio es para ti.",
+        "en": "If you connect with the MACI universe and feel that a song could be yours too, this space is for you.",
+        "destacado": false
+      },
+      {
+        "es": "Ya sea para interpretar un tema, crear una colaboración o dar vida a una nueva versión, las puertas están abiertas a artistas que vibren con la misma esencia.",
+        "en": "Whether it's to perform a track, create a collaboration, or bring a new version to life, the doors are open to artists who vibe with the same essence.",
+        "destacado": false
+      },
+      {
+        "es": "Porque cada voz suma, cada historia transforma… y cada colaboración crea algo único.",
+        "en": "Because every voice adds up, every story transforms… and every collaboration creates something unique.",
+        "destacado": true
+      }
+    ],
+    "tarjetaTitulo": {
+      "es": "¿Tienes una idea?",
+      "en": "Got an idea?"
+    },
+    "boton": {
+      "es": "CONTACTAME",
+      "en": "CONTACT ME"
+    },
+    "botonEnlace": "https://www.instagram.com/maci_ai_music/"
+  },
+  "pie": {
+    "nombre": "MACI / Abel Maciñeiras",
+    "descripcion": "artista digital AI · compositor · productor musical",
+    "copyright": "© Copyright MACI, 2026",
+    "siguemeTexto": {
+      "es": "SÍGUEME EN:",
+      "en": "FOLLOW ME ON:"
+    }
+  }
+}

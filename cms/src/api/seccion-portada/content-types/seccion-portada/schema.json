@@ -1,0 +1,55 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_portada",
+  "info": {
+    "singularName": "seccion-portada",
+    "pluralName": "secciones-portada",
+    "displayName": "1 · Portada",
+    "description": "Primera pantalla: título, claim y botón"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "coordenadas": {
+      "type": "string",
+      "required": true
+    },
+    "titulo": {
+      "type": "string",
+      "required": true
+    },
+    "subtitulo": {
+      "type": "string",
+      "required": true
+    },
+    "claim": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "lema": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "intro": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "boton": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "firma": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

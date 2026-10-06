@@ -1,0 +1,31 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_discografia",
+  "info": {
+    "singularName": "seccion-discografia",
+    "pluralName": "secciones-discografia",
+    "displayName": "2 · Discografía (textos)",
+    "description": "Cabecera de la sección de discos (los discos se editan en «Disco»)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "titulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "intro": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "cierre": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

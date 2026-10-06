@@ -46,29 +46,104 @@ const VISTAS = {
   },
 };
 
+// Etiquetas de los campos de texto de las secciones (tipos individuales).
+const CAMPOS_SECCION = {
+  seoTitulo: ['Título SEO', 'Título de la pestaña y de Google.'],
+  seoDescripcion: ['Descripción SEO', 'Resumen que muestran Google y las redes al compartir.'],
+  enlaceSpotifyArtista: ['Spotify (artista)', 'Enlace del botón «Explorar» de la portada.'],
+  enlaceInstagram: ['Instagram', 'Icono del pie de página.'],
+  enlaceYoutube: ['YouTube', 'Icono del pie de página.'],
+  enlaceTiktok: ['TikTok', 'Icono del pie de página.'],
+  coordenadas: ['Coordenadas', 'Etiqueta roja sobre el título.'],
+  titulo: ['Título', ''],
+  subtitulo: ['Subtítulo', ''],
+  claim: ['Claim', 'Frase roja grande.'],
+  lema: ['Lema', 'Línea corta en mayúsculas.'],
+  intro: ['Introducción', ''],
+  boton: ['Texto del botón', ''],
+  firma: ['Firma vertical', 'Texto vertical a la derecha (solo en escritorio).'],
+  cierre: ['Texto final', 'Línea roja bajo el carrusel.'],
+  marcaAgua: ['Marca de agua', 'Palabra gigante semitransparente detrás de la foto.'],
+  foto: ['Foto', 'Vertical (4:5). Se sube en calidad original.'],
+  fotoAlt: ['Texto alternativo de la foto', 'Describe la foto (SEO y accesibilidad).'],
+  cita: ['Cita sobre la foto', 'Sin comillas: se añaden solas.'],
+  parrafos: ['Párrafos', 'Arrastra para cambiar el orden. «Destacado» lo pone en negrita y blanco.'],
+  etiqueta: ['Etiqueta', 'Texto pequeño rojo sobre el título.'],
+  texto: ['Texto', 'Los saltos de línea se respetan (una línea en blanco = separación de párrafo).'],
+  tarjetaTitulo: ['Título de la tarjeta', ''],
+  tarjetaTexto: ['Texto de la tarjeta', 'Los saltos de línea se respetan.'],
+  appEtiqueta: ['App: etiqueta', ''],
+  appNombre: ['App: nombre', ''],
+  appDescripcion: ['App: descripción', ''],
+  appCaracteristicas: ['App: características', 'Una por línea; cada una se muestra como una pastilla.'],
+  appBoton: ['App: texto del botón', ''],
+  appEnlace: ['App: enlace', ''],
+  botonEnlace: ['Enlace del botón', 'Adónde lleva el botón de contacto.'],
+  nombre: ['Nombre', ''],
+  descripcion: ['Descripción', ''],
+  copyright: ['Copyright', ''],
+  siguemeTexto: ['Texto «Sígueme en»', ''],
+};
+
+const CAMPOS_COMPONENTE = {
+  es: ['Español', ''],
+  en: ['Inglés', ''],
+  destacado: ['Destacado', 'En negrita y blanco.'],
+};
+
+const aplicarEtiquetas = (conf, campos) => {
+  for (const [campo, [label, description]] of Object.entries(campos)) {
+    const meta = conf.metadatas[campo];
+    if (!meta) continue;
+    meta.edit = { ...meta.edit, label, description };
+    meta.list = { ...meta.list, label };
+  }
+};
+
+// Cada vista se configura una sola vez; después se respetan los cambios
+// hechos desde «Configurar la vista» en el panel.
 async function configurarVistas(strapi) {
   const store = strapi.store({ type: 'plugin', name: 'maci-sync' });
-  if (await store.get({ key: 'vistas-configuradas' })) return;
+  const hecho = (await store.get({ key: 'vistas' })) || {};
+  // Compatibilidad con la primera versión (discos y plataformas ya configurados).
+  if (await store.get({ key: 'vistas-configuradas' })) Object.keys(VISTAS).forEach((uid) => { hecho[uid] = true; });
 
-  const servicio = strapi.plugin('content-manager').service('content-types');
+  const tipos = strapi.plugin('content-manager').service('content-types');
+  const componentes = strapi.plugin('content-manager').service('components');
+  const guardar = async (servicio, modelo, conf) => servicio.updateConfiguration(modelo, {
+    settings: conf.settings, metadatas: conf.metadatas, layouts: conf.layouts,
+  });
+
   for (const [uid, vista] of Object.entries(VISTAS)) {
-    const tipo = servicio.findContentType(uid);
-    const conf = await servicio.findConfiguration(tipo);
-    for (const [campo, [label, description]] of Object.entries(vista.campos)) {
-      const meta = conf.metadatas[campo];
-      if (!meta) continue;
-      meta.edit = { ...meta.edit, label, description };
-      meta.list = { ...meta.list, label };
-    }
+    if (hecho[uid]) continue;
+    const tipo = tipos.findContentType(uid);
+    const conf = await tipos.findConfiguration(tipo);
+    aplicarEtiquetas(conf, vista.campos);
     conf.settings = { ...conf.settings, mainField: vista.mainField, defaultSortBy: 'orden', defaultSortOrder: 'ASC' };
     conf.layouts = { ...conf.layouts, list: vista.list };
-    await servicio.updateConfiguration(tipo, {
-      settings: conf.settings,
-      metadatas: conf.metadatas,
-      layouts: conf.layouts,
-    });
+    await guardar(tipos, tipo, conf);
+    hecho[uid] = true;
   }
-  await store.set({ key: 'vistas-configuradas', value: true });
+
+  for (const uid of Object.keys(strapi.contentTypes).filter((u) => u.startsWith('api::seccion-'))) {
+    if (hecho[uid]) continue;
+    const tipo = tipos.findContentType(uid);
+    const conf = await tipos.findConfiguration(tipo);
+    aplicarEtiquetas(conf, CAMPOS_SECCION);
+    await guardar(tipos, tipo, conf);
+    hecho[uid] = true;
+  }
+
+  for (const uid of Object.keys(strapi.components).filter((u) => u.startsWith('textos.'))) {
+    if (hecho[uid]) continue;
+    const comp = componentes.findComponent(uid);
+    const conf = await componentes.findConfiguration(comp);
+    aplicarEtiquetas(conf, CAMPOS_COMPONENTE);
+    await guardar(componentes, comp, conf);
+    hecho[uid] = true;
+  }
+
+  await store.set({ key: 'vistas', value: hecho });
 }
 
 module.exports = {
@@ -93,6 +168,7 @@ module.exports = {
 
     // Primer arranque (o base de datos borrada): traer el contenido de la web.
     await sync.importar(strapi);
+    await sync.importarTextos(strapi);
 
     // A partir de aquí, cada cambio en el panel actualiza la web.
     if (process.env.MACI_SYNC_AUTO !== 'false') {

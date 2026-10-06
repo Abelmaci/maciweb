@@ -1,0 +1,10 @@
+{
+  "collectionName": "components_textos_parrafos",
+  "info": { "displayName": "Párrafo ES/EN", "icon": "paragraph", "description": "Párrafo en español e inglés" },
+  "options": {},
+  "attributes": {
+    "es": { "type": "text", "required": true },
+    "en": { "type": "text", "required": true },
+    "destacado": { "type": "boolean", "default": false }
+  }
+}

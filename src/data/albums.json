@@ -1,26 +1,5 @@
 [
   {
-    "id": "quien-fue",
-    "title": "¿Quién fue?",
-    "uppercaseTitle": false,
-    "cover": "CD_quien_fue.jpg",
-    "coverAlt": "Portada del EP ¿Quién fue?",
-    "labelAlt": "Portada de ¿Quién fue?",
-    "audio": "/music-preview/quien-fue.mp3",
-    "duration": 30,
-    "badge": null,
-    "kicker": {
-      "es": "EP · 3 canciones",
-      "en": "EP · 3 tracks"
-    },
-    "year": null,
-    "description": null,
-    "tags": "misterio · memoria · emoción",
-    "countdown": null,
-    "spotify": "https://open.spotify.com/album/2RuwVtKwjWHcGUGasYDWmD?si=1xjtYLO9QDKOMwU_aKWzBA",
-    "spotifyLabel": "Escuchar álbum ¿Quién fue? en Spotify"
-  },
-  {
     "id": "Regresa",
     "title": "Regresa",
     "uppercaseTitle": false,
@@ -40,6 +19,27 @@
     "countdown": null,
     "spotify": "https://open.spotify.com/intl-es/album/7bSJQl6UgIVYlJVf8NviWI?si=5NJKzTlkREuUAZyp0wvvnw",
     "spotifyLabel": "Escuchar álbum Regresa en Spotify"
+  },
+  {
+    "id": "quien-fue",
+    "title": "¿Quién fue?",
+    "uppercaseTitle": false,
+    "cover": "CD_quien_fue.jpg",
+    "coverAlt": "Portada del EP ¿Quién fue?",
+    "labelAlt": "Portada de ¿Quién fue?",
+    "audio": "/music-preview/quien-fue.mp3",
+    "duration": 30,
+    "badge": null,
+    "kicker": {
+      "es": "EP · 3 canciones",
+      "en": "EP · 3 tracks"
+    },
+    "year": null,
+    "description": null,
+    "tags": "misterio · memoria · emoción",
+    "countdown": null,
+    "spotify": "https://open.spotify.com/album/2RuwVtKwjWHcGUGasYDWmD?si=1xjtYLO9QDKOMwU_aKWzBA",
+    "spotifyLabel": "Escuchar álbum ¿Quién fue? en Spotify"
   },
   {
     "id": "guajira-gallega",

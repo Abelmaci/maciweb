@@ -28,18 +28,26 @@ try {
 
   run('git', ['add', '--', ...CONTENIDO]);
   const cambios = out('git', ['diff', '--cached', '--name-status', '--', ...CONTENIDO]);
-  if (!cambios) {
+
+  // Commits que quedaron sin subir (p. ej. si un push anterior falló).
+  run('git', ['fetch', '--quiet', 'origin', 'main'], { stdio: ['ignore', 'ignore', 'inherit'] });
+  const pendientes = out('git', ['log', '--oneline', 'origin/main..HEAD']);
+
+  if (!cambios && !pendientes) {
     console.log('\n✔ No hay cambios de contenido que publicar.');
     process.exit(0);
   }
-  console.log(`\nCambios a publicar:\n${cambios}`);
+  if (cambios) console.log(`\nCambios a publicar:\n${cambios}`);
+  if (pendientes) console.log(`\nCambios guardados que aún no se habían subido:\n${pendientes}`);
 
   paso('Comprobando que la web compila…');
   run('npm', ['run', '--silent', 'build'], { stdio: ['inherit', 'ignore', 'inherit'] });
 
-  const fecha = new Date().toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
-  paso('Guardando el cambio (commit)…');
-  run('git', ['commit', '-m', `Actualizar contenido de la web (${fecha})`, '--', ...CONTENIDO]);
+  if (cambios) {
+    const fecha = new Date().toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+    paso('Guardando el cambio (commit)…');
+    run('git', ['commit', '-m', `Actualizar contenido de la web (${fecha})`, '--', ...CONTENIDO]);
+  }
 
   paso('Subiendo a GitHub…');
   run('git', ['push', 'origin', 'HEAD:main']);

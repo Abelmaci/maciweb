@@ -21,6 +21,27 @@
     "spotifyLabel": "Escuchar álbum ¿Quién fue? en Spotify"
   },
   {
+    "id": "Regresa",
+    "title": "Regresa",
+    "uppercaseTitle": false,
+    "cover": "Regresa-portada-CD.jpg",
+    "coverAlt": "Portada del EP Regresa",
+    "labelAlt": "Portada de Regresa",
+    "audio": "/music-preview/03-Regresa-muestra-.mp3",
+    "duration": 30,
+    "badge": "new",
+    "kicker": {
+      "es": "EP · 7 canciones",
+      "en": "EP · 7 tracks"
+    },
+    "year": "2026",
+    "description": null,
+    "tags": "Amor · memoria · emoción",
+    "countdown": null,
+    "spotify": "https://open.spotify.com/intl-es/album/7bSJQl6UgIVYlJVf8NviWI?si=5NJKzTlkREuUAZyp0wvvnw",
+    "spotifyLabel": "Escuchar álbum Regresa en Spotify"
+  },
+  {
     "id": "guajira-gallega",
     "title": "Guajira Gallega",
     "uppercaseTitle": false,

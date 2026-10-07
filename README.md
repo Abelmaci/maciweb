@@ -47,8 +47,13 @@ Notas:
   web, así que puedes preparar un lanzamiento sin que aparezca.
 - El **orden** del carrusel y de las plataformas lo marca el campo *Orden*
   (de menor a mayor; usa 10, 20, 30… para poder intercalar).
-- Las portadas se suben en calidad original: Astro genera las versiones
-  optimizadas al construir la web.
+- Las imágenes se optimizan al subirlas a Strapi: si pasan de 2000 px o de
+  800 KB se reducen a 2000 px y se recomprimen con calidad alta (una foto en
+  PNG pasa a JPG; los PNG con transparencia, como logos, siguen en PNG). Las
+  ligeras se guardan tal cual. Después Astro genera las versiones AVIF/WebP
+  a la medida de cada pantalla.
+- `npm --prefix cms run optimizar-imagenes` aplica lo mismo a imágenes que
+  ya estuvieran subidas.
 - La base de datos de Strapi (`cms/.tmp/`) y sus subidas (`cms/public/uploads/`)
   no se suben al repositorio (es público). Si se pierden o cambias de
   ordenador, Strapi se rellena solo desde los JSON de la web al arrancar.

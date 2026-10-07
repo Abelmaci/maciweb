@@ -14,7 +14,8 @@
     "upgrade": "npx @strapi/upgrade latest",
     "upgrade:dry": "npx @strapi/upgrade latest --dry",
     "exportar": "node scripts/exportar.js",
-    "postinstall": "node scripts/preparar-env.js"
+    "postinstall": "node scripts/preparar-env.js",
+    "optimizar-imagenes": "node scripts/optimizar-imagenes.js"
   },
   "dependencies": {
     "@strapi/database": "5.56.0",

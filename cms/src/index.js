@@ -1,6 +1,7 @@
 'use strict';
 
 const sync = require('./maci-sync');
+const { instalarOptimizacion } = require('./maci-sync/optimizar-imagen');
 
 // Etiquetas y ayudas que ve quien edita en el panel. Se aplican una sola vez
 // (después se respetan los cambios que se hagan desde "Configurar la vista").
@@ -165,13 +166,15 @@ module.exports = {
   },
 
   async bootstrap({ strapi }) {
-    // Los archivos subidos son los originales de la web: Strapi no debe
-    // recomprimirlos ni redimensionarlos (Astro ya los optimiza al construir).
+    // La compresión propia de Strapi (calidad 80 a todo) queda desactivada.
+    // En su lugar, las imágenes grandes se reducen a 2000 px y se recomprimen
+    // con calidad alta; las ligeras se guardan tal cual (optimizar-imagen.js).
     await strapi.plugin('upload').service('upload').setSettings({
       sizeOptimization: false,
       responsiveDimensions: false,
       autoOrientation: false,
     });
+    instalarOptimizacion(strapi);
 
     try {
       await configurarVistas(strapi);

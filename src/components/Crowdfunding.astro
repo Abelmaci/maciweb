@@ -68,6 +68,43 @@ const redes = [
 ] as const;
 
 const Titulo = modo === 'pagina' ? 'h1' : 'h2';
+
+// Redes que no admiten enlaces desde la web: se comparte una imagen vertical.
+const cuenta = (enlace: string) => `@${enlace.replace(/\/+$/, '').split('/').pop()?.replace(/^@/, '')}`;
+const IG = cuenta(TEXTOS.ajustes.enlaceInstagram);
+const TT = cuenta(TEXTOS.ajustes.enlaceTiktok);
+const REDES_IMAGEN = [
+  {
+    id: 'instagram' as const,
+    nombre: 'Instagram',
+    imagen: '/images/ig-story-crowdfunding.jpg',
+    descarga: 'maci-quedate-instagram.jpg',
+    copiar: 'enlace',
+    titulo: { es: 'Compártelo en tu historia', en: 'Share it on your story' },
+    pasoMovil: { es: 'Pulsa «Compartir imagen» y elige Instagram → Historias.', en: 'Tap «Share image» and choose Instagram → Stories.' },
+    pasoEscritorio: { es: 'Descarga la imagen y súbela a una historia de Instagram desde el móvil.', en: 'Download the image and post it as an Instagram story from your phone.' },
+    pasos: [
+      { es: 'Añade el sticker «Enlace» y pega el enlace de la campaña (ya está copiado).', en: 'Add the «Link» sticker and paste the campaign link (it\'s already copied).' },
+      { es: `¡Publica y menciona a ${IG}!`, en: `Post it and mention ${IG}!` },
+    ],
+    botonCopiar: { es: 'Copiar enlace', en: 'Copy link' },
+  },
+  {
+    id: 'tiktok' as const,
+    nombre: 'TikTok',
+    imagen: '/images/tiktok-crowdfunding.jpg',
+    descarga: 'maci-quedate-tiktok.jpg',
+    copiar: 'descripcion',
+    titulo: { es: 'Compártelo en TikTok', en: 'Share it on TikTok' },
+    pasoMovil: { es: 'Pulsa «Compartir imagen» y elige TikTok (como foto o en tu historia).', en: 'Tap «Share image» and choose TikTok (as a photo post or story).' },
+    pasoEscritorio: { es: 'Descarga la imagen y súbela a TikTok desde el móvil como foto.', en: 'Download the image and upload it to TikTok from your phone as a photo post.' },
+    pasos: [
+      { es: 'Pega la descripción (ya está copiada): incluye el enlace y los hashtags.', en: 'Paste the caption (it\'s already copied): it includes the link and hashtags.' },
+      { es: `¡Publica y menciona a ${TT}!`, en: `Post it and mention ${TT}!` },
+    ],
+    botonCopiar: { es: 'Copiar descripción', en: 'Copy caption' },
+  },
+];
 ---
 <section id="crowdfunding" class={`${modo === 'pagina' ? 'pt-40' : 'py-32'} pb-32 px-8 bg-background relative overflow-hidden`}
   data-crowdfunding data-api={`${API}`} data-id={c.idCampana} data-objetivo={vivo.objetivo}
@@ -172,6 +209,10 @@ const Titulo = modo === 'pagina' ? 'h1' : 'h2';
               class="w-11 h-11 rounded-full border border-white/10 bg-white/5 text-white/70 flex items-center justify-center transition-all hover:bg-primary hover:text-black hover:border-primary hover:scale-110">
               <svg class="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d={ICONOS_REDES.instagram} /></svg>
             </button>
+            <button type="button" data-compartir="tiktok" aria-label="Compartir en TikTok" title="TikTok"
+              class="w-11 h-11 rounded-full border border-white/10 bg-white/5 text-white/70 flex items-center justify-center transition-all hover:bg-primary hover:text-black hover:border-primary hover:scale-110">
+              <svg class="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d={ICONOS_REDES.tiktok} /></svg>
+            </button>
             <button type="button" data-compartir="copiar" aria-label="Copiar enlace" title="Copiar enlace"
               class="w-11 h-11 rounded-full border border-white/10 bg-white/5 text-white/70 flex items-center justify-center transition-all hover:bg-primary hover:text-black hover:border-primary hover:scale-110">
               <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -187,47 +228,47 @@ const Titulo = modo === 'pagina' ? 'h1' : 'h2';
       </div>
     </div>
 
-    <!-- Instagram: no admite compartir enlaces desde la web, así que se
-         comparte una historia (imagen 1080×1920 que genera Strapi) y el enlace
-         se añade con el sticker «Enlace». -->
-    <dialog data-instagram
-      class="w-[min(92vw,820px)] max-h-[92vh] rounded-3xl bg-surface text-white border border-white/10 p-0 shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm">
-      <div class="grid sm:grid-cols-[minmax(0,260px)_1fr] gap-8 p-6 sm:p-10 items-center">
-        <img src="/images/ig-story-crowdfunding.jpg" alt={`Historia de Instagram de ${c.titulo.es}`} width="1080" height="1920" loading="lazy"
-          class="w-40 sm:w-full mx-auto rounded-2xl shadow-2xl border border-white/10">
-        <div class="space-y-6">
-          <div>
-            <div class="text-[0.6rem] text-primary font-bold uppercase tracking-[0.4em] mb-3">Instagram</div>
-            <h3 data-i18n-es="Compártelo en tu historia" data-i18n-en="Share it on your story"
-              class="text-2xl md:text-3xl font-black uppercase tracking-tighter">Compártelo en tu historia</h3>
-          </div>
-          <ol class="space-y-3 text-on-surface-variant text-sm leading-relaxed list-decimal pl-5 marker:text-primary marker:font-bold">
-            <li data-ig-paso="movil" data-i18n-es="Pulsa «Compartir imagen» y elige Instagram → Historias." data-i18n-en="Tap «Share image» and choose Instagram → Stories.">Pulsa «Compartir imagen» y elige Instagram → Historias.</li>
-            <li data-ig-paso="escritorio" class="hidden" data-i18n-es="Descarga la imagen y súbela a una historia de Instagram desde el móvil." data-i18n-en="Download the image and post it as an Instagram story from your phone.">Descarga la imagen y súbela a una historia de Instagram desde el móvil.</li>
-            <li data-i18n-es="Añade el sticker «Enlace» y pega el enlace de la campaña (ya está copiado)." data-i18n-en="Add the «Link» sticker and paste the campaign link (it's already copied).">Añade el sticker «Enlace» y pega el enlace de la campaña (ya está copiado).</li>
-            <li data-i18n-es="¡Publica y menciona a @macimusic!" data-i18n-en="Post it and mention @macimusic!">¡Publica y menciona a @macimusic!</li>
-          </ol>
-          <div class="flex flex-col gap-3">
-            <button type="button" data-ig="compartir"
-              class="outline-none focus-visible:ring-2 focus-visible:ring-white/70 btn-primary-gradient px-8 py-4 rounded-full text-on-primary font-bold uppercase text-xs flex items-center justify-center gap-3">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d={ICONOS_REDES.instagram} /></svg>
-              <span class="tracking-widest" data-i18n-es="Compartir imagen" data-i18n-en="Share image">Compartir imagen</span>
-            </button>
-            <a data-ig="descargar" href="/images/ig-story-crowdfunding.jpg" download="maci-quedate-historia.jpg"
-              class="outline-none focus-visible:ring-2 focus-visible:ring-white/70 hidden btn-primary-gradient px-8 py-4 rounded-full text-on-primary font-bold uppercase text-xs items-center justify-center gap-3">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              <span class="tracking-widest" data-i18n-es="Descargar imagen" data-i18n-en="Download image">Descargar imagen</span>
-            </a>
-            <button type="button" data-ig="copiar"
-              class="outline-none focus-visible:ring-2 focus-visible:ring-white/70 px-8 py-4 rounded-full border border-white/15 text-white/80 hover:border-primary hover:text-primary transition-colors font-bold uppercase text-xs">
-              <span class="tracking-widest" data-ig-copiar data-i18n-es="Copiar enlace" data-i18n-en="Copy link">Copiar enlace</span>
-            </button>
+    <!-- Instagram y TikTok no admiten compartir enlaces desde la web: se
+         comparte una imagen vertical (la genera Strapi) y el enlace se añade
+         con el sticker «Enlace» (Instagram) o en la descripción (TikTok). -->
+    {REDES_IMAGEN.map((red) => (
+      <dialog data-dialogo-red={red.id} data-copiar={red.copiar} data-imagen={red.imagen} data-descarga={red.descarga}
+        class="w-[min(92vw,820px)] max-h-[92vh] rounded-3xl bg-surface text-white border border-white/10 p-0 shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm">
+        <div class="grid sm:grid-cols-[minmax(0,260px)_1fr] gap-8 p-6 sm:p-10 items-center">
+          <img src={red.imagen} alt={`Imagen para ${red.nombre} de ${c.titulo.es}`} width="1080" height="1920" loading="lazy"
+            class="w-40 sm:w-full mx-auto rounded-2xl shadow-2xl border border-white/10">
+          <div class="space-y-6">
+            <div>
+              <div class="text-[0.6rem] text-primary font-bold uppercase tracking-[0.4em] mb-3">{red.nombre}</div>
+              <h3 {...i18n(red.titulo)} class="text-2xl md:text-3xl font-black uppercase tracking-tighter">{red.titulo.es}</h3>
+            </div>
+            <ol class="space-y-3 text-on-surface-variant text-sm leading-relaxed list-decimal pl-5 marker:text-primary marker:font-bold">
+              <li data-paso="movil" {...i18n(red.pasoMovil)}>{red.pasoMovil.es}</li>
+              <li data-paso="escritorio" class="hidden" {...i18n(red.pasoEscritorio)}>{red.pasoEscritorio.es}</li>
+              {red.pasos.map((paso) => <li {...i18n(paso)}>{paso.es}</li>)}
+            </ol>
+            <div class="flex flex-col gap-3">
+              <button type="button" data-accion="compartir"
+                class="outline-none focus-visible:ring-2 focus-visible:ring-white/70 btn-primary-gradient px-8 py-4 rounded-full text-on-primary font-bold uppercase text-xs flex items-center justify-center gap-3">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d={ICONOS_REDES[red.id]} /></svg>
+                <span class="tracking-widest" data-i18n-es="Compartir imagen" data-i18n-en="Share image">Compartir imagen</span>
+              </button>
+              <a data-accion="descargar" href={red.imagen} download={red.descarga}
+                class="outline-none focus-visible:ring-2 focus-visible:ring-white/70 hidden btn-primary-gradient px-8 py-4 rounded-full text-on-primary font-bold uppercase text-xs items-center justify-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span class="tracking-widest" data-i18n-es="Descargar imagen" data-i18n-en="Download image">Descargar imagen</span>
+              </a>
+              <button type="button" data-accion="copiar"
+                class="outline-none focus-visible:ring-2 focus-visible:ring-white/70 px-8 py-4 rounded-full border border-white/15 text-white/80 hover:border-primary hover:text-primary transition-colors font-bold uppercase text-xs">
+                <span class="tracking-widest" data-texto-copiar {...i18n(red.botonCopiar)}>{red.botonCopiar.es}</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <button type="button" data-ig="cerrar" aria-label="Cerrar"
-        class="absolute top-4 right-5 text-white/50 hover:text-white text-3xl leading-none font-light">&times;</button>
-    </dialog>
+        <button type="button" data-accion="cerrar" aria-label="Cerrar"
+          class="absolute top-4 right-5 text-white/50 hover:text-white text-3xl leading-none font-light">&times;</button>
+      </dialog>
+    ))}
 
     <!-- Recompensas -->
     {c.recompensas.length > 0 && (

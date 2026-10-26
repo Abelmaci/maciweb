@@ -135,15 +135,20 @@ async function generarOgCampana(datos, dirFuentes) {
 // Historia de Instagram (1080×1920): Instagram no lee el Open Graph, así que
 // para compartir allí se usa esta imagen + el sticker de enlace.
 // datos: { imagen, etiqueta, titulo, subtitulo, lema, boton, enlace }
-async function generarHistoriaCampana(datos, dirFuentes) {
+// opciones.formato: 'instagram' (historias) o 'tiktok' (la interfaz de TikTok
+// tapa más abajo —descripción— y a la derecha —botones—, así que el
+// contenido sube y la portada es algo menor).
+async function generarHistoriaCampana(datos, dirFuentes, { formato = 'instagram' } = {}) {
+  const tiktok = formato === 'tiktok';
   const sharp = require('sharp');
   const AW = 1080;
   const AH = 1920;
   const cx = AW / 2;
-  const ancho = AW - 160;
+  // En TikTok los botones laterales ocupan el borde derecho: textos más estrechos.
+  const ancho = tiktok ? AW - 360 : AW - 160;
 
   // Zonas seguras: Instagram tapa ~250 px arriba (cuenta) y ~250 px abajo.
-  const lado = 760;
+  const lado = tiktok ? 640 : 760;
   const radio = 44;
   const mascara = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${lado}" height="${lado}"><rect width="${lado}" height="${lado}" rx="${radio}" fill="#fff"/></svg>`);
   const portada = await sharp(datos.imagen).rotate().resize(lado, lado, { fit: 'cover' })
@@ -153,7 +158,7 @@ async function generarHistoriaCampana(datos, dirFuentes) {
     .modulate({ brightness: 0.35, saturation: 0.8 }).png().toBuffer();
 
   let texto = '';
-  let y = 260;
+  let y = tiktok ? 190 : 260;
   const poner = (o, hueco) => {
     const b = bloque(dirFuentes, { ...o, centro: cx, y });
     texto += b.svg;

@@ -62,8 +62,8 @@ function compartir(seccion) {
       return;
     }
 
-    if (red === 'instagram') {
-      boton.addEventListener('click', () => abrirInstagram(seccion, texto));
+    if (red === 'instagram' || red === 'tiktok') {
+      boton.addEventListener('click', () => abrirRedImagen(seccion, texto, red));
       return;
     }
 
@@ -90,75 +90,87 @@ function compartir(seccion) {
   });
 }
 
-// Instagram: ventana con la historia (1080×1920) generada por Strapi.
-// En el móvil se comparte el archivo con el menú del sistema (aparece
-// Instagram → Historias); en el ordenador se descarga. El enlace se copia
-// para pegarlo en el sticker «Enlace».
-const IMAGEN_HISTORIA = '/images/ig-story-crowdfunding.jpg';
-let archivoHistoria = null;
+// Instagram y TikTok: ventana con una imagen vertical (la genera Strapi).
+// En el móvil se comparte el archivo con el menú del sistema (aparecen
+// Instagram y TikTok); en el ordenador se descarga. Se copia el enlace
+// (sticker «Enlace» de Instagram) o una descripción con enlace y hashtags
+// (TikTok, donde los enlaces no son clicables).
+const archivos = new Map();
 
-async function obtenerArchivoHistoria() {
-  if (!archivoHistoria) {
-    const blob = await fetch(IMAGEN_HISTORIA).then((r) => r.blob());
-    archivoHistoria = new File([blob], 'maci-quedate-historia.jpg', { type: 'image/jpeg' });
+async function obtenerArchivo(ruta, nombre) {
+  if (!archivos.has(ruta)) {
+    const blob = await fetch(ruta).then((r) => r.blob());
+    archivos.set(ruta, new File([blob], nombre, { type: 'image/jpeg' }));
   }
-  return archivoHistoria;
+  return archivos.get(ruta);
 }
 
-async function copiarEnlace(url) {
+async function copiarTexto(texto) {
   try {
-    await navigator.clipboard.writeText(url);
+    await navigator.clipboard.writeText(texto);
     return true;
   } catch {
     return false;
   }
 }
 
-function abrirInstagram(seccion, texto) {
-  const dialogo = seccion.querySelector('[data-instagram]');
+const HASHTAGS = {
+  es: '#MACI #Quédate #crowdfunding #música #músicacubana',
+  en: '#MACI #Quédate #crowdfunding #music #cubanmusic',
+};
+
+function abrirRedImagen(seccion, texto, red) {
+  const dialogo = seccion.querySelector(`[data-dialogo-red="${red}"]`);
   if (!dialogo) return;
   const url = seccion.dataset.url;
+  const lang = () => (document.documentElement.lang === 'en' ? 'en' : 'es');
+  const aCopiar = () => (dialogo.dataset.copiar === 'descripcion'
+    ? `${texto()}\n\n👉 ${url}\n\n${HASHTAGS[lang()]}`
+    : url);
   const puedeCompartir = Boolean(navigator.canShare && navigator.canShare({ files: [new File([''], 'x.jpg', { type: 'image/jpeg' })] }));
+  const el = (sel) => dialogo.querySelector(sel);
 
   // Modo móvil (compartir archivo) o escritorio (descargar).
-  dialogo.querySelector('[data-ig="compartir"]').classList.toggle('hidden', !puedeCompartir);
-  dialogo.querySelector('[data-ig="descargar"]').classList.toggle('hidden', puedeCompartir);
-  dialogo.querySelector('[data-ig="descargar"]').classList.toggle('flex', !puedeCompartir);
-  dialogo.querySelector('[data-ig-paso="movil"]').classList.toggle('hidden', !puedeCompartir);
-  dialogo.querySelector('[data-ig-paso="escritorio"]').classList.toggle('hidden', puedeCompartir);
+  el('[data-accion="compartir"]').classList.toggle('hidden', !puedeCompartir);
+  el('[data-accion="descargar"]').classList.toggle('hidden', puedeCompartir);
+  el('[data-accion="descargar"]').classList.toggle('flex', !puedeCompartir);
+  el('[data-paso="movil"]').classList.toggle('hidden', !puedeCompartir);
+  el('[data-paso="escritorio"]').classList.toggle('hidden', puedeCompartir);
 
   if (!dialogo.dataset.listo) {
     dialogo.dataset.listo = '1';
-    dialogo.querySelector('[data-ig="cerrar"]').addEventListener('click', () => dialogo.close());
+    const evento = (method) => {
+      if (window.gtag) window.gtag('event', 'share', { method, content_type: 'crowdfunding', item_id: url });
+    };
+    el('[data-accion="cerrar"]').addEventListener('click', () => dialogo.close());
     dialogo.addEventListener('click', (e) => { if (e.target === dialogo) dialogo.close(); });
 
-    dialogo.querySelector('[data-ig="compartir"]').addEventListener('click', async () => {
-      await copiarEnlace(url);
+    el('[data-accion="compartir"]').addEventListener('click', async () => {
+      await copiarTexto(aCopiar());
       try {
-        const archivo = await obtenerArchivoHistoria();
-        await navigator.share({ files: [archivo], text: `${texto()} ${url}` });
-        if (window.gtag) window.gtag('event', 'share', { method: 'instagram', content_type: 'crowdfunding', item_id: url });
+        const archivo = await obtenerArchivo(dialogo.dataset.imagen, dialogo.dataset.descarga);
+        await navigator.share({ files: [archivo], text: aCopiar() });
+        evento(red);
       } catch (e) {
-        if (e && e.name !== 'AbortError') console.warn('Instagram: no se pudo compartir la imagen', e);
+        if (e && e.name !== 'AbortError') console.warn(`${red}: no se pudo compartir la imagen`, e);
       }
     });
 
-    dialogo.querySelector('[data-ig="descargar"]').addEventListener('click', () => {
-      copiarEnlace(url);
-      if (window.gtag) window.gtag('event', 'share', { method: 'instagram_descarga', content_type: 'crowdfunding', item_id: url });
+    el('[data-accion="descargar"]').addEventListener('click', () => {
+      copiarTexto(aCopiar());
+      evento(`${red}_descarga`);
     });
 
-    const textoCopiar = dialogo.querySelector('[data-ig-copiar]');
-    dialogo.querySelector('[data-ig="copiar"]').addEventListener('click', async () => {
-      const original = textoCopiar.textContent;
-      const ok = await copiarEnlace(url);
-      if (!ok) { window.prompt('Copia el enlace:', url); return; }
-      textoCopiar.textContent = document.documentElement.lang === 'en' ? 'Link copied!' : '¡Enlace copiado!';
-      setTimeout(() => { textoCopiar.textContent = original; }, 2200);
+    const textoBoton = el('[data-texto-copiar]');
+    el('[data-accion="copiar"]').addEventListener('click', async () => {
+      const original = textoBoton.textContent;
+      if (!(await copiarTexto(aCopiar()))) { window.prompt('Copia el texto:', aCopiar()); return; }
+      textoBoton.textContent = lang() === 'en' ? 'Copied!' : '¡Copiado!';
+      setTimeout(() => { textoBoton.textContent = original; }, 2200);
     });
   }
 
-  copiarEnlace(url);
+  copiarTexto(aCopiar());
   dialogo.showModal();
 }
 

@@ -40,6 +40,7 @@ function rutas(strapi) {
     banner: path.join(web, 'public/images/Banner-MACI-optimized'),
     ogCampana: path.join(web, 'public/images/og-crowdfunding.jpg'),
     historiaCampana: path.join(web, 'public/images/ig-story-crowdfunding.jpg'),
+    tiktokCampana: path.join(web, 'public/images/tiktok-crowdfunding.jpg'),
     fuentes: path.join(web, 'node_modules/@fontsource/inter/files'),
     imagenes: path.join(web, 'src/assets/images'),
     audios: path.join(web, 'public/music-preview'),
@@ -274,6 +275,21 @@ async function exportar(strapi) {
       if (!historiaActual || !historiaActual.equals(historia)) {
         await fs.writeFile(r.historiaCampana, historia);
         cambios.push('ig-story-crowdfunding.jpg');
+      }
+      // Variante para TikTok (zonas seguras distintas).
+      const tiktok = await generarHistoriaCampana({
+        imagen: path.join(r.imagenes, campana.imagen),
+        etiqueta: campana.etiqueta.es,
+        titulo: campana.titulo.es,
+        subtitulo: campana.subtitulo.es,
+        lema: campana.lema.es,
+        boton: campana.boton.es,
+        enlace: 'macimusic.es/crowdfunding',
+      }, r.fuentes, { formato: 'tiktok' });
+      const tiktokActual = await fs.readFile(r.tiktokCampana).catch(() => null);
+      if (!tiktokActual || !tiktokActual.equals(tiktok)) {
+        await fs.writeFile(r.tiktokCampana, tiktok);
+        cambios.push('tiktok-crowdfunding.jpg');
       }
     } catch (e) {
       strapi.log.warn(`[maci-sync] No se pudo generar la imagen para redes: ${e.message}`);

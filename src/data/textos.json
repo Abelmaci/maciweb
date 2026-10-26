@@ -390,6 +390,26 @@
     },
     "botonEnlace": "https://www.instagram.com/macimusic"
   },
+  "escucha": {
+    "visible": true,
+    "etiqueta": {
+      "es": "SPOTIFY",
+      "en": "SPOTIFY"
+    },
+    "titulo": {
+      "es": "ESCUCHA MI ÚLTIMA LISTA",
+      "en": "LISTEN TO MY LATEST PLAYLIST"
+    },
+    "intro": {
+      "es": "Algunos de mis últimos temas, reunidos en una lista para escuchar de principio a fin.",
+      "en": "Some of my latest tracks, gathered in one playlist to listen from start to finish."
+    },
+    "enlaceSpotify": "https://open.spotify.com/playlist/28Exof9FNrynaR8Hr739xw",
+    "boton": {
+      "es": "ABRIR EN SPOTIFY",
+      "en": "OPEN IN SPOTIFY"
+    }
+  },
   "pie": {
     "nombre": "MACI / Abel Maciñeiras",
     "descripcion": "artista digital AI · compositor · productor musical",

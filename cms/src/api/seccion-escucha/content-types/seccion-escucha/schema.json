@@ -1,0 +1,47 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_escucha",
+  "info": {
+    "singularName": "seccion-escucha",
+    "pluralName": "secciones-escucha",
+    "displayName": "10 · Escucha en Spotify",
+    "description": "Sección final con un reproductor de Spotify embebido"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "visible": {
+      "type": "boolean",
+      "default": true
+    },
+    "etiqueta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "titulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "intro": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "enlaceSpotify": {
+      "type": "string",
+      "required": true
+    },
+    "boton": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    }
+  }
+}

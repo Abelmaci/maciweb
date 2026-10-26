@@ -1,0 +1,47 @@
+---
+// «Escucha en Spotify»: reproductor de Spotify embebido al final de la web.
+// Textos y enlace en Strapi: «10 · Escucha en Spotify». El campo admite el
+// enlace de compartir (lista, álbum, canción, artista…) o el código <iframe>.
+import { TEXTOS, i18n } from '../data/textos';
+
+const t = TEXTOS.escucha;
+
+// Saca tipo e ID de cualquier formato de enlace de Spotify.
+const m = t.enlaceSpotify.match(/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?(?:embed\/)?(playlist|album|track|artist|episode|show)\/([A-Za-z0-9]+)/);
+if (t.visible && !m) {
+  throw new Error(`[textos.json] El enlace de Spotify de «Escucha» no es válido: ${t.enlaceSpotify}`);
+}
+const [, tipo, id] = m ?? [];
+const embed = `https://open.spotify.com/embed/${tipo}/${id}?utm_source=generator&theme=0`;
+const abrir = `https://open.spotify.com/${tipo}/${id}`;
+---
+{t.visible && (
+  <section id="escucha" class="py-32 px-8 bg-surface-container-low relative overflow-hidden">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="reveal mb-16">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <svg class="w-4 h-4 text-[#1DB954]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          <span {...i18n(t.etiqueta)}
+            class="text-[0.6rem] md:text-[0.7rem] text-primary font-bold uppercase tracking-[0.2em] md:tracking-[0.5em]">{t.etiqueta.es}</span>
+        </div>
+        <h2 {...i18n(t.titulo)}
+          class="reveal text-3xl md:text-6xl font-black uppercase tracking-tighter mb-8 text-white">{t.titulo.es}</h2>
+        <p {...i18n(t.intro)}
+          class="text-white/60 text-xl font-light italic">{t.intro.es}</p>
+      </div>
+
+      <div class="reveal relative bg-surface-container-highest p-1 rounded-3xl overflow-hidden shadow-2xl">
+        <iframe src={embed} title={t.titulo.es} width="100%" height="452" frameborder="0" loading="lazy"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen
+          class="block w-full h-[352px] md:h-[452px] rounded-[1.25rem] bg-surface"></iframe>
+      </div>
+
+      <div class="mt-10">
+        <a href={abrir} target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center gap-3 bg-[#1DB954] text-white rounded-full px-8 py-4 text-xs font-bold uppercase hover:bg-[#1ed760] transition-colors shadow-[0_0_20px_rgba(29,185,84,0.25)]">
+          <span class="tracking-widest" {...i18n(t.boton)}>{t.boton.es}</span>
+        </a>
+      </div>
+    </div>
+  </section>
+)}

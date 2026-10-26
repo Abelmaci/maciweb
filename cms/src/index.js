@@ -107,6 +107,7 @@ const CAMPOS_SECCION = {
   compartirTexto: ['Texto al compartir', 'Mensaje breve que acompaña al enlace en WhatsApp, X, Telegram…'],
   ogTitulo: ['Título al compartir en redes', 'Título de la tarjeta que ven al pegar el enlace macimusic.es/crowdfunding/.'],
   ogDescripcion: ['Descripción al compartir en redes', 'Texto breve de esa tarjeta.'],
+  enlaceSpotify: ['Enlace de Spotify', 'Pega el enlace de una lista, álbum, canción o artista (Compartir → Copiar enlace en Spotify). Sirve también el código embebido.'],
 };
 
 const CAMPOS_COMPONENTE = {

@@ -84,6 +84,7 @@ const SECCIONES = {
   loQueViene: 'api::seccion-lo-que-viene.seccion-lo-que-viene',
   apps: 'api::seccion-apps.seccion-apps',
   colaboraciones: 'api::seccion-colaboraciones.seccion-colaboraciones',
+  escucha: 'api::seccion-escucha.seccion-escucha',
   pie: 'api::seccion-pie.seccion-pie',
 };
 

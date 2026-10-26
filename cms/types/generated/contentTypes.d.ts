@@ -853,6 +853,45 @@ export interface ApiSeccionDiscografiaSeccionDiscografia
   };
 }
 
+export interface ApiSeccionEscuchaSeccionEscucha
+  extends Struct.SingleTypeSchema {
+  collectionName: 'seccion_escucha';
+  info: {
+    description: 'Secci\u00F3n final con un reproductor de Spotify embebido';
+    displayName: '10 \u00B7 Escucha en Spotify';
+    pluralName: 'secciones-escucha';
+    singularName: 'seccion-escucha';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    boton: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    enlaceSpotify: Schema.Attribute.String & Schema.Attribute.Required;
+    etiqueta: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    intro: Schema.Attribute.Component<'textos.bilingue-largo', false> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::seccion-escucha.seccion-escucha'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    titulo: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    visible: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+  };
+}
+
 export interface ApiSeccionLoQueVieneSeccionLoQueViene
   extends Struct.SingleTypeSchema {
   collectionName: 'seccion_lo_que_viene';
@@ -894,7 +933,7 @@ export interface ApiSeccionPieSeccionPie extends Struct.SingleTypeSchema {
   collectionName: 'seccion_pie';
   info: {
     description: 'Cr\u00E9ditos y texto de redes del pie';
-    displayName: '10 \u00B7 Pie de p\u00E1gina';
+    displayName: '11 \u00B7 Pie de p\u00E1gina';
     pluralName: 'secciones-pie';
     singularName: 'seccion-pie';
   };
@@ -1520,6 +1559,7 @@ declare module '@strapi/strapi' {
       'api::seccion-colaboraciones.seccion-colaboraciones': ApiSeccionColaboracionesSeccionColaboraciones;
       'api::seccion-crowdfunding.seccion-crowdfunding': ApiSeccionCrowdfundingSeccionCrowdfunding;
       'api::seccion-discografia.seccion-discografia': ApiSeccionDiscografiaSeccionDiscografia;
+      'api::seccion-escucha.seccion-escucha': ApiSeccionEscuchaSeccionEscucha;
       'api::seccion-lo-que-viene.seccion-lo-que-viene': ApiSeccionLoQueVieneSeccionLoQueViene;
       'api::seccion-pie.seccion-pie': ApiSeccionPieSeccionPie;
       'api::seccion-plataformas.seccion-plataformas': ApiSeccionPlataformasSeccionPlataformas;

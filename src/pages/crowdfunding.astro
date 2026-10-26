@@ -4,6 +4,7 @@
 // «03 · Crowdfunding». La imagen la genera Strapi al exportar.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Crowdfunding from '../components/Crowdfunding.astro';
+import Escucha from '../components/Escucha.astro';
 import Footer from '../components/Footer.astro';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 import { TEXTOS } from '../data/textos';
@@ -29,6 +30,7 @@ const url = 'https://macimusic.es/crowdfunding/';
 
     <main>
       <Crowdfunding modo="pagina" />
+      <Escucha />
     </main>
     <Footer />
     <LanguageSwitcher />

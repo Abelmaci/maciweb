@@ -62,6 +62,11 @@ function compartir(seccion) {
       return;
     }
 
+    if (red === 'instagram') {
+      boton.addEventListener('click', () => abrirInstagram(seccion, texto));
+      return;
+    }
+
     if (red === 'copiar') {
       boton.addEventListener('click', async () => {
         try {
@@ -83,6 +88,78 @@ function compartir(seccion) {
       if (window.gtag) window.gtag('event', 'share', { method: red, content_type: 'crowdfunding', item_id: url });
     });
   });
+}
+
+// Instagram: ventana con la historia (1080×1920) generada por Strapi.
+// En el móvil se comparte el archivo con el menú del sistema (aparece
+// Instagram → Historias); en el ordenador se descarga. El enlace se copia
+// para pegarlo en el sticker «Enlace».
+const IMAGEN_HISTORIA = '/images/ig-story-crowdfunding.jpg';
+let archivoHistoria = null;
+
+async function obtenerArchivoHistoria() {
+  if (!archivoHistoria) {
+    const blob = await fetch(IMAGEN_HISTORIA).then((r) => r.blob());
+    archivoHistoria = new File([blob], 'maci-quedate-historia.jpg', { type: 'image/jpeg' });
+  }
+  return archivoHistoria;
+}
+
+async function copiarEnlace(url) {
+  try {
+    await navigator.clipboard.writeText(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function abrirInstagram(seccion, texto) {
+  const dialogo = seccion.querySelector('[data-instagram]');
+  if (!dialogo) return;
+  const url = seccion.dataset.url;
+  const puedeCompartir = Boolean(navigator.canShare && navigator.canShare({ files: [new File([''], 'x.jpg', { type: 'image/jpeg' })] }));
+
+  // Modo móvil (compartir archivo) o escritorio (descargar).
+  dialogo.querySelector('[data-ig="compartir"]').classList.toggle('hidden', !puedeCompartir);
+  dialogo.querySelector('[data-ig="descargar"]').classList.toggle('hidden', puedeCompartir);
+  dialogo.querySelector('[data-ig="descargar"]').classList.toggle('flex', !puedeCompartir);
+  dialogo.querySelector('[data-ig-paso="movil"]').classList.toggle('hidden', !puedeCompartir);
+  dialogo.querySelector('[data-ig-paso="escritorio"]').classList.toggle('hidden', puedeCompartir);
+
+  if (!dialogo.dataset.listo) {
+    dialogo.dataset.listo = '1';
+    dialogo.querySelector('[data-ig="cerrar"]').addEventListener('click', () => dialogo.close());
+    dialogo.addEventListener('click', (e) => { if (e.target === dialogo) dialogo.close(); });
+
+    dialogo.querySelector('[data-ig="compartir"]').addEventListener('click', async () => {
+      await copiarEnlace(url);
+      try {
+        const archivo = await obtenerArchivoHistoria();
+        await navigator.share({ files: [archivo], text: `${texto()} ${url}` });
+        if (window.gtag) window.gtag('event', 'share', { method: 'instagram', content_type: 'crowdfunding', item_id: url });
+      } catch (e) {
+        if (e && e.name !== 'AbortError') console.warn('Instagram: no se pudo compartir la imagen', e);
+      }
+    });
+
+    dialogo.querySelector('[data-ig="descargar"]').addEventListener('click', () => {
+      copiarEnlace(url);
+      if (window.gtag) window.gtag('event', 'share', { method: 'instagram_descarga', content_type: 'crowdfunding', item_id: url });
+    });
+
+    const textoCopiar = dialogo.querySelector('[data-ig-copiar]');
+    dialogo.querySelector('[data-ig="copiar"]').addEventListener('click', async () => {
+      const original = textoCopiar.textContent;
+      const ok = await copiarEnlace(url);
+      if (!ok) { window.prompt('Copia el enlace:', url); return; }
+      textoCopiar.textContent = document.documentElement.lang === 'en' ? 'Link copied!' : '¡Enlace copiado!';
+      setTimeout(() => { textoCopiar.textContent = original; }, 2200);
+    });
+  }
+
+  copiarEnlace(url);
+  dialogo.showModal();
 }
 
 export function initCrowdfunding() {

@@ -15,7 +15,7 @@ const fss = require('fs');
 const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
-const { generarOgCampana } = require('./og-campana');
+const { generarOgCampana, generarHistoriaCampana } = require('./og-campana');
 
 const DISCO = 'api::disco.disco';
 const PLATAFORMA = 'api::plataforma.plataforma';
@@ -39,6 +39,7 @@ function rutas(strapi) {
     textos: path.join(web, 'src/data/textos.json'),
     banner: path.join(web, 'public/images/Banner-MACI-optimized'),
     ogCampana: path.join(web, 'public/images/og-crowdfunding.jpg'),
+    historiaCampana: path.join(web, 'public/images/ig-story-crowdfunding.jpg'),
     fuentes: path.join(web, 'node_modules/@fontsource/inter/files'),
     imagenes: path.join(web, 'src/assets/images'),
     audios: path.join(web, 'public/music-preview'),
@@ -258,6 +259,21 @@ async function exportar(strapi) {
       if (!actual || !actual.equals(og)) {
         await fs.writeFile(r.ogCampana, og);
         cambios.push('og-crowdfunding.jpg');
+      }
+      // Historia de Instagram (1080×1920) para el botón «Instagram».
+      const historia = await generarHistoriaCampana({
+        imagen: path.join(r.imagenes, campana.imagen),
+        etiqueta: campana.etiqueta.es,
+        titulo: campana.titulo.es,
+        subtitulo: campana.subtitulo.es,
+        lema: campana.lema.es,
+        boton: campana.boton.es,
+        enlace: 'macimusic.es/crowdfunding',
+      }, r.fuentes);
+      const historiaActual = await fs.readFile(r.historiaCampana).catch(() => null);
+      if (!historiaActual || !historiaActual.equals(historia)) {
+        await fs.writeFile(r.historiaCampana, historia);
+        cambios.push('ig-story-crowdfunding.jpg');
       }
     } catch (e) {
       strapi.log.warn(`[maci-sync] No se pudo generar la imagen para redes: ${e.message}`);

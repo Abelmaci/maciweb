@@ -47,8 +47,8 @@ function lineas(f, texto, tamano, espaciado, ancho) {
 }
 
 // Devuelve { svg, alto, ancho } de un bloque de texto con la línea base
-// superior en `y`.
-function bloque(dir, { texto, peso, tamano, color, x, y, ancho, espaciado = 0, interlineado = 1.25 }) {
+// superior en `y`. Con `centro`, cada línea se centra en esa coordenada x.
+function bloque(dir, { texto, peso, tamano, color, x = 0, y, ancho, espaciado = 0, interlineado = 1.25, centro }) {
   const f = fuente(dir, peso);
   const asc = (f.ascender / f.unitsPerEm) * tamano;
   const desc = (-f.descender / f.unitsPerEm) * tamano;
@@ -56,14 +56,15 @@ function bloque(dir, { texto, peso, tamano, color, x, y, ancho, espaciado = 0, i
   let svg = '';
   let maxAncho = 0;
   filas.forEach((fila, i) => {
-    let cx = x;
+    const inicio = centro !== undefined ? centro - anchoLinea(f, fila, tamano, espaciado) / 2 : x;
+    let cx = inicio;
     const base = y + asc + i * tamano * interlineado;
     const trazos = [];
     for (const ch of fila) {
       trazos.push(f.getPath(ch, cx, base, tamano).toPathData(2));
       cx += f.getAdvanceWidth(ch, tamano) + espaciado;
     }
-    maxAncho = Math.max(maxAncho, cx - espaciado - x);
+    maxAncho = Math.max(maxAncho, cx - espaciado - inicio);
     svg += `<path fill="${color}" d="${trazos.join(' ')}"/>`;
   });
   const alto = asc + desc + (filas.length - 1) * tamano * interlineado;
@@ -131,4 +132,74 @@ async function generarOgCampana(datos, dirFuentes) {
     .toBuffer();
 }
 
-module.exports = { generarOgCampana };
+// Historia de Instagram (1080×1920): Instagram no lee el Open Graph, así que
+// para compartir allí se usa esta imagen + el sticker de enlace.
+// datos: { imagen, etiqueta, titulo, subtitulo, lema, boton, enlace }
+async function generarHistoriaCampana(datos, dirFuentes) {
+  const sharp = require('sharp');
+  const AW = 1080;
+  const AH = 1920;
+  const cx = AW / 2;
+  const ancho = AW - 160;
+
+  // Zonas seguras: Instagram tapa ~250 px arriba (cuenta) y ~250 px abajo.
+  const lado = 760;
+  const radio = 44;
+  const mascara = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${lado}" height="${lado}"><rect width="${lado}" height="${lado}" rx="${radio}" fill="#fff"/></svg>`);
+  const portada = await sharp(datos.imagen).rotate().resize(lado, lado, { fit: 'cover' })
+    .composite([{ input: mascara, blend: 'dest-in' }]).png().toBuffer();
+  // Fondo: la propia portada muy difuminada y oscurecida.
+  const fondo = await sharp(datos.imagen).rotate().resize(AW, AH, { fit: 'cover' }).blur(60)
+    .modulate({ brightness: 0.35, saturation: 0.8 }).png().toBuffer();
+
+  let texto = '';
+  let y = 260;
+  const poner = (o, hueco) => {
+    const b = bloque(dirFuentes, { ...o, centro: cx, y });
+    texto += b.svg;
+    y += b.alto + hueco;
+    return b;
+  };
+  poner({ texto: datos.etiqueta, peso: 700, tamano: 30, color: ROJO, espaciado: 7, ancho }, 50);
+  const yPortada = y;
+  y += lado + 60;
+  poner({ texto: datos.titulo, peso: 900, tamano: 150, color: '#ffffff', espaciado: -4, ancho, interlineado: 1 }, 26);
+  poner({ texto: datos.subtitulo.toUpperCase(), peso: 700, tamano: 34, color: '#ffffffcc', espaciado: 8, ancho }, 30);
+  poner({ texto: datos.lema, peso: 400, tamano: 36, color: '#ffffffa6', ancho }, 60);
+
+  const boton = bloque(dirFuentes, { texto: datos.boton, peso: 700, tamano: 32, color: '#000', espaciado: 4, y: 0 });
+  const pillW = Math.round(boton.ancho + 110);
+  const pillH = 96;
+  const yPill = y;
+  texto += bloque(dirFuentes, { texto: datos.boton, peso: 700, tamano: 32, color: '#000000', espaciado: 4, centro: cx, y: yPill + (pillH - boton.alto) / 2 }).svg;
+  y += pillH + 40;
+  poner({ texto: datos.enlace.toUpperCase(), peso: 700, tamano: 26, color: '#ffffff80', espaciado: 5, ancho }, 0);
+
+  const svg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${AW}" height="${AH}">
+    <defs>
+      <linearGradient id="v" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0e0e0f" stop-opacity="0.2"/><stop offset="0.55" stop-color="#0e0e0f" stop-opacity="0.55"/><stop offset="1" stop-color="#0e0e0f" stop-opacity="0.95"/>
+      </linearGradient>
+      <linearGradient id="b" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="${ROJO}" stop-opacity="0.3"/><stop offset="0.5" stop-color="${ROJO}"/><stop offset="1" stop-color="${ROJO}" stop-opacity="0.3"/>
+      </linearGradient>
+      <linearGradient id="p" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="${ROJO}"/><stop offset="1" stop-color="#CC0000"/>
+      </linearGradient>
+    </defs>
+    <rect width="${AW}" height="${AH}" fill="url(#v)"/>
+    <rect y="${AH - 14}" width="${AW}" height="14" fill="url(#b)"/>
+    <rect x="${cx - pillW / 2}" y="${yPill}" width="${pillW}" height="${pillH}" rx="${pillH / 2}" fill="url(#p)"/>
+    ${texto}
+  </svg>`);
+
+  return sharp(fondo)
+    .composite([
+      { input: svg, left: 0, top: 0 },
+      { input: portada, left: Math.round(cx - lado / 2), top: Math.round(yPortada) },
+    ])
+    .jpeg({ quality: 88, mozjpeg: true })
+    .toBuffer();
+}
+
+module.exports = { generarOgCampana, generarHistoriaCampana };

@@ -555,7 +555,7 @@ export interface ApiSeccionAdelaSeccionAdela extends Struct.SingleTypeSchema {
   collectionName: 'seccion_adela';
   info: {
     description: 'Foto, cita y texto de la secci\u00F3n Adela';
-    displayName: '4 \u00B7 Adela';
+    displayName: '05 \u00B7 Adela';
     pluralName: 'secciones-adela';
     singularName: 'seccion-adela';
   };
@@ -592,7 +592,7 @@ export interface ApiSeccionAjustesSeccionAjustes
   collectionName: 'seccion_ajustes';
   info: {
     description: 'SEO de la p\u00E1gina y enlaces a redes sociales';
-    displayName: '0 \u00B7 Ajustes generales';
+    displayName: '00 \u00B7 Ajustes generales';
     pluralName: 'secciones-ajustes';
     singularName: 'seccion-ajustes';
   };
@@ -629,7 +629,7 @@ export interface ApiSeccionAppsSeccionApps extends Struct.SingleTypeSchema {
   collectionName: 'seccion_apps';
   info: {
     description: 'Secci\u00F3n de herramientas y tarjeta de EasyPrompt';
-    displayName: '7 \u00B7 Apps';
+    displayName: '08 \u00B7 Apps';
     pluralName: 'secciones-apps';
     singularName: 'seccion-apps';
   };
@@ -665,6 +665,7 @@ export interface ApiSeccionAppsSeccionApps extends Struct.SingleTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    visible: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
   };
 }
 
@@ -673,7 +674,7 @@ export interface ApiSeccionBiografiaSeccionBiografia
   collectionName: 'seccion_biografia';
   info: {
     description: 'Foto, cita y texto de la biograf\u00EDa';
-    displayName: '3 \u00B7 Biograf\u00EDa';
+    displayName: '04 \u00B7 Biograf\u00EDa';
     pluralName: 'secciones-biografia';
     singularName: 'seccion-biografia';
   };
@@ -710,7 +711,7 @@ export interface ApiSeccionColaboracionesSeccionColaboraciones
   collectionName: 'seccion_colaboraciones';
   info: {
     description: 'Texto y bot\u00F3n de contacto';
-    displayName: '8 \u00B7 Colaboraciones';
+    displayName: '09 \u00B7 Colaboraciones';
     pluralName: 'secciones-colaboraciones';
     singularName: 'seccion-colaboraciones';
   };
@@ -746,12 +747,73 @@ export interface ApiSeccionColaboracionesSeccionColaboraciones
   };
 }
 
+export interface ApiSeccionCrowdfundingSeccionCrowdfunding
+  extends Struct.SingleTypeSchema {
+  collectionName: 'seccion_crowdfunding';
+  info: {
+    description: 'Campa\u00F1a de crowdfunding: secci\u00F3n de la home y p\u00E1gina para compartir (macimusic.es/crowdfunding/)';
+    displayName: '03 \u00B7 Crowdfunding';
+    pluralName: 'secciones-crowdfunding';
+    singularName: 'seccion-crowdfunding';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    boton: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    compartirTexto: Schema.Attribute.Component<'textos.bilingue-largo', false> &
+      Schema.Attribute.Required;
+    compartirTitulo: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    descripcion: Schema.Attribute.Component<'textos.bilingue-largo', false> &
+      Schema.Attribute.Required;
+    enlaceCampana: Schema.Attribute.String & Schema.Attribute.Required;
+    etiqueta: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    fechaFinal: Schema.Attribute.Date & Schema.Attribute.Required;
+    idCampana: Schema.Attribute.Integer & Schema.Attribute.Required;
+    imagen: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    imagenAlt: Schema.Attribute.String & Schema.Attribute.Required;
+    lema: Schema.Attribute.Component<'textos.bilingue-largo', false> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::seccion-crowdfunding.seccion-crowdfunding'
+    > &
+      Schema.Attribute.Private;
+    notaPago: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    objetivo: Schema.Attribute.Integer & Schema.Attribute.Required;
+    ogDescripcion: Schema.Attribute.Text & Schema.Attribute.Required;
+    ogTitulo: Schema.Attribute.String & Schema.Attribute.Required;
+    precioToken: Schema.Attribute.Integer & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    recompensas: Schema.Attribute.Component<'textos.recompensa', true>;
+    recompensasTitulo: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    subtitulo: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    titulo: Schema.Attribute.Component<'textos.bilingue', false> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    video: Schema.Attribute.String;
+    visible: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+  };
+}
+
 export interface ApiSeccionDiscografiaSeccionDiscografia
   extends Struct.SingleTypeSchema {
   collectionName: 'seccion_discografia';
   info: {
     description: 'Cabecera de la secci\u00F3n de discos (los discos se editan en \u00ABDisco\u00BB)';
-    displayName: '2 \u00B7 Discograf\u00EDa (textos)';
+    displayName: '02 \u00B7 Discograf\u00EDa (textos)';
     pluralName: 'secciones-discografia';
     singularName: 'seccion-discografia';
   };
@@ -796,7 +858,7 @@ export interface ApiSeccionLoQueVieneSeccionLoQueViene
   collectionName: 'seccion_lo_que_viene';
   info: {
     description: 'Texto de pr\u00F3ximos lanzamientos y tarjeta con la onda sonora';
-    displayName: '6 \u00B7 Lo que viene';
+    displayName: '07 \u00B7 Lo que viene';
     pluralName: 'secciones-lo-que-viene';
     singularName: 'seccion-lo-que-viene';
   };
@@ -832,7 +894,7 @@ export interface ApiSeccionPieSeccionPie extends Struct.SingleTypeSchema {
   collectionName: 'seccion_pie';
   info: {
     description: 'Cr\u00E9ditos y texto de redes del pie';
-    displayName: '9 \u00B7 Pie de p\u00E1gina';
+    displayName: '10 \u00B7 Pie de p\u00E1gina';
     pluralName: 'secciones-pie';
     singularName: 'seccion-pie';
   };
@@ -866,7 +928,7 @@ export interface ApiSeccionPlataformasSeccionPlataformas
   collectionName: 'seccion_plataformas';
   info: {
     description: 'Cabecera de la secci\u00F3n (los logos se editan en \u00ABPlataforma\u00BB)';
-    displayName: '5 \u00B7 Plataformas (textos)';
+    displayName: '06 \u00B7 Plataformas (textos)';
     pluralName: 'secciones-plataformas';
     singularName: 'seccion-plataformas';
   };
@@ -901,7 +963,7 @@ export interface ApiSeccionPortadaSeccionPortada
   collectionName: 'seccion_portada';
   info: {
     description: 'Primera pantalla: t\u00EDtulo, claim y bot\u00F3n';
-    displayName: '1 \u00B7 Portada';
+    displayName: '01 \u00B7 Portada';
     pluralName: 'secciones-portada';
     singularName: 'seccion-portada';
   };
@@ -1456,6 +1518,7 @@ declare module '@strapi/strapi' {
       'api::seccion-apps.seccion-apps': ApiSeccionAppsSeccionApps;
       'api::seccion-biografia.seccion-biografia': ApiSeccionBiografiaSeccionBiografia;
       'api::seccion-colaboraciones.seccion-colaboraciones': ApiSeccionColaboracionesSeccionColaboraciones;
+      'api::seccion-crowdfunding.seccion-crowdfunding': ApiSeccionCrowdfundingSeccionCrowdfunding;
       'api::seccion-discografia.seccion-discografia': ApiSeccionDiscografiaSeccionDiscografia;
       'api::seccion-lo-que-viene.seccion-lo-que-viene': ApiSeccionLoQueVieneSeccionLoQueViene;
       'api::seccion-pie.seccion-pie': ApiSeccionPieSeccionPie;

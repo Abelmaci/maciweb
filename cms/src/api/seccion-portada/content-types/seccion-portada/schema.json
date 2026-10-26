@@ -4,7 +4,7 @@
   "info": {
     "singularName": "seccion-portada",
     "pluralName": "secciones-portada",
-    "displayName": "1 · Portada",
+    "displayName": "01 · Portada",
     "description": "Primera pantalla: título, claim y botón"
   },
   "options": {

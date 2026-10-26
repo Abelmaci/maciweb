@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_textos_recompensas",
+  "info": { "displayName": "Recompensa", "icon": "star", "description": "Recompensa de la campaña de crowdfunding" },
+  "options": {},
+  "attributes": {
+    "tokens": { "type": "integer", "required": true, "min": 1 },
+    "masTokens": { "type": "boolean", "default": false },
+    "nivel": { "type": "string", "required": true },
+    "es": { "type": "string", "required": true },
+    "en": { "type": "string", "required": true },
+    "descripcionEs": { "type": "text", "required": true },
+    "descripcionEn": { "type": "text", "required": true }
+  }
+}

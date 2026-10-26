@@ -15,6 +15,7 @@ const fss = require('fs');
 const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
+const { generarOgCampana } = require('./og-campana');
 
 const DISCO = 'api::disco.disco';
 const PLATAFORMA = 'api::plataforma.plataforma';
@@ -37,6 +38,8 @@ function rutas(strapi) {
     platforms: path.join(web, 'src/data/platforms.json'),
     textos: path.join(web, 'src/data/textos.json'),
     banner: path.join(web, 'public/images/Banner-MACI-optimized'),
+    ogCampana: path.join(web, 'public/images/og-crowdfunding.jpg'),
+    fuentes: path.join(web, 'node_modules/@fontsource/inter/files'),
     imagenes: path.join(web, 'src/assets/images'),
     audios: path.join(web, 'public/music-preview'),
     logos: path.join(web, 'public/images/platforms'),
@@ -74,6 +77,7 @@ const SECCIONES = {
   ajustes: 'api::seccion-ajustes.seccion-ajustes',
   portada: 'api::seccion-portada.seccion-portada',
   discografia: 'api::seccion-discografia.seccion-discografia',
+  crowdfunding: 'api::seccion-crowdfunding.seccion-crowdfunding',
   biografia: 'api::seccion-biografia.seccion-biografia',
   adela: 'api::seccion-adela.seccion-adela',
   plataformas: 'api::seccion-plataformas.seccion-plataformas',
@@ -236,6 +240,29 @@ async function exportar(strapi) {
     await generarBanner(path.join(r.imagenes, banner), r.banner);
     cambios.push('banner de la portada (webp + jpg)');
   }
+  // Imagen para compartir la campaña en redes (se reescribe solo si cambia).
+  const campana = textos.crowdfunding;
+  if (campana?.imagen && fss.existsSync(r.fuentes)) {
+    try {
+      const og = await generarOgCampana({
+        imagen: path.join(r.imagenes, campana.imagen),
+        etiqueta: campana.etiqueta.es,
+        titulo: campana.titulo.es,
+        subtitulo: campana.subtitulo.es,
+        lema: campana.lema.es,
+        boton: campana.boton.es,
+        dominio: 'MACIMUSIC.ES',
+      }, r.fuentes);
+      const actual = await fs.readFile(r.ogCampana).catch(() => null);
+      if (!actual || !actual.equals(og)) {
+        await fs.writeFile(r.ogCampana, og);
+        cambios.push('og-crowdfunding.jpg');
+      }
+    } catch (e) {
+      strapi.log.warn(`[maci-sync] No se pudo generar la imagen para redes: ${e.message}`);
+    }
+  }
+
   if (await escribirSiCambia(r.textos, `${JSON.stringify(textos, null, 2)}\n`)) cambios.push('textos.json');
 
   strapi.log.info(cambios.length

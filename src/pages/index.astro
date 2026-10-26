@@ -6,6 +6,7 @@ import SplashLoader from '../components/SplashLoader.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
 import Discography from '../components/Discography.astro';
+import Crowdfunding from '../components/Crowdfunding.astro';
 import Bio from '../components/Bio.astro';
 import Adela from '../components/Adela.astro';
 import Platforms from '../components/Platforms.astro';
@@ -14,6 +15,7 @@ import Apps from '../components/Apps.astro';
 import Collaborations from '../components/Collaborations.astro';
 import Footer from '../components/Footer.astro';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import { TEXTOS } from '../data/textos';
 ---
 <BaseLayout>
   <BrowserNotice />
@@ -23,6 +25,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher.astro';
     <Nav />
     <Hero />
     <Discography />
+    {TEXTOS.crowdfunding.visible && <Crowdfunding />}
     <Bio />
     <Adela />
     <Platforms />

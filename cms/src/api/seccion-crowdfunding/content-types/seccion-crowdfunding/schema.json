@@ -1,0 +1,127 @@
+{
+  "kind": "singleType",
+  "collectionName": "seccion_crowdfunding",
+  "info": {
+    "singularName": "seccion-crowdfunding",
+    "pluralName": "secciones-crowdfunding",
+    "displayName": "03 · Crowdfunding",
+    "description": "Campaña de crowdfunding: sección de la home y página para compartir (macimusic.es/crowdfunding/)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "visible": {
+      "type": "boolean",
+      "default": true
+    },
+    "etiqueta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "titulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "subtitulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "lema": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "descripcion": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "imagen": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "imagenAlt": {
+      "type": "string",
+      "required": true
+    },
+    "enlaceCampana": {
+      "type": "string",
+      "required": true
+    },
+    "idCampana": {
+      "type": "integer",
+      "required": true
+    },
+    "objetivo": {
+      "type": "integer",
+      "required": true
+    },
+    "precioToken": {
+      "type": "integer",
+      "required": true
+    },
+    "fechaFinal": {
+      "type": "date",
+      "required": true
+    },
+    "video": {
+      "type": "string"
+    },
+    "boton": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "notaPago": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "recompensasTitulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "recompensas": {
+      "type": "component",
+      "repeatable": true,
+      "component": "textos.recompensa"
+    },
+    "compartirTitulo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue",
+      "required": true
+    },
+    "compartirTexto": {
+      "type": "component",
+      "repeatable": false,
+      "component": "textos.bilingue-largo",
+      "required": true
+    },
+    "ogTitulo": {
+      "type": "string",
+      "required": true
+    },
+    "ogDescripcion": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

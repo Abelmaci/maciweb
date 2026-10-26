@@ -38,6 +38,7 @@ export interface TextosEnlaceMenu extends Struct.ComponentSchema {
       [
         'inicio',
         'discograf\u00EDa',
+        'crowdfunding',
         'biograf\u00EDa',
         'adela',
         'plataformas',
@@ -66,6 +67,31 @@ export interface TextosParrafo extends Struct.ComponentSchema {
   };
 }
 
+export interface TextosRecompensa extends Struct.ComponentSchema {
+  collectionName: 'components_textos_recompensas';
+  info: {
+    description: 'Recompensa de la campa\u00F1a de crowdfunding';
+    displayName: 'Recompensa';
+    icon: 'star';
+  };
+  attributes: {
+    descripcionEn: Schema.Attribute.Text & Schema.Attribute.Required;
+    descripcionEs: Schema.Attribute.Text & Schema.Attribute.Required;
+    en: Schema.Attribute.String & Schema.Attribute.Required;
+    es: Schema.Attribute.String & Schema.Attribute.Required;
+    masTokens: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    nivel: Schema.Attribute.String & Schema.Attribute.Required;
+    tokens: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+  };
+}
+
 declare module '@strapi/strapi' {
   export namespace Public {
     export interface ComponentSchemas {
@@ -73,6 +99,7 @@ declare module '@strapi/strapi' {
       'textos.bilingue-largo': TextosBilingueLargo;
       'textos.enlace-menu': TextosEnlaceMenu;
       'textos.parrafo': TextosParrafo;
+      'textos.recompensa': TextosRecompensa;
     }
   }
 }

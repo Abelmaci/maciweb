@@ -3,6 +3,7 @@
 // aparición y parallax de los textos de fondo.
 import { SandCanvas } from './sand-canvas.js';
 import { initAlbumPlayer } from './album-player.js';
+import { initCrowdfunding } from './crowdfunding.js';
 
 const HERO_IMAGE = '/images/Banner-MACI-optimized.webp';
 
@@ -194,6 +195,7 @@ export function initApp() {
   safeRun(initNavScroll);
   initCarousel();
   safeRun(initAlbumPlayer);
+  safeRun(initCrowdfunding);
   safeRun(initReveal);
   safeRun(initParallax);
 }

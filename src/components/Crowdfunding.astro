@@ -1,0 +1,208 @@
+---
+// Campaña de crowdfunding (The Muxic). Textos en Strapi: «03 · Crowdfunding».
+// Lo recaudado, las aportaciones y la fecha se consultan en la API pública de
+// The Muxic al construir la web y se refrescan en el navegador
+// (src/scripts/crowdfunding.js).
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { TEXTOS, i18n } from '../data/textos';
+import { ICONOS_REDES } from '../data/iconos-redes';
+
+interface Props {
+  /** 'home': sección de la página principal. 'pagina': página /crowdfunding/. */
+  modo?: 'home' | 'pagina';
+}
+
+const { modo = 'home' } = Astro.props;
+const c = TEXTOS.crowdfunding;
+const URL_COMPARTIR = 'https://macimusic.es/crowdfunding/';
+const API = 'https://api.themuxic.club/api/v1';
+
+// Datos en vivo (si The Muxic no responde, se usan los de Strapi).
+async function consultar() {
+  const opciones = { signal: AbortSignal.timeout(6000) };
+  try {
+    const [campana, aportaciones] = await Promise.all([
+      fetch(`${API}/campaign/${c.idCampana}/data/published/`, opciones).then((r) => (r.ok ? r.json() : null)),
+      fetch(`${API}/donation/${c.idCampana}?page=1&size=1`, opciones).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    ]);
+    if (!campana) return null;
+    return {
+      recaudado: Number(campana.amount_collected) || 0,
+      objetivo: Number(campana.economic_objective) || c.objetivo,
+      fechaFinal: campana.final_date || c.fechaFinal,
+      aportaciones: Number(aportaciones?.total) || 0,
+    };
+  } catch {
+    return null;
+  }
+}
+
+const vivo = (await consultar()) ?? { recaudado: 0, objetivo: c.objetivo, fechaFinal: c.fechaFinal, aportaciones: 0 };
+const euros = (n: number) => `${new Intl.NumberFormat('es-ES', { useGrouping: 'always' }).format(n)} €`;
+const porcentaje = Math.min(100, Math.round((vivo.recaudado / vivo.objetivo) * 100));
+// Días restantes como en The Muxic (hasta el inicio del último día); la
+// campaña se da por finalizada al acabar ese día (hora peninsular).
+const dias = Math.max(0, Math.ceil((Date.parse(`${vivo.fechaFinal}T00:00:00+01:00`) - Date.now()) / 86400000));
+const finalizada = Date.parse(`${vivo.fechaFinal}T23:59:59+01:00`) < Date.now();
+
+const images = import.meta.glob<{ default: ImageMetadata }>('../assets/images/*.{jpg,jpeg,png,webp}', { eager: true });
+const imagen = images[`../assets/images/${c.imagen}`]?.default;
+if (!imagen) throw new Error(`[textos.json] No existe la imagen de la campaña "${c.imagen}" en src/assets/images/.`);
+
+const tokensTexto = (r: (typeof c.recompensas)[number]) => {
+  const n = `${r.tokens}${r.masTokens ? '+' : ''}`;
+  const plural = r.tokens > 1 || r.masTokens;
+  const precio = r.tokens * c.precioToken;
+  return {
+    es: `${n} token${plural ? 's' : ''} · desde ${euros(precio)}`,
+    en: `${n} token${plural ? 's' : ''} · from €${new Intl.NumberFormat('en-GB').format(precio)}`,
+  };
+};
+
+const redes = [
+  { id: 'whatsapp', nombre: 'WhatsApp' },
+  { id: 'x', nombre: 'X' },
+  { id: 'facebook', nombre: 'Facebook' },
+  { id: 'telegram', nombre: 'Telegram' },
+] as const;
+
+const Titulo = modo === 'pagina' ? 'h1' : 'h2';
+---
+<section id="crowdfunding" class={`${modo === 'pagina' ? 'pt-40' : 'py-32'} pb-32 px-8 bg-background relative overflow-hidden`}
+  data-crowdfunding data-api={`${API}`} data-id={c.idCampana} data-objetivo={vivo.objetivo}
+  data-fecha-final={vivo.fechaFinal} data-url={URL_COMPARTIR} data-titulo={c.ogTitulo}
+  data-texto-es={c.compartirTexto.es} data-texto-en={c.compartirTexto.en}>
+  <!-- Resplandor rojo de fondo -->
+  <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-primary/10 blur-[160px] pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto relative">
+    <div class="reveal flex flex-col items-center text-center mb-16">
+      <div {...i18n(c.etiqueta)}
+        class="text-[0.6rem] md:text-[0.7rem] text-primary font-bold uppercase tracking-[0.2em] md:tracking-[0.5em] mb-4">{c.etiqueta.es}</div>
+      <Titulo {...i18n(c.titulo)}
+        class="reveal text-5xl md:text-8xl font-black uppercase tracking-tighter mb-6 text-white">{c.titulo.es}</Titulo>
+      <p {...i18n(c.subtitulo)}
+        class="text-white/80 text-xs md:text-sm font-bold uppercase tracking-[0.3em] mb-4">{c.subtitulo.es}</p>
+      <p {...i18n(c.lema)}
+        class="text-white/60 text-xl font-light italic max-w-2xl">{c.lema.es}</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+      <!-- Portada -->
+      <div class="reveal">
+        <div class="relative bg-surface-container-highest p-1 rounded-3xl overflow-hidden shadow-2xl max-w-xl mx-auto">
+          <Picture src={imagen} alt={c.imagenAlt} formats={['avif', 'webp']} width={1200} widths={[480, 800, 1200]}
+            sizes="(min-width: 1280px) 600px, (min-width: 1024px) 45vw, 90vw" loading="lazy" decoding="async"
+            class="w-full aspect-square object-cover rounded-[1.25rem]" />
+          <div class="absolute top-6 left-6 flex items-center gap-2 bg-black/70 backdrop-blur-md rounded-full px-4 py-2 border border-white/10">
+            {finalizada
+              ? <span class="w-2 h-2 bg-white/40 rounded-full"></span>
+              : <span class="w-2 h-2 bg-primary rounded-full animate-ping"></span>}
+            <span data-cf="estado"
+              data-i18n-es={finalizada ? 'CAMPAÑA FINALIZADA' : 'CAMPAÑA EN CURSO'}
+              data-i18n-en={finalizada ? 'CAMPAIGN ENDED' : 'LIVE CAMPAIGN'}
+              class="text-[0.6rem] font-bold text-white tracking-[0.2em] uppercase">{finalizada ? 'CAMPAÑA FINALIZADA' : 'CAMPAÑA EN CURSO'}</span>
+          </div>
+        </div>
+        {c.video && (
+          <div class="text-center mt-6">
+            <a href={c.video} target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center gap-3 text-white/70 hover:text-primary transition-colors text-xs font-bold uppercase">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21"/></svg>
+              <span class="tracking-[0.3em]" data-i18n-es="Ver el vídeo de la campaña" data-i18n-en="Watch the campaign video">Ver el vídeo de la campaña</span>
+            </a>
+          </div>
+        )}
+      </div>
+
+      <!-- Datos y aportación -->
+      <div class="space-y-10">
+        <p {...i18n(c.descripcion)}
+          class="reveal text-on-surface-variant text-lg leading-relaxed border-l-2 border-primary pl-8 whitespace-pre-line">{c.descripcion.es}</p>
+
+        <div class="reveal bg-surface rounded-3xl border border-outline-variant/20 p-8 md:p-10 shadow-2xl">
+          <div class="flex flex-wrap items-end gap-x-4 gap-y-1 mb-6">
+            <span data-cf="recaudado" class="text-5xl md:text-6xl font-black text-primary tracking-tighter tabular-nums">{euros(vivo.recaudado)}</span>
+            <span class="text-white/50 text-sm pb-2">
+              <span data-i18n-es="objetivo" data-i18n-en="goal">objetivo</span>
+              <span data-cf="objetivo" class="text-white font-bold">{euros(vivo.objetivo)}</span>
+            </span>
+          </div>
+
+          <div class="h-3 rounded-full bg-white/10 overflow-hidden mb-8" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={porcentaje}>
+            <div data-cf="barra" class="h-full rounded-full bg-gradient-to-r from-primary to-[#CC0000] shadow-[0_0_20px_rgba(255,68,68,0.6)] transition-[width] duration-[1500ms] ease-out"
+              style={`width:${porcentaje}%`}></div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4 border-b border-outline-variant/20 pb-8 mb-8">
+            <div>
+              <div data-cf="porcentaje" class="text-2xl md:text-3xl font-black text-white tabular-nums">{porcentaje}%</div>
+              <div data-i18n-es="conseguido" data-i18n-en="funded" class="text-[0.6rem] text-white/50 uppercase tracking-[0.2em] mt-1">conseguido</div>
+            </div>
+            <div>
+              <div data-cf="dias" class="text-2xl md:text-3xl font-black text-white tabular-nums">{dias}</div>
+              <div data-i18n-es="días restantes" data-i18n-en="days left" class="text-[0.6rem] text-white/50 uppercase tracking-[0.2em] mt-1">días restantes</div>
+            </div>
+            <div>
+              <div data-cf="aportaciones" class="text-2xl md:text-3xl font-black text-white tabular-nums">{vivo.aportaciones}</div>
+              <div data-i18n-es="aportaciones" data-i18n-en="backers" class="text-[0.6rem] text-white/50 uppercase tracking-[0.2em] mt-1">aportaciones</div>
+            </div>
+          </div>
+
+          <a href={c.enlaceCampana} target="_blank" rel="noopener"
+            class="btn-primary-gradient w-full px-6 md:px-10 py-5 text-on-primary font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-3 active:scale-95 transition-transform shadow-lg shadow-primary/20 rounded-full">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span class="tracking-[0.12em] md:tracking-widest whitespace-nowrap" {...i18n(c.boton)}>{c.boton.es}</span>
+          </a>
+          <p {...i18n(c.notaPago)} class="text-[0.6rem] text-white/40 uppercase tracking-[0.2em] text-center mt-4">{c.notaPago.es}</p>
+        </div>
+
+        <!-- Compartir -->
+        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4">
+          <span {...i18n(c.compartirTitulo)} class="text-[0.65rem] tracking-[0.3em] text-white/50 uppercase font-bold whitespace-nowrap">{c.compartirTitulo.es}</span>
+          <div class="flex flex-wrap items-center gap-3">
+            {redes.map((r) => (
+              <button type="button" data-compartir={r.id} aria-label={`Compartir en ${r.nombre}`} title={r.nombre}
+                class="w-11 h-11 rounded-full border border-white/10 bg-white/5 text-white/70 flex items-center justify-center transition-all hover:bg-primary hover:text-black hover:border-primary hover:scale-110">
+                <svg class="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d={ICONOS_REDES[r.id]} /></svg>
+              </button>
+            ))}
+            <button type="button" data-compartir="copiar" aria-label="Copiar enlace" title="Copiar enlace"
+              class="w-11 h-11 rounded-full border border-white/10 bg-white/5 text-white/70 flex items-center justify-center transition-all hover:bg-primary hover:text-black hover:border-primary hover:scale-110">
+              <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </button>
+            <button type="button" data-compartir="nativo" aria-label="Compartir" title="Compartir"
+              class="hidden w-11 h-11 rounded-full border border-white/10 bg-white/5 text-white/70 items-center justify-center transition-all hover:bg-primary hover:text-black hover:border-primary hover:scale-110">
+              <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </button>
+            <span data-cf="copiado" data-i18n-es="¡Enlace copiado!" data-i18n-en="Link copied!"
+              class="text-[0.65rem] text-primary font-bold uppercase tracking-[0.2em] opacity-0 transition-opacity duration-300">¡Enlace copiado!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recompensas -->
+    {c.recompensas.length > 0 && (
+      <div class="mt-24">
+        <h3 {...i18n(c.recompensasTitulo)}
+          class="reveal text-2xl md:text-3xl font-black uppercase tracking-tighter text-white text-center mb-10">{c.recompensasTitulo.es}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {c.recompensas.map((r) => {
+            const tk = tokensTexto(r);
+            return (
+              <div class="reveal group relative flex flex-col gap-3 p-6 bg-surface border border-outline-variant/10 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-white/5">
+                <a href={c.enlaceCampana} target="_blank" rel="noopener" class="absolute inset-0 rounded-2xl z-10" aria-label={`${r.es} · ${tk.es}`}></a>
+                <span class="text-[0.6rem] text-primary font-bold uppercase tracking-[0.3em]">{r.nivel}</span>
+                <span data-i18n-es={tk.es} data-i18n-en={tk.en} class="text-[0.65rem] text-white/50 font-bold uppercase tracking-[0.15em]">{tk.es}</span>
+                <span {...i18n(r)} class="text-white font-black uppercase tracking-tight leading-tight group-hover:text-primary transition-colors">{r.es}</span>
+                <span data-i18n-es={r.descripcionEs} data-i18n-en={r.descripcionEn} class="text-on-surface-variant text-sm leading-relaxed">{r.descripcionEs}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    )}
+  </div>
+</section>

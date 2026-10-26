@@ -18,6 +18,11 @@
         "destino": "discografía"
       },
       {
+        "es": "CROWDFUNDING",
+        "en": "CROWDFUNDING",
+        "destino": "crowdfunding"
+      },
+      {
         "es": "BIOGRAFÍA",
         "en": "BIOGRAPHY",
         "destino": "biografía"
@@ -36,11 +41,6 @@
         "es": "LANZAMIENTOS",
         "en": "RELEASES",
         "destino": "lanzamientos"
-      },
-      {
-        "es": "APPS",
-        "en": "APPS",
-        "destino": "easyprompt"
       }
     ],
     "avisoNavegador": {
@@ -97,6 +97,106 @@
       "es": "LANZAMIENTO EN",
       "en": "LAUNCHING IN"
     }
+  },
+  "crowdfunding": {
+    "visible": true,
+    "etiqueta": {
+      "es": "CROWDFUNDING · THE MUXIC",
+      "en": "CROWDFUNDING · THE MUXIC"
+    },
+    "titulo": {
+      "es": "QUÉDATE",
+      "en": "QUÉDATE"
+    },
+    "subtitulo": {
+      "es": "El nuevo álbum de MACI",
+      "en": "MACI's new album"
+    },
+    "lema": {
+      "es": "Una canción de raíz cubana para quedarse contigo.",
+      "en": "A Cuban-rooted song to stay with you."
+    },
+    "descripcion": {
+      "es": "«Quédate» es el nuevo álbum de MACI: una propuesta pop con raíces en la guajira cubana, el son y la trova tradicional. Un viaje de melodías cálidas, historias cercanas y sonidos que conectan con nuestra memoria, producido con asistencia de inteligencia artificial.\n\nCon esta campaña queremos recaudar 2.000 € para completar la producción y compartir estas canciones contigo. Tu apoyo forma parte esencial de este viaje musical.",
+      "en": "«Quédate» is MACI's new album: a pop proposal rooted in Cuban guajira, son and traditional trova. A journey of warm melodies, close-to-home stories and sounds that connect with our memory, produced with the assistance of artificial intelligence.\n\nWith this campaign we want to raise €2,000 to complete the production and share these songs with you. Your support is an essential part of this musical journey."
+    },
+    "imagen": "quedate-campana.jpg",
+    "imagenAlt": "Portada de «Quédate», el nuevo álbum de MACI",
+    "enlaceCampana": "https://themuxic.club/campanas/9",
+    "idCampana": 9,
+    "objetivo": 2000,
+    "precioToken": 20,
+    "fechaFinal": "2026-11-22",
+    "video": "https://youtube.com/shorts/E4tV8ekM7x4",
+    "boton": {
+      "es": "APOYAR LA CAMPAÑA",
+      "en": "SUPPORT THE CAMPAIGN"
+    },
+    "notaPago": {
+      "es": "1 token = 20 € · Pago seguro con Stripe en The Muxic",
+      "en": "1 token = €20 · Secure payment with Stripe on The Muxic"
+    },
+    "recompensasTitulo": {
+      "es": "RECOMPENSAS",
+      "en": "REWARDS"
+    },
+    "recompensas": [
+      {
+        "tokens": 1,
+        "masTokens": false,
+        "nivel": "Fan",
+        "es": "Primera escucha de «Quédate»",
+        "en": "First listen of «Quédate»",
+        "descripcionEs": "Acceso anticipado al álbum «Quédate» antes de su lanzamiento oficial y agradecimiento especial de MACI.",
+        "descripcionEn": "Early access to the album «Quédate» before its official release, plus a special thank-you from MACI."
+      },
+      {
+        "tokens": 2,
+        "masTokens": false,
+        "nivel": "Crew",
+        "es": "Maquetas de «Quédate»",
+        "en": "«Quédate» demos",
+        "descripcionEs": "Acceso exclusivo a una selección de maquetas y versiones iniciales del álbum, además de la recompensa anterior.",
+        "descripcionEn": "Exclusive access to a selection of demos and early versions of the album, plus the previous reward."
+      },
+      {
+        "tokens": 3,
+        "masTokens": false,
+        "nivel": "Insider",
+        "es": "Maquetas de «Quédate»",
+        "en": "«Quédate» demos",
+        "descripcionEs": "Acceso exclusivo a una selección de maquetas y versiones iniciales del álbum, además de la recompensa anterior.",
+        "descripcionEn": "Exclusive access to a selection of demos and early versions of the album, plus the previous reward."
+      },
+      {
+        "tokens": 4,
+        "masTokens": false,
+        "nivel": "Backstage",
+        "es": "Versiones exclusivas «Quédate»",
+        "en": "Exclusive «Quédate» versions",
+        "descripcionEs": "Acceso a contenidos exclusivos del proceso de producción, incluyendo demos, making-of y material inédito.",
+        "descripcionEn": "Access to exclusive content from the production process, including demos, making-of and unreleased material."
+      },
+      {
+        "tokens": 5,
+        "masTokens": true,
+        "nivel": "Legend",
+        "es": "Gorra oficial MACI",
+        "en": "Official MACI cap",
+        "descripcionEs": "Gorra exclusiva con el logo de MACI, además de todas las recompensas digitales anteriores.",
+        "descripcionEn": "Exclusive cap with the MACI logo, plus all the previous digital rewards."
+      }
+    ],
+    "compartirTitulo": {
+      "es": "COMPARTE LA CAMPAÑA",
+      "en": "SHARE THE CAMPAIGN"
+    },
+    "compartirTexto": {
+      "es": "Apoya «Quédate», el nuevo álbum de MACI: pop con raíz cubana, son y trova. Consigue recompensas exclusivas desde 20 €.",
+      "en": "Support «Quédate», MACI's new album: pop with Cuban roots, son and trova. Get exclusive rewards from €20."
+    },
+    "ogTitulo": "«Quédate» · El nuevo álbum de MACI | Crowdfunding",
+    "ogDescripcion": "Apoya el nuevo álbum de MACI: pop con raíz cubana, son y trova tradicional. Objetivo 2.000 €. Recompensas exclusivas desde 20 €."
   },
   "biografia": {
     "marcaAgua": "MACI",
@@ -221,6 +321,7 @@
     }
   },
   "apps": {
+    "visible": false,
     "etiqueta": {
       "es": "HERRAMIENTAS AI",
       "en": "AI TOOLS"

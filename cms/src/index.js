@@ -91,6 +91,22 @@ const CAMPOS_SECCION = {
   etiquetaReproduciendo: ['Etiqueta «Reproduciendo»', 'Se muestra en los discos con esa etiqueta.'],
   botonSpotify: ['Botón de Spotify', 'Texto del botón verde de cada disco.'],
   cuentaAtrasEtiqueta: ['Texto de la cuenta atrás (al cambiar de idioma)', 'El texto inicial de cada disco se edita en el propio disco.'],
+  visible: ['Mostrar en la web', 'Desactívalo para ocultar la sección sin perder su contenido.'],
+  imagen: ['Imagen de la campaña', 'Portada cuadrada. Se usa en la sección y para la imagen al compartir en redes.'],
+  imagenAlt: ['Texto alternativo de la imagen', ''],
+  enlaceCampana: ['Enlace a la campaña', 'Página de la campaña en The Muxic (botón «Apoyar» y enlaces de compartir).'],
+  idCampana: ['ID de la campaña en The Muxic', 'Número del final del enlace (…/campanas/9 → 9). Con él la web muestra lo recaudado en directo.'],
+  objetivo: ['Objetivo (€)', 'Se usa si no se puede consultar The Muxic en ese momento.'],
+  precioToken: ['Precio por token (€)', ''],
+  fechaFinal: ['Fecha final', 'Para los días restantes. Al pasar la fecha la campaña se muestra como finalizada.'],
+  video: ['Vídeo (YouTube)', 'Opcional. Enlace de YouTube o YouTube Shorts.'],
+  notaPago: ['Nota bajo el botón', ''],
+  recompensasTitulo: ['Título de las recompensas', ''],
+  recompensas: ['Recompensas', 'Arrastra para ordenarlas.'],
+  compartirTitulo: ['Título de «Compartir»', ''],
+  compartirTexto: ['Texto al compartir', 'Mensaje breve que acompaña al enlace en WhatsApp, X, Telegram…'],
+  ogTitulo: ['Título al compartir en redes', 'Título de la tarjeta que ven al pegar el enlace macimusic.es/crowdfunding/.'],
+  ogDescripcion: ['Descripción al compartir en redes', 'Texto breve de esa tarjeta.'],
 };
 
 const CAMPOS_COMPONENTE = {
@@ -98,6 +114,11 @@ const CAMPOS_COMPONENTE = {
   en: ['Inglés', ''],
   destacado: ['Destacado', 'En negrita y blanco.'],
   destino: ['Lleva a la sección', ''],
+  tokens: ['Tokens', ''],
+  masTokens: ['«o más» tokens', 'Muestra «5+ tokens» (para la recompensa más alta).'],
+  nivel: ['Nivel', 'Fan, Crew, Insider…'],
+  descripcionEs: ['Descripción (español)', ''],
+  descripcionEn: ['Descripción (inglés)', ''],
 };
 
 const aplicarEtiquetas = (conf, campos, yaEtiquetados = []) => {

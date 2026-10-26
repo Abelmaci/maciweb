@@ -4,13 +4,17 @@
   "info": {
     "singularName": "seccion-apps",
     "pluralName": "secciones-apps",
-    "displayName": "7 · Apps",
+    "displayName": "08 · Apps",
     "description": "Sección de herramientas y tarjeta de EasyPrompt"
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
+    "visible": {
+      "type": "boolean",
+      "default": true
+    },
     "etiqueta": {
       "type": "component",
       "repeatable": false,

@@ -159,6 +159,15 @@ const REDES_IMAGEN = [
           class="reveal text-on-surface-variant text-lg leading-relaxed border-l-2 border-primary pl-8 whitespace-pre-line">{c.descripcion.es}</p>
 
         <div class="reveal bg-surface rounded-3xl border border-outline-variant/20 p-8 md:p-10 shadow-2xl">
+          <!-- Plataforma de la campaña (The Muxic) -->
+          <div class="flex justify-end mb-6 -mt-2">
+            <span class="relative inline-flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity">
+              <span data-i18n-es="Campaña realizada con" data-i18n-en="Campaign powered by"
+                class="text-[0.55rem] text-white/50 font-bold uppercase tracking-[0.2em]">Campaña realizada con</span>
+              <img src="/images/the-muxic-logo-claro.png" alt="The Muxic" width="400" height="118" loading="lazy" decoding="async" class="h-6 w-auto">
+              <a href="https://themuxic.club" target="_blank" rel="noopener" class="absolute inset-0" aria-label="The Muxic, plataforma de crowdfunding musical"></a>
+            </span>
+          </div>
           <div class="flex flex-wrap items-end gap-x-4 gap-y-1 mb-6">
             <span data-cf="recaudado" class="text-5xl md:text-6xl font-black text-primary tracking-tighter tabular-nums">{euros(vivo.recaudado)}</span>
             <span class="text-white/50 text-sm pb-2">
